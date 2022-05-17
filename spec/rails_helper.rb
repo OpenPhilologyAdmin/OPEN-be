@@ -10,7 +10,7 @@ require 'rspec/rails'
 require 'simplecov'
 SimpleCov.start 'rails'
 
-require 'database_cleaner'
+require 'database_cleaner-active_record'
 require 'support/factory_bot'
 require 'support/shoulda_matchers'
 
