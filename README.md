@@ -1,7 +1,7 @@
 # Project details
 
 The general aims of the project:
-- provide tools for editing multilingual texts,,
+- provide tools for editing multilingual texts,
 - allow for easy export of edited text into standard word
 processors/typesetters for further/final typesetting (for paper
 publication),
