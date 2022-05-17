@@ -1,24 +1,30 @@
-# README
+# Project details
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The general aims of the project:
+- provide tools for editing multilingual texts,,
+- allow for easy export of edited text into standard word
+processors/typesetters for further/final typesetting (for paper
+publication),
+- allow online display of editions, both as completed projects and in
+process.
 
-Things you may want to cover:
+Useful links:
+- [Jira board](https://xfive.atlassian.net/jira/software/c/projects/OPLU/boards/37)
 
-* Ruby version
+# Technology stack
 
-* System dependencies
+- Ruby v3.1.2
+- Ruby on Rails v7.0.3
 
-* Configuration
+# Project setup instructions
 
-* Database creation
+- `gem install bundler`
+- `bundle install`
+- `lefthook install -f`
+- `rails db:setup`
+- `rails server`
+- application is running on `http://localhost:3000`
 
-* Database initialization
+# Running tests and other services around the project
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- `rspec spec` to run tests.
