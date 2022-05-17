@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  commands:
+    brakeman:
+      run: bundle exec brakeman -q --no-pager
+    bundle-audit:
+      run: bundle exec bundle-audit check --update
+    rubocop:
+      glob: "*.{rb,rake}"
+      run: bundle exec rubocop {staged_files} --format=emacs --force-exclusion --display-cop-names -a && git add {staged_files}
+pre-push:
+  commands:
+    rspec:
+      glob: "*.{rb}"
+      run: bundle exec rspec spec
