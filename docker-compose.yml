@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - .ci/env
+      - .ci/postgres-env
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  setup:
+    env_file:
+      - .ci/env
+      - .ci/rails-env
+    depends_on:
+      - postgres
+      - redis
+    build: .
+    command: >
+      sh -c "
+        bundle exec rails db:setup
+      "
+  tests:
+    env_file:
+      - .ci/postgres-env
+      - .ci/rails-env
+    depends_on:
+      - setup
+    build: .
+    command: sh -c "bundle exec rspec spec"

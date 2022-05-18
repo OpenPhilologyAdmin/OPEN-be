@@ -1,0 +1,20 @@
+name: Ruby
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches:
+      - "feature/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docker images
+        run: docker-compose build
+      - name: Run test
+        run: docker-compose run tests
