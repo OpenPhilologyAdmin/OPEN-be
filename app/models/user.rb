@@ -14,4 +14,6 @@ class User < ApplicationRecord
             scope:      :shallow
 
   validates :role, :name, presence: true
+  validates :password, format: { with: /\A(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}\z/ },
+                       unless: -> { password.blank? }
 end
