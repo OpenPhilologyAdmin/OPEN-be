@@ -31,3 +31,7 @@ coverage/*
 
 # Ignore RubyMine files.
 .idea/
+
+# Ignore local configuration
+.env.development.local
+.env.test.local
