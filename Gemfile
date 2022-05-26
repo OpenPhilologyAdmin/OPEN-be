@@ -8,6 +8,7 @@ gem 'rails', '~> 7.0.3'
 
 gem 'bootsnap', require: false
 gem 'devise'
+gem 'enumerize'
 gem 'jbuilder'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
