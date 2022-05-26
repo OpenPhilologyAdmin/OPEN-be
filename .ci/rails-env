@@ -1,0 +1,2 @@
+RAILS_ENV=test
+DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432"

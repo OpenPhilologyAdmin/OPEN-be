@@ -29,6 +29,17 @@ Useful links:
 
 - `rspec spec` to run tests.
 
+# Testing CI locally
+
+## Requirements
+
+- [docker](https://www.docker.com/products/docker-desktop/)
+- [act](https://github.com/nektos/act)
+
+## Commands
+
+- `act -P ubuntu-latest=lucasalt/act_base:latest` to run the actions locally
+
 # API Docs
 
 [Rswag](https://github.com/rswag/rswag/tree/2.3.0) is used to generate API docs semi-automatically.
