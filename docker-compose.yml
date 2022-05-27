@@ -5,17 +5,16 @@ services:
     image: postgres
     ports:
       - 5432:5432
-    env_file:
-      - .ci/env
-      - .ci/postgres-env
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
   redis:
     image: redis
     ports:
       - 6379:6379
   setup:
-    env_file:
-      - .ci/env
-      - .ci/rails-env
+    environment:
+      RAILS_ENV: "test"
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432"
     depends_on:
       - postgres
       - redis
@@ -25,9 +24,10 @@ services:
         bundle exec rails db:setup
       "
   tests:
-    env_file:
-      - .ci/postgres-env
-      - .ci/rails-env
+    environment:
+      RAILS_ENV: "test"
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432"
+      DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: 'true'
     depends_on:
       - setup
     build: .
