@@ -17,4 +17,6 @@ jobs:
       - name: Build docker images
         run: docker-compose build
       - name: Run test
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: docker-compose run tests
