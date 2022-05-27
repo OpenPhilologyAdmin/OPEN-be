@@ -18,6 +18,9 @@ Useful links:
 
 # Project setup instructions
 
+- `cp .env.local.template .env.development.local`
+- `cp .env.local.template .env.test.local`
+- Set up ENV variables in `.env.development.local` and `.env.test.local`
 - `gem install bundler`
 - `bundle install`
 - `lefthook install -f`
