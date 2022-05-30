@@ -5,7 +5,8 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :confirmable
+         :confirmable,
+         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
   enumerize :role,
             in:         %i[admin],

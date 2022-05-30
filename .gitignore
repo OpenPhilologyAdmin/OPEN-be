@@ -36,3 +36,5 @@ coverage/*
 # Ignore local configuration
 .env.development.local
 .env.test.local
+
+/config/credentials/test.key

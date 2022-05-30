@@ -100,6 +100,9 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise-jwt (0.9.0)
+      devise (~> 4.0)
+      warden-jwt_auth (~> 0.6)
     diff-lcs (1.5.0)
     digest (3.1.0)
     docile (1.4.0)
@@ -107,6 +110,16 @@ GEM
     dotenv-rails (2.7.6)
       dotenv (= 2.7.6)
       railties (>= 3.2)
+    dry-auto_inject (0.9.0)
+      dry-container (>= 0.3.4)
+    dry-configurable (0.15.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 0.6)
+    dry-container (0.9.0)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 0.13, >= 0.13.0)
+    dry-core (0.7.1)
+      concurrent-ruby (~> 1.0)
     enumerize (2.5.0)
       activesupport (>= 3.2)
     equalizer (0.0.11)
@@ -138,6 +151,7 @@ GEM
       activesupport (>= 5.0.0)
     json-schema (2.8.1)
       addressable (>= 2.4)
+    jwt (2.3.0)
     kwalify (0.7.2)
     launchy (2.5.0)
       addressable (~> 2.7)
@@ -154,7 +168,7 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     minitest (5.15.0)
-    msgpack (1.5.1)
+    msgpack (1.5.2)
     net-imap (0.2.3)
       digest
       net-protocol
@@ -189,7 +203,7 @@ GEM
     pundit (2.2.0)
       activesupport (>= 3.0.0)
     racc (1.6.0)
-    rack (2.2.3)
+    rack (2.2.3.1)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
     rack-test (1.1.0)
@@ -230,7 +244,7 @@ GEM
       kwalify (~> 0.7.0)
       parser (~> 3.1.0)
       rainbow (>= 2.0, < 4.0)
-    regexp_parser (2.4.0)
+    regexp_parser (2.5.0)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -261,13 +275,13 @@ GEM
     rswag-ui (2.5.1)
       actionpack (>= 3.1, < 7.1)
       railties (>= 3.1, < 7.1)
-    rubocop (1.29.1)
+    rubocop (1.30.0)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.17.0, < 2.0)
+      rubocop-ast (>= 1.18.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.18.0)
@@ -316,6 +330,11 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.9)
       rack (>= 2.0.9)
+    warden-jwt_auth (0.6.0)
+      dry-auto_inject (~> 0.8)
+      dry-configurable (~> 0.13)
+      jwt (~> 2.1)
+      warden (~> 1.2)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -330,6 +349,7 @@ DEPENDENCIES
   bundle-audit
   database_cleaner-active_record
   devise
+  devise-jwt
   dotenv-rails
   enumerize
   factory_bot_rails
