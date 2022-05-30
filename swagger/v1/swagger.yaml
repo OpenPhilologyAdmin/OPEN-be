@@ -3,7 +3,96 @@ openapi: 3.0.1
 info:
   title: API V1
   version: v1
-paths: {}
+components:
+  securitySchemes:
+    bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        role:
+          type: string
+          enum:
+          - admin
+          default: admin
+    credentials:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+            password:
+              type: string
+              format: password
+paths:
+  "/api/v1/users/sign_in":
+    post:
+      summary: Signs the user in
+      tags:
+      - Authorization
+      description: Signs the user in using email and password combination
+      parameters: []
+      responses:
+        '201':
+          description: User has been successfully signed in
+          headers:
+            Authorization:
+              type: string
+              description: 'The JWT token for user with the following format: Bearer
+                {token}'
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user"
+        '401':
+          description: Login credentials are incorrect
+          content:
+            application/json:
+              example:
+                success: false
+                message: Invalid email or password.
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/credentials"
+  "/api/v1/users/sign_out":
+    delete:
+      summary: Logs out the user
+      tags:
+      - Authorization
+      security:
+      - bearer: []
+      description: Signs out the user and invalidates the token.
+      responses:
+        '204':
+          description: 'User has been signed out '
 servers:
 - url: https://{defaultHost}
   variables:

@@ -41,6 +41,11 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Enabled: false
 
+RSpec/VariableName:
+   EnforcedStyle: snake_case
+   IgnoredPatterns:
+     - ^Authorization$
+
 Style/Documentation:
   Enabled: false
 
