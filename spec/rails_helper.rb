@@ -13,6 +13,7 @@ require 'rspec/rails'
 require 'database_cleaner-active_record'
 require 'support/factory_bot'
 require 'support/shoulda_matchers'
+require 'support/helpers/authorization'
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
@@ -29,6 +30,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.order = :random
   config.default_formatter = 'doc'
+
+  config.include Helpers::Authorization, type: :request
+  config.include Devise::Test::IntegrationHelpers, type: :request
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
