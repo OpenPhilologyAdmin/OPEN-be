@@ -28,6 +28,7 @@ services:
       RAILS_ENV: "test"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432"
       DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: 'true'
+      RAILS_MASTER_KEY: "${RAILS_MASTER_KEY}"
     depends_on:
       - setup
     build: .
