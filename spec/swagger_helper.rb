@@ -42,6 +42,17 @@ RSpec.configure do |config|
                 }
               }
             }
+          },
+          user_email:  {
+            type:       :object,
+            properties: {
+              user: {
+                type:       :object,
+                properties: {
+                  email: { type: :string, format: :email }
+                }
+              }
+            }
           }
         }
       },

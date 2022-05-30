@@ -80,8 +80,8 @@ RSpec.describe 'v1/sessions', type: :request do
       description 'Signs out the user and invalidates the token.'
 
       response '204', 'User has been signed out ' do
-        let(:user) { create(:user) }
         let(:Authorization) { authorization_header_for(user) }
+        let(:user) { create(:user) }
 
         it 'returns a valid 204 response' do |example|
           submit_request(example.metadata)
