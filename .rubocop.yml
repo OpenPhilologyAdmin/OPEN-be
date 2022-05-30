@@ -44,7 +44,7 @@ RSpec/NestedGroups:
 RSpec/VariableName:
    EnforcedStyle: snake_case
    IgnoredPatterns:
-     - ^Authorization
+     - ^Authorization$
 
 Style/Documentation:
   Enabled: false
