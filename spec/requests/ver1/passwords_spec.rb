@@ -62,7 +62,7 @@ RSpec.describe 'v1/passwords', type: :request do
       end
 
       response '200', 'Password updated' do
-        let(:Authorization) {} # rubocop:disable Lint/EmptyBlock
+        let(:Authorization) { nil }
         let(:password) { attributes_for(:user)[:password] }
 
         header 'Authorization',
@@ -82,7 +82,7 @@ RSpec.describe 'v1/passwords', type: :request do
       end
 
       response '422', 'Invalid password or reset password token' do
-        let(:Authorization) {} # rubocop:disable Lint/EmptyBlock
+        let(:Authorization) { nil }
         let(:password) { '' }
 
         schema type:       :object,

@@ -37,7 +37,7 @@ RSpec.describe 'v1/sessions', type: :request do
       parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/credentials' }
 
       response '201', 'User has been successfully signed in' do
-        let(:Authorization) {}  # rubocop:disable Lint/EmptyBlock
+        let(:Authorization) { nil }
         let(:password) { attributes_for(:user)[:password] }
         let(:user) do
           user = create(:user, password:)
