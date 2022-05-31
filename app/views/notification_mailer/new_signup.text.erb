@@ -1,0 +1,10 @@
+<%= I18n.t('mailers.notification_mailer.new_signup.greeting', name: @recipient.name) %>
+
+<%= I18n.t('mailers.notification_mailer.new_signup.message') %>
+
+<%= I18n.t('mailers.notification_mailer.new_signup.new_user_name_label') %> <%= @new_user.name %>
+<%= I18n.t('mailers.notification_mailer.new_signup.new_user_email_label') %> <%= @new_user.email %>
+
+
+<%= I18n.t('mailers.notification_mailer.new_signup.link_description') %>
+<%= ENV['FRONTEND_APP_USERS_MANAGEMENT_URL'] %>

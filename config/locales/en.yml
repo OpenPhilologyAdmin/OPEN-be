@@ -5,4 +5,13 @@ en:
         user:
           attributes:
             password:
-              invalid: 'must contain at least one digit and one letter'
+              invalid: must contain at least one digit and one letter
+  mailers:
+    notification_mailer:
+      new_signup:
+        subject: A new user has just signed up
+        greeting: "Hello %{name},"
+        message: A new user has just signed up.
+        new_user_name_label: 'Name:'
+        new_user_email_label: 'Email:'
+        link_description: 'Please click on the following link to manage new signups:'
