@@ -1,5 +1,7 @@
 name: Ruby
-on: [pull_request]
+on:
+  pull_request:
+  pull_request_target: [closed]
 
 permissions:
   contents: read
