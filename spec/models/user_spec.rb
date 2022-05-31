@@ -38,5 +38,9 @@ RSpec.describe User, type: :model do
     it 'creates valid :approved factory' do
       expect(build(:user, :approved)).to be_valid
     end
+
+    it 'creates valid :not_approved factory' do
+      expect(build(:user, :not_approved)).to be_valid
+    end
   end
 end
