@@ -1,9 +1,5 @@
 name: Ruby
-on:
-  push:
-    branches: [$default-branch]
-  pull_request:
-    types: [opened, reopened]
+on: [pull_request]
 
 permissions:
   contents: read
