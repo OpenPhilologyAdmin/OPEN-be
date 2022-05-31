@@ -20,7 +20,13 @@ module Ver1
       self.resource = User.reset_password_by_token(resource_params)
 
       if resource.errors.empty?
-        handle_valid_update_params
+        unlock_and_sign_in
+        render(
+          json:   {
+            message: I18n.t('devise.passwords.updated')
+          },
+          status: :ok
+        )
       else
         render(
           json:   {
@@ -33,15 +39,9 @@ module Ver1
 
     private
 
-    def handle_valid_update_params
+    def unlock_and_sign_in
       resource.unlock_access! if unlockable?(resource)
       sign_in(:user, resource)
-      render(
-        json:   {
-          message: I18n.t('devise.passwords.updated')
-        },
-        status: :ok
-      )
     end
   end
 end
