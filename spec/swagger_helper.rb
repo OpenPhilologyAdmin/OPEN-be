@@ -20,7 +20,7 @@ RSpec.configure do |config|
           }
         },
         schemas:         {
-          user:        {
+          user:                {
             type:       :object,
             properties: {
               id:         { type: :integer },
@@ -31,7 +31,7 @@ RSpec.configure do |config|
               role:       { type: :string, enum: %i[admin], default: :admin }
             }
           },
-          credentials: {
+          credentials:         {
             type:       :object,
             properties: {
               user: {
@@ -43,13 +43,26 @@ RSpec.configure do |config|
               }
             }
           },
-          user_email:  {
+          user_email:          {
             type:       :object,
             properties: {
               user: {
                 type:       :object,
                 properties: {
                   email: { type: :string, format: :email }
+                }
+              }
+            }
+          },
+          user_reset_password: {
+            type:       :object,
+            properties: {
+              user: {
+                type:       :object,
+                properties: {
+                  reset_password_token:  { type: :string, example: 'reset_password_token' },
+                  password:              { type: :string, format: :password },
+                  password_confirmation: { type: :string, format: :password }
                 }
               }
             }

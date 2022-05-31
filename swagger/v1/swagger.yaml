@@ -52,6 +52,21 @@ components:
             email:
               type: string
               format: email
+    user_reset_password:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            reset_password_token:
+              type: string
+              example: reset_password_token
+            password:
+              type: string
+              format: password
+            password_confirmation:
+              type: string
+              format: password
 paths:
   "/api/v1/users/password":
     post:
@@ -81,6 +96,47 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/user_email"
+    put:
+      summary: Sets new password
+      tags:
+      - Users
+      security:
+      - bearer: []
+      description: Updating the password using reset_password_token
+      parameters: []
+      responses:
+        '200':
+          description: Password updated
+          headers:
+            Authorization:
+              type: string
+              description: 'The JWT token for user with the following format: Bearer
+                {token}'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your password has been changed successfully. You are
+                      now signed in.
+        '422':
+          description: Invalid password or reset password token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                    - Password can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_reset_password"
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in

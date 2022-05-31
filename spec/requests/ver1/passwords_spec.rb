@@ -39,5 +39,62 @@ RSpec.describe 'v1/passwords', type: :request do
         end
       end
     end
+
+    put 'Sets new password' do
+      tags 'Users'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Updating the password using reset_password_token'
+      parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/user_reset_password' }
+
+      let(:user) do
+        user  = create(:user)
+        token = user.send_reset_password_instructions
+        {
+          user:
+                {
+                  reset_password_token:  token,
+                  password:,
+                  password_confirmation: password
+                }
+        }
+      end
+
+      response '200', 'Password updated' do
+        let(:Authorization) {} # rubocop:disable Lint/EmptyBlock
+        let(:password) { attributes_for(:user)[:password] }
+
+        header 'Authorization',
+               type:        :string,
+               description: 'The JWT token for user with the following format:'\
+                            ' Bearer {token}'
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('devise.passwords.updated')
+                 }
+               }
+
+        run_test!
+      end
+
+      response '422', 'Invalid password or reset password token' do
+        let(:Authorization) {} # rubocop:disable Lint/EmptyBlock
+        let(:password) { '' }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :array,
+                   example: ["Password can't be blank"]
+                 }
+               }
+
+        run_test!
+      end
+    end
   end
 end

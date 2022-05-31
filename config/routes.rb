@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         post 'users/sign_in', to: 'sessions#create'
         delete 'users/sign_out', to: 'sessions#destroy'
         post 'users/password', to: 'passwords#create'
+        put 'users/password', to: 'passwords#update'
       end
     end
   end
