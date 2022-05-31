@@ -10,5 +10,9 @@ FactoryBot.define do
     trait :admin do
       role { :admin }
     end
+
+    trait :approved do
+      approved_at { Time.zone.today }
+    end
   end
 end

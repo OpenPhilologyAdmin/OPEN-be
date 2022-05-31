@@ -31,8 +31,12 @@ RSpec.describe User, type: :model do
       expect(build(:user)).to be_valid
     end
 
-    it 'creates valid admin factory' do
+    it 'creates valid :admin factory' do
       expect(build(:user, :admin)).to be_valid
+    end
+
+    it 'creates valid :approved factory' do
+      expect(build(:user, :approved)).to be_valid
     end
   end
 end
