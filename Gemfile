@@ -33,6 +33,7 @@ group :development do
   gem 'brakeman'
   gem 'bundle-audit'
   gem 'lefthook'
+  gem 'letter_opener'
   gem 'listen'
   gem 'rubocop-rails'
   gem 'rubocop-rspec'

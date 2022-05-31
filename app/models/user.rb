@@ -17,4 +17,6 @@ class User < ApplicationRecord
   validates :role, :name, presence: true
   validates :password, format: { with: /\A(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}\z/ },
                        unless: -> { password.blank? }
+
+  scope :approved, -> { where.not(approved_at: nil) }
 end
