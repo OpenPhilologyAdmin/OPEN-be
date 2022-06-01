@@ -13,7 +13,7 @@ describe UserSerializer do
         email:            resource.email,
         name:             resource.name,
         role:             resource.role,
-        account_approved: resource.account_approved
+        account_approved: resource.account_approved?
       }.as_json
     end
 

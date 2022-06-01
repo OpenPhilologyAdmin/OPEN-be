@@ -44,16 +44,16 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#account_approved' do
+  describe '#account_approved?' do
     context 'when user not approved yet' do
       it 'is falsey' do
-        expect(build(:user, :not_approved).account_approved).to be_falsey
+        expect(build(:user, :not_approved)).not_to be_account_approved
       end
     end
 
     context 'when user is approved' do
       it 'is truthy' do
-        expect(build(:user, :approved).account_approved).to be_truthy
+        expect(build(:user, :approved)).to be_account_approved
       end
     end
   end
