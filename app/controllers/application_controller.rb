@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
-  Pundit::Authorization
+  include Pundit::Authorization
+  include Pagy::Backend
 end

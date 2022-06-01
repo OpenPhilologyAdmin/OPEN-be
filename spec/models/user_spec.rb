@@ -43,4 +43,32 @@ RSpec.describe User, type: :model do
       expect(build(:user, :not_approved)).to be_valid
     end
   end
+
+  describe '#account_approved?' do
+    context 'when user not approved yet' do
+      it 'is falsey' do
+        expect(build(:user, :not_approved)).not_to be_account_approved
+      end
+    end
+
+    context 'when user is approved' do
+      it 'is truthy' do
+        expect(build(:user, :approved)).to be_account_approved
+      end
+    end
+  end
+
+  describe '#approved_admin?' do
+    context 'when admin user not approved yet' do
+      it 'is falsey' do
+        expect(build(:user, :admin, :not_approved)).not_to be_approved_admin
+      end
+    end
+
+    context 'when admin user is approved' do
+      it 'is truthy' do
+        expect(build(:user, :admin, :approved)).to be_approved_admin
+      end
+    end
+  end
 end

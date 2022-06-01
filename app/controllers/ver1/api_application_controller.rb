@@ -12,9 +12,18 @@ module Ver1
       render(
         json:      {
           success: false,
-          message: 'Not authorized to perform this action.'
+          message: I18n.t('general.errors.forbidden_request')
         }, status: :forbidden
       )
+    end
+
+    def require_login
+      return if current_user
+
+      render json:   {
+        success: false,
+        message: I18n.t('general.errors.login_required')
+      }, status: :unauthorized
     end
   end
 end

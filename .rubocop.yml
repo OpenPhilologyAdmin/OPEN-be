@@ -32,6 +32,15 @@ Metrics/MethodLength:
 Rails:
   Enabled: true
 
+RSpec:
+  Language:
+    ExampleGroups:
+      Regular:
+        - response
+    Examples:
+      Regular:
+        - run_test!
+
 RSpec/AnyInstance:
   Enabled: false
 

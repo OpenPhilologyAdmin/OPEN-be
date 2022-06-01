@@ -15,3 +15,7 @@ en:
         new_user_name_label: 'Name:'
         new_user_email_label: 'Email:'
         link_description: 'Please click on the following link to manage new signups:'
+  general:
+    errors:
+      forbidden_request: Not authorized to perform this action.
+      login_required: Login required.
