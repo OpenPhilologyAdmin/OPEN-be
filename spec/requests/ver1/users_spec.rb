@@ -69,7 +69,7 @@ RSpec.describe 'v1/users', type: :request do
                properties: {
                  message: {
                    type:    :string,
-                   example: I18n.t('controllers.errors.login_required')
+                   example: I18n.t('general.errors.login_required')
                  }
                }
 
@@ -84,7 +84,7 @@ RSpec.describe 'v1/users', type: :request do
                properties: {
                  message: {
                    type:    :string,
-                   example: I18n.t('controllers.errors.forbidden_request')
+                   example: I18n.t('general.errors.forbidden_request')
                  }
                }
 

@@ -12,7 +12,7 @@ module Ver1
       render(
         json:      {
           success: false,
-          message: I18n.t('controllers.errors.forbidden_request')
+          message: I18n.t('general.errors.forbidden_request')
         }, status: :forbidden
       )
     end
@@ -22,7 +22,7 @@ module Ver1
 
       render json:   {
         success: false,
-        message: I18n.t('controllers.errors.login_required')
+        message: I18n.t('general.errors.login_required')
       }, status: :unauthorized
     end
   end
