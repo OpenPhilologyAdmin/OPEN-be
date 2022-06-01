@@ -19,4 +19,8 @@ class User < ApplicationRecord
                        unless: -> { password.blank? }
 
   scope :approved, -> { where.not(approved_at: nil) }
+
+  def account_approved
+    approved_at.present?
+  end
 end
