@@ -2,7 +2,11 @@
 
 class UserPolicy < ApplicationPolicy
   def index?
-    user.present? && user.approved_admin?
+    user&.approved_admin?
+  end
+
+  def approve?
+    user&.approved_admin? && !record.account_approved?
   end
 
   class Scope < Scope
