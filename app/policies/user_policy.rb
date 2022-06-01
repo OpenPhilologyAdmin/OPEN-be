@@ -2,6 +2,12 @@
 
 class UserPolicy < ApplicationPolicy
   def index?
-    user.present? && user.admin?
+    user.present? && user.approved_admin?
+  end
+
+  class Scope < Scope
+    def resolve
+      scope
+    end
   end
 end

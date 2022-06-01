@@ -23,4 +23,8 @@ class User < ApplicationRecord
   def account_approved
     approved_at.present?
   end
+
+  def approved_admin?
+    admin? && account_approved
+  end
 end
