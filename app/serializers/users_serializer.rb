@@ -9,9 +9,9 @@ class UsersSerializer
   def as_json
     {
       records:      serialized_records,
-      count:        @metadata[:count] || @records.size,
-      current_page: @metadata[:page],
-      pages:        @metadata[:pages]
+      count:        @metadata.fetch(:count, @records.size),
+      current_page: @metadata.fetch(:page, 1),
+      pages:        @metadata.fetch(:pages, 1)
     }
   end
 

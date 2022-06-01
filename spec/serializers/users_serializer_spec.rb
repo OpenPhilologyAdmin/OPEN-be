@@ -20,8 +20,8 @@ describe UsersSerializer do
         {
           records:      [UserSerializer.new(resource).as_json, UserSerializer.new(resource2).as_json],
           count:        2,
-          current_page: nil,
-          pages:        nil
+          current_page: 1,
+          pages:        1
         }
       end
 
