@@ -20,17 +20,13 @@ components:
           format: email
         name:
           type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
         role:
           type: string
           enum:
           - admin
           default: admin
+        account_confirmed:
+          type: boolean
     credentials:
       type: object
       properties:
@@ -186,6 +182,71 @@ paths:
       responses:
         '204':
           description: 'User has been signed out '
+  "/api/v1/users":
+    get:
+      summary: Retrieves paginated list of users
+      tags:
+      - Users
+      security:
+      - bearer: []
+      description: Allows retrieving all users list.
+      parameters:
+      - name: items
+        in: query
+        schema:
+          type: integer
+          required: false
+          example: Number of records per page
+      - name: page
+        in: query
+        schema:
+          type: integer
+          required: false
+          example: Page number
+      responses:
+        '200':
+          description: Users can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/user"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+                  current_page:
+                    type: integer
+                    description: Current page
+                    example: 1
+                  pages:
+                    type: integer
+                    description: Number of all pages
+                    example: 5
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login required.
+        '403':
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to perform this action.
 servers:
 - url: https://{defaultHost}
   variables:

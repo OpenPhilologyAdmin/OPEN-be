@@ -11,6 +11,8 @@ Rails.application.routes.draw do
         post 'users/password', to: 'passwords#create'
         put 'users/password', to: 'passwords#update'
       end
+
+      get 'users', to: 'users#index'
     end
   end
 
