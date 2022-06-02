@@ -31,8 +31,9 @@ class User < ApplicationRecord
   end
 
   def approve!
-    return if account_approved?
+    return false if account_approved?
 
     update(approved_at: Time.zone.now)
+    true
   end
 end
