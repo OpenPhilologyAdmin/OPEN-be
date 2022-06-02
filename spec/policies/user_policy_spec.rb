@@ -45,8 +45,8 @@ describe UserPolicy do
         end
 
         context 'when edited user has already been approved' do
-          it 'denies access' do
-            expect(user_policy).not_to permit(current_user, build(:user, :approved))
+          it 'grants access' do
+            expect(user_policy).to permit(current_user, build(:user, :approved))
           end
         end
       end

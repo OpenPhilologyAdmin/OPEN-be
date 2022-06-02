@@ -6,7 +6,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def approve?
-    user&.approved_admin? && !record.account_approved?
+    user&.approved_admin?
   end
 
   class Scope < Scope
