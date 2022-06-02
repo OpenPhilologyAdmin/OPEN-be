@@ -91,7 +91,7 @@ RSpec.describe User, type: :model do
       let(:user) { create(:user, approved_at: previous_approved_at) }
 
       it 'does not update approved_at value' do
-        expect(user.approved_at).to eq(previous_approved_at)
+        expect(user.approved_at).to be_within(1.second).of(previous_approved_at)
       end
     end
   end
