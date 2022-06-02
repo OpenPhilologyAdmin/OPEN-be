@@ -29,4 +29,10 @@ class User < ApplicationRecord
   def approved_admin?
     admin? && account_approved?
   end
+
+  def approve!
+    return if account_approved?
+
+    update(approved_at: Time.zone.now)
+  end
 end

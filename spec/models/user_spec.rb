@@ -71,4 +71,28 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe '#approve!' do
+    before do
+      user.approve!
+      user.reload
+    end
+
+    context 'when user not approved yet' do
+      let(:user) { create(:user, :not_approved) }
+
+      it 'sets approved_at value' do
+        expect(user).to be_account_approved
+      end
+    end
+
+    context 'when user has already been approved' do
+      let(:previous_approved_at) { 1.month.ago }
+      let(:user) { create(:user, approved_at: previous_approved_at) }
+
+      it 'does not update approved_at value' do
+        expect(user.approved_at).to be_within(1.second).of(previous_approved_at)
+      end
+    end
+  end
 end
