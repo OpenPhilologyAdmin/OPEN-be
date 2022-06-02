@@ -78,15 +78,15 @@ RSpec.describe User, type: :model do
       user.reload
     end
 
-    context 'when admin user not approved yet' do
+    context 'when user not approved yet' do
       let(:user) { create(:user, :not_approved) }
 
-      it 'is sets approved_at' do
+      it 'sets approved_at value' do
         expect(user).to be_account_approved
       end
     end
 
-    context 'when admin user has already been approved' do
+    context 'when user has already been approved' do
       let(:previous_approved_at) { 1.month.ago }
       let(:user) { create(:user, approved_at: previous_approved_at) }
 
