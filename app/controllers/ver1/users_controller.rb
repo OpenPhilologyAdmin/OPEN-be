@@ -15,5 +15,14 @@ module Ver1
         ).as_json
       )
     end
+
+    def approve
+      record = authorize(User.find(params[:id]))
+      record.approve!
+
+      render(
+        json: UserSerializer.new(record).as_json
+      )
+    end
   end
 end

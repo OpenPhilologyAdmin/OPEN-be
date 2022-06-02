@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 require 'swagger_helper'
 
 RSpec.describe 'v1/users', type: :request do
@@ -92,4 +93,63 @@ RSpec.describe 'v1/users', type: :request do
       end
     end
   end
+
+  path '/api/v1/users/{id}/approve' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:new_user) { create(:user, :not_approved) }
+    let(:id) { new_user.id }
+
+    patch('Approves the user') do
+      tags 'Users'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      parameter name: :id, in: :path, schema: {
+        type: :integer
+      }
+      description('Allows approving the new user account.')
+
+      response '200', 'New user can be approved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/user'
+
+        run_test!
+
+        it 'approves the new user' do
+          expect(new_user.reload).to be_account_approved
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.errors.login_required')
+                 }
+               }
+
+        run_test!
+      end
+
+      response '403', 'Not Authorized' do
+        let(:user) { create(:user, :admin, :not_approved) }
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.errors.forbidden_request')
+                 }
+               }
+
+        run_test!
+      end
+    end
+  end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers
