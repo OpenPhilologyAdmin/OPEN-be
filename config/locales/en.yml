@@ -15,6 +15,10 @@ en:
         new_user_name_label: 'Name:'
         new_user_email_label: 'Email:'
         link_description: 'Please click on the following link to manage new signups:'
+      account_approved:
+        subject: Your account has been approved
+        greeting: "Hello %{name},"
+        message: Your account has been approved. You can now sign in.
   general:
     errors:
       forbidden_request: Not authorized to perform this action.

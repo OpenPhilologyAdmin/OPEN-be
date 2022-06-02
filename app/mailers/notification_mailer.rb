@@ -7,4 +7,10 @@ class NotificationMailer < ApplicationMailer
 
     mail(to: @recipient.email, subject: I18n.t('mailers.notification_mailer.new_signup.subject'))
   end
+
+  def account_approved(recipient)
+    @recipient = recipient
+
+    mail(to: @recipient.email, subject: I18n.t('mailers.notification_mailer.account_approved.subject'))
+  end
 end
