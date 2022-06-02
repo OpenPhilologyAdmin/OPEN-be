@@ -76,21 +76,6 @@ RSpec.describe 'v1/users', type: :request do
 
         run_test!
       end
-
-      response '403', 'Not Authorized' do
-        let(:user) { create(:user, :admin, :not_approved) }
-        let(:Authorization) { authorization_header_for(user) }
-
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.forbidden_request')
-                 }
-               }
-
-        run_test!
-      end
     end
   end
 
@@ -98,6 +83,12 @@ RSpec.describe 'v1/users', type: :request do
     let(:user) { create(:user, :admin, :approved) }
     let(:new_user) { create(:user, :not_approved) }
     let(:id) { new_user.id }
+    let(:mailer_mock) { instance_double(ActionMailer::MessageDelivery) }
+
+    before do
+      allow(NotificationMailer).to receive(:account_approved).and_return(mailer_mock)
+      allow(mailer_mock).to receive(:deliver_later)
+    end
 
     patch('Approves the user') do
       tags 'Users'
@@ -119,6 +110,22 @@ RSpec.describe 'v1/users', type: :request do
         it 'approves the new user' do
           expect(new_user.reload).to be_account_approved
         end
+
+        context 'when the user has just been approved' do
+          it 'sends a notification to user' do
+            expect(NotificationMailer).to have_received(:account_approved)
+            expect(mailer_mock).to have_received(:deliver_later)
+          end
+        end
+
+        context 'when the user has already been approved' do
+          let(:new_user) { create(:user, :approved) }
+
+          it 'does not send a notification to user' do
+            expect(NotificationMailer).not_to have_received(:account_approved)
+            expect(mailer_mock).not_to have_received(:deliver_later)
+          end
+        end
       end
 
       response '401', 'Login required' do
@@ -129,21 +136,6 @@ RSpec.describe 'v1/users', type: :request do
                  message: {
                    type:    :string,
                    example: I18n.t('general.errors.login_required')
-                 }
-               }
-
-        run_test!
-      end
-
-      response '403', 'Not Authorized' do
-        let(:user) { create(:user, :admin, :not_approved) }
-        let(:Authorization) { authorization_header_for(user) }
-
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.forbidden_request')
                  }
                }
 

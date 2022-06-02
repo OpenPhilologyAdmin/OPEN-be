@@ -73,8 +73,10 @@ RSpec.describe User, type: :model do
   end
 
   describe '#approve!' do
+    let(:approval_result) { user.approve! }
+
     before do
-      user.approve!
+      approval_result
       user.reload
     end
 
@@ -84,6 +86,10 @@ RSpec.describe User, type: :model do
       it 'sets approved_at value' do
         expect(user).to be_account_approved
       end
+
+      it 'returns true' do
+        expect(approval_result).to be_truthy
+      end
     end
 
     context 'when user has already been approved' do
@@ -92,6 +98,10 @@ RSpec.describe User, type: :model do
 
       it 'does not update approved_at value' do
         expect(user.approved_at).to be_within(1.second).of(previous_approved_at)
+      end
+
+      it 'returns false' do
+        expect(approval_result).to be_falsey
       end
     end
   end

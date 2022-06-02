@@ -15,8 +15,7 @@ RSpec.describe 'v1/sessions', type: :request do
       end
       let(:expected_response) do
         {
-          message: I18n.t('devise.failure.invalid', authentication_keys: 'email'),
-          success: false
+          message: I18n.t('devise.failure.invalid', authentication_keys: 'email')
         }.stringify_keys
       end
 
@@ -40,7 +39,7 @@ RSpec.describe 'v1/sessions', type: :request do
         let(:Authorization) { nil }
         let(:password) { attributes_for(:user)[:password] }
         let(:user) do
-          user = create(:user, password:)
+          user = create(:user, :approved, password:)
           { user: { email: user.email, password: } }
         end
 
@@ -54,20 +53,41 @@ RSpec.describe 'v1/sessions', type: :request do
         run_test!
       end
 
-      response '401', 'Login credentials are incorrect' do
-        let!(:user) { create(:user) }
-
+      response '401', 'Login credentials are incorrect or user has not been approved yet' do
         schema type: :object, properties: {
-          success: { type: :boolean },
-          message: { type: :string }
+          message: {
+            type:     :string,
+            example:  I18n.t('devise.failure.invalid', authentication_keys: 'email'),
+            examples: [
+              I18n.t('devise.failure.invalid', authentication_keys: 'email'),
+              I18n.t('devise.failure.not_approved')
+            ]
+          }
         }
 
-        examples 'application/json' => {
-          success: false,
-          message: I18n.t('devise.failure.invalid', authentication_keys: 'email')
-        }
+        context 'when credentials are incorrect' do
+          let(:user) { create(:user) }
 
-        run_test!
+          run_test!
+        end
+
+        context 'when user has not been approved yet' do
+          let(:password) { attributes_for(:user)[:password] }
+          let(:user) do
+            user = create(:user, :not_approved, password:)
+            { user: { email: user.email, password: } }
+          end
+
+          run_test!
+        end
+
+        context 'when login credentials empty' do
+          let(:user) do
+            { user: { email: '', password: '' } }
+          end
+
+          run_test!
+        end
       end
     end
   end

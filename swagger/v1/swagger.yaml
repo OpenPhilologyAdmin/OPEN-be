@@ -117,6 +117,17 @@ paths:
                     type: string
                     example: Your password has been changed successfully. You are
                       now signed in.
+        '401':
+          description: Not approved yet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your account has not been approved by the administrator
+                      yet.
         '422':
           description: Invalid password or reset password token
           content:
@@ -153,19 +164,19 @@ paths:
               schema:
                 "$ref": "#/components/schemas/user"
         '401':
-          description: Login credentials are incorrect
+          description: Login credentials are incorrect or user has not been approved
+            yet
           content:
             application/json:
-              example:
-                success: false
-                message: Invalid email or password.
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
                   message:
                     type: string
+                    example: Invalid email or password.
+                    examples:
+                    - Invalid email or password.
+                    - Your account has not been approved by the administrator yet.
       requestBody:
         content:
           application/json:
@@ -237,16 +248,6 @@ paths:
                   message:
                     type: string
                     example: Login required.
-        '403':
-          description: Not Authorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Not authorized to perform this action.
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user
@@ -278,16 +279,6 @@ paths:
                   message:
                     type: string
                     example: Login required.
-        '403':
-          description: Not Authorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Not authorized to perform this action.
 servers:
 - url: https://{defaultHost}
   variables:

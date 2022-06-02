@@ -13,7 +13,7 @@ RSpec.describe 'v1/passwords', type: :request do
       parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/user_email' }
 
       response '200', 'Reset password sent' do
-        let(:Authorization) {} # rubocop:disable Lint/EmptyBlock
+        let(:Authorization) { nil }
         let(:user) do
           {
             user: { email: 'email@example.com' }
@@ -49,7 +49,7 @@ RSpec.describe 'v1/passwords', type: :request do
       parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/user_reset_password' }
 
       let(:user) do
-        user  = create(:user)
+        user  = create(:user, :approved)
         token = user.send_reset_password_instructions
         {
           user:
@@ -77,6 +77,32 @@ RSpec.describe 'v1/passwords', type: :request do
                    example: I18n.t('devise.passwords.updated')
                  }
                }
+
+        run_test!
+      end
+
+      response '401', 'Not approved yet' do
+        let(:Authorization) { nil }
+        let(:password) { attributes_for(:user)[:password] }
+        let(:user) do
+          user  = create(:user, :not_approved)
+          token = user.send_reset_password_instructions
+          {
+            user:
+                  {
+                    reset_password_token:  token,
+                    password:,
+                    password_confirmation: password
+                  }
+          }
+        end
+
+        schema type: :object, properties: {
+          message: {
+            type:    :string,
+            example: I18n.t('devise.failure.not_approved')
+          }
+        }
 
         run_test!
       end
