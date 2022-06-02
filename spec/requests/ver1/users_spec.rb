@@ -76,21 +76,6 @@ RSpec.describe 'v1/users', type: :request do
 
         run_test!
       end
-
-      response '403', 'Not Authorized' do
-        let(:user) { create(:user, :admin, :not_approved) }
-        let(:Authorization) { authorization_header_for(user) }
-
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.forbidden_request')
-                 }
-               }
-
-        run_test!
-      end
     end
   end
 
@@ -151,21 +136,6 @@ RSpec.describe 'v1/users', type: :request do
                  message: {
                    type:    :string,
                    example: I18n.t('general.errors.login_required')
-                 }
-               }
-
-        run_test!
-      end
-
-      response '403', 'Not Authorized' do
-        let(:user) { create(:user, :admin, :not_approved) }
-        let(:Authorization) { authorization_header_for(user) }
-
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.forbidden_request')
                  }
                }
 

@@ -36,4 +36,12 @@ class User < ApplicationRecord
     update(approved_at: Time.zone.now)
     true
   end
+
+  def active_for_authentication?
+    super && account_approved?
+  end
+
+  def inactive_message
+    account_approved? ? super : :not_approved
+  end
 end

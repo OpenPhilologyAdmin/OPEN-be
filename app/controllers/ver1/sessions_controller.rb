@@ -21,8 +21,7 @@ module Ver1
     def handle_empty_login_params
       render(
         json:   {
-          message: I18n.t('devise.failure.invalid', authentication_keys: 'email'),
-          success: false
+          message: I18n.t('devise.failure.invalid', authentication_keys: 'email')
         },
         status: :unauthorized
       )
