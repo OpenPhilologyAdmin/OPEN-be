@@ -4,7 +4,7 @@ class ApplicationPolicy
   attr_reader :user, :record
 
   def initialize(user, record)
-    @user = user
+    @user   = user
     @record = record
   end
 
@@ -38,7 +38,7 @@ class ApplicationPolicy
 
   class Scope
     def initialize(user, scope)
-      @user = user
+      @user  = user
       @scope = scope
     end
 
@@ -49,5 +49,11 @@ class ApplicationPolicy
     private
 
     attr_reader :user, :scope
+  end
+
+  private
+
+  def approved_admin?
+    user.present? && user.approved_admin?
   end
 end
