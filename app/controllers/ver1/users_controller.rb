@@ -18,7 +18,8 @@ module Ver1
 
     def approve
       record = authorize(User.find(params[:id]))
-      record.approve!
+      record_approved = record.approve!
+      NotificationMailer.account_approved(record).deliver_later if record_approved
 
       render(
         json: UserSerializer.new(record).as_json
