@@ -25,7 +25,7 @@ components:
           enum:
           - admin
           default: admin
-        account_confirmed:
+        account_approved:
           type: boolean
     credentials:
       type: object
@@ -227,6 +227,47 @@ paths:
                     type: integer
                     description: Number of all pages
                     example: 5
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login required.
+        '403':
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to perform this action.
+  "/api/v1/users/{id}/approve":
+    patch:
+      summary: Approves the user
+      tags:
+      - Users
+      security:
+      - bearer: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+      description: Allows approving the new user account.
+      responses:
+        '200':
+          description: New user can be approved
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user"
         '401':
           description: Login required
           content:

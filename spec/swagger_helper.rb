@@ -23,11 +23,11 @@ RSpec.configure do |config|
           user:                {
             type:       :object,
             properties: {
-              id:                { type: :integer },
-              email:             { type: :string, format: :email },
-              name:              { type: :string },
-              role:              { type: :string, enum: %i[admin], default: :admin },
-              account_confirmed: { type: :boolean }
+              id:               { type: :integer },
+              email:            { type: :string, format: :email },
+              name:             { type: :string },
+              role:             { type: :string, enum: %i[admin], default: :admin },
+              account_approved: { type: :boolean }
             }
           },
           credentials:         {
