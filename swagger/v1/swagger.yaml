@@ -248,6 +248,61 @@ paths:
                   message:
                     type: string
                     example: Login required.
+    post:
+      summary: Creates new user account
+      tags:
+      - Users
+      security:
+      - bearer: []
+      description: Creates new account.
+      parameters: []
+      responses:
+        '200':
+          description: User can be created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user"
+        '422':
+          description: User data invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                    - Password can't be blank
+                    - Email is invalid
+        '403':
+          description: Not Authorized if logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to perform this action.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: email@example.com
+                password:
+                  type: string
+                  example: password
+                password_confirmation:
+                  type: string
+                  example: password
+                name:
+                  type: string
+                  example: name
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user

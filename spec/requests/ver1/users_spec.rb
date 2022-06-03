@@ -77,6 +77,92 @@ RSpec.describe 'v1/users', type: :request do
         run_test!
       end
     end
+
+    post('Creates new user account') do
+      tags 'Users'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description('Creates new account.')
+
+      parameter name: :user, in: :body, schema: {
+        type:       :object,
+        properties: {
+          email:                 {
+            type:    :string,
+            example: 'email@example.com'
+          },
+          password:              {
+            type:    :string,
+            example: 'password'
+          },
+          password_confirmation: {
+            type:    :string,
+            example: 'password'
+          },
+          name:                  {
+            type:    :string,
+            example: 'name'
+          }
+        }
+      }
+
+      response '200', 'User can be created' do
+        let(:Authorization) { nil }
+        let(:password) { attributes_for(:user)[:password] }
+        let(:user) do
+          { user:
+                  {
+                    email:                 Faker::Internet.email,
+                    password:,
+                    password_confirmation: password,
+                    name:                  Faker::Name.name
+                  } }
+        end
+
+        schema '$ref' => '#/components/schemas/user'
+
+        run_test!
+      end
+
+      response '422', 'User data invalid' do
+        let(:Authorization) { nil }
+        let(:user) do
+          { user:
+                  {
+                    email:                 Faker::Internet.email,
+                    password:              '',
+                    password_confirmation: '',
+                    name:                  Faker::Name.name
+                  } }
+        end
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :array,
+                   example: ['Password can\'t be blank', 'Email is invalid']
+                 }
+               }
+
+        run_test!
+      end
+
+      response '403', 'Not Authorized if logged in' do
+        let(:user) { create(:user, :approved) }
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: 'Not authorized to perform this action.'
+                 }
+               }
+
+        run_test!
+      end
+    end
   end
 
   path '/api/v1/users/{id}/approve' do

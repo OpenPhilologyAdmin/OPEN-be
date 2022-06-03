@@ -2,7 +2,7 @@
 
 module Ver1
   class UsersController < ApiApplicationController
-    before_action :require_login
+    before_action :require_login, except: [:create]
 
     def index
       authorize User, :index?
@@ -14,6 +14,23 @@ module Ver1
           metadata: pagy_metadata(pagy)
         ).as_json
       )
+    end
+
+    def create
+      record = User.new(permitted_attributes(User))
+      authorize record, :create?
+      if record.save
+        render(
+          json: UserSerializer.new(record).as_json
+        )
+      else
+        render(
+          json:   {
+            message: record.errors.full_messages
+          },
+          status: :unprocessable_entity
+        )
+      end
     end
 
     def approve

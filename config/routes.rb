@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       end
 
       get 'users', to: 'users#index'
+      post 'users', to: 'users#create'
       patch 'users/:id/approve', to: 'users#approve'
     end
   end
