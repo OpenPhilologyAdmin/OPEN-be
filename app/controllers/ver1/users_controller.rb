@@ -20,6 +20,7 @@ module Ver1
       record = User.new(permitted_attributes(User))
       authorize record, :create?
       if record.save
+        notify_admins(record)
         render(
           json: UserSerializer.new(record).as_json
         )
@@ -34,13 +35,19 @@ module Ver1
     end
 
     def approve
-      record = authorize(User.find(params[:id]))
+      record          = authorize(User.find(params[:id]))
       record_approved = record.approve!
       NotificationMailer.account_approved(record).deliver_later if record_approved
 
       render(
         json: UserSerializer.new(record).as_json
       )
+    end
+
+    private
+
+    def notify_admins(record)
+      SignupNotifier.new(record).perform!
     end
   end
 end
