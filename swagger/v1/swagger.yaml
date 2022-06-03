@@ -64,6 +64,68 @@ components:
               type: string
               format: password
 paths:
+  "/api/v1/users/confirmation":
+    post:
+      summary: Re-sends the confirmation email
+      tags:
+      - Users
+      description: The confirmation email will be sent to user if email exists in
+        the database.
+      parameters: []
+      responses:
+        '200':
+          description: Email confirmation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: If your email address exists in our database, you will
+                      receive an email with instructions for how to confirm your email
+                      address in a few minutes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@example.com
+    get:
+      summary: Confirms user's email
+      tags:
+      - Users
+      parameters:
+      - name: confirmation_token
+        in: query
+        schema:
+          type: string
+          example: confirmation_token
+      responses:
+        '200':
+          description: Email confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your email address has been successfully confirmed.
+        '422':
+          description: Invalid confirmation_token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                    - Confirmation token can't be blank
   "/api/v1/users/password":
     post:
       summary: Sends the reset password email
