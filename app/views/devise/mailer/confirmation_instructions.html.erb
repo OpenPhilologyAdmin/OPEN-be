@@ -1,0 +1,5 @@
+<p><%= I18n.t('mailers.registrations.email_confirmation.greeting', email: @email) %></p>
+
+<p><%= I18n.t('mailers.registrations.email_confirmation.message') %><p>
+
+<p><%= link_to I18n.t('mailers.registrations.email_confirmation.link_description'), "#{ENV['FRONTEND_APP_CONFIRM_ACCOUNT_URL']}?confirmation_token=#{@token}" %></p>
