@@ -19,6 +19,15 @@ RSpec.describe User, type: :model do
         end
       end
 
+      context 'when password contains letters, numbers, and special chars' do
+        it 'is valid' do
+          passwords = ['fp3ef.YnK2rQ*-_L!', 'XnX2Do!erTr@N3n2', 'Dh4cm8FsN_YFD*of_']
+          passwords.each do |password|
+            expect(user).to allow_value(password).for(:password)
+          end
+        end
+      end
+
       context 'when password contains only letters or only numbers' do
         it { is_expected.not_to allow_value(Faker::Alphanumeric.alpha(number: 8)).for(:password) }
         it { is_expected.not_to allow_value(Faker::Number.number(digits: 8)).for(:password) }
