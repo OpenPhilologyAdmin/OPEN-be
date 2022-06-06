@@ -14,4 +14,28 @@ RSpec.describe Importer::Base, type: :service do
       expect(service.instance_variable_get('@errors')).to eq({})
     end
   end
+
+  describe '#validate_file_format' do
+    before do
+      service.send(:validate_file_format)
+    end
+
+    context 'when file format is allowed' do
+      it 'the service is valid' do
+        expect(service).to be_valid
+      end
+    end
+
+    context 'when file format is not allowed' do
+      let(:data_path) { 'spec/fixtures/sample_project.csv' }
+
+      it 'the service is no longer valid' do
+        expect(service).not_to be_valid
+      end
+
+      it 'assigns errors to service' do
+        expect(service.errors[:file]).to eq(I18n.t('importer.errors.invalid_file_format'))
+      end
+    end
+  end
 end
