@@ -79,8 +79,11 @@ RSpec.describe 'confirmation', type: :request do
         schema type:       :object,
                properties: {
                  message: {
-                   type:    :array,
-                   example: ["Confirmation token can't be blank"]
+                   type:  :array,
+                   items: {
+                     type:    :string,
+                     example: "Confirmation token can't be blank"
+                   }
                  }
                }
 

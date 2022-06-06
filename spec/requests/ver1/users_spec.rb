@@ -151,8 +151,11 @@ RSpec.describe 'v1/users', type: :request do
         schema type:       :object,
                properties: {
                  message: {
-                   type:    :array,
-                   example: ['Password can\'t be blank', 'Email is invalid']
+                   type:  :array,
+                   items: {
+                     type:    :string,
+                     example: 'Password can\'t be blank'
+                   }
                  }
                }
 

@@ -124,8 +124,9 @@ paths:
                 properties:
                   message:
                     type: array
-                    example:
-                    - Confirmation token can't be blank
+                    items:
+                      type: string
+                      example: Confirmation token can't be blank
   "/api/v1/users/password":
     post:
       summary: Sends the reset password email
@@ -334,9 +335,9 @@ paths:
                 properties:
                   message:
                     type: array
-                    example:
-                    - Password can't be blank
-                    - Email is invalid
+                    items:
+                      type: string
+                      example: Password can't be blank
         '403':
           description: Not Authorized if logged in
           content:
