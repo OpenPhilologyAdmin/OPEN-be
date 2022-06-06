@@ -64,6 +64,69 @@ components:
               type: string
               format: password
 paths:
+  "/api/v1/users/confirmation":
+    post:
+      summary: Re-sends the confirmation email
+      tags:
+      - Users
+      description: The confirmation email will be sent to user if email exists in
+        the database.
+      parameters: []
+      responses:
+        '200':
+          description: Email confirmation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: If your email address exists in our database, you will
+                      receive an email with instructions for how to confirm your email
+                      address in a few minutes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@example.com
+    get:
+      summary: Confirms user's email
+      tags:
+      - Users
+      parameters:
+      - name: confirmation_token
+        in: query
+        schema:
+          type: string
+          example: confirmation_token
+      responses:
+        '200':
+          description: Email confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your email address has been successfully confirmed.
+        '422':
+          description: Invalid confirmation_token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: Confirmation token can't be blank
   "/api/v1/users/password":
     post:
       summary: Sends the reset password email
@@ -248,6 +311,61 @@ paths:
                   message:
                     type: string
                     example: Login required.
+    post:
+      summary: Creates new user account
+      tags:
+      - Users
+      security:
+      - bearer: []
+      description: Creates new account.
+      parameters: []
+      responses:
+        '200':
+          description: User can be created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user"
+        '422':
+          description: User data invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: Password can't be blank
+        '403':
+          description: Not Authorized if logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to perform this action.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: email@example.com
+                password:
+                  type: string
+                  example: password
+                password_confirmation:
+                  type: string
+                  example: password
+                name:
+                  type: string
+                  example: name
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user

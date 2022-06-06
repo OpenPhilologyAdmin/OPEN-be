@@ -10,9 +10,12 @@ Rails.application.routes.draw do
         delete 'users/sign_out', to: 'sessions#destroy'
         post 'users/password', to: 'passwords#create'
         put 'users/password', to: 'passwords#update'
+        post 'users/confirmation', to: 'confirmations#create'
+        get 'users/confirmation', to: 'confirmations#show'
       end
 
       get 'users', to: 'users#index'
+      post 'users', to: 'users#create'
       patch 'users/:id/approve', to: 'users#approve'
     end
   end

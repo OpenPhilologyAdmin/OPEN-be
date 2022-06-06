@@ -18,5 +18,9 @@ FactoryBot.define do
     trait :not_approved do
       approved_at { nil }
     end
+
+    trait :not_confirmed do
+      confirmed_at { nil }
+    end
   end
 end

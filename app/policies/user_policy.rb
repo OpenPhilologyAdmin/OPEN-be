@@ -9,6 +9,23 @@ class UserPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def new?
+    false
+  end
+
+  def create?
+    user.blank?
+  end
+
+  def permitted_attributes_for_create
+    %i[
+      name
+      email
+      password
+      password_confirmation
+    ]
+  end
+
   class Scope < Scope
     def resolve
       scope

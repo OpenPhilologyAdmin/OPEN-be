@@ -19,6 +19,11 @@ en:
         subject: Your account has been approved
         greeting: "Hello %{name},"
         message: Your account has been approved. You can now sign in.
+    registrations:
+      email_confirmation:
+        greeting: "Hello %{email},"
+        message: "You can confirm your account email through the link below:"
+        link_description: Confirm my account
   general:
     errors:
       forbidden_request: Not authorized to perform this action.
