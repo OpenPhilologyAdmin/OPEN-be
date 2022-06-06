@@ -21,8 +21,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_093054) do
   end
 
   create_table "project_roles", force: :cascade do |t|
-    t.integer "project_id"
-    t.integer "user_id"
+    t.bigint "project_id"
+    t.bigint "user_id"
     t.string "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -39,12 +39,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_093054) do
   end
 
   create_table "tokens", force: :cascade do |t|
-    t.integer "project_id"
+    t.bigint "project_id"
     t.integer "index"
     t.jsonb "variants"
     t.jsonb "grouped_variants"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_tokens_on_project_id"
   end
 
   create_table "users", force: :cascade do |t|
