@@ -20,6 +20,8 @@ class User < ApplicationRecord
 
   scope :approved, -> { where.not(approved_at: nil) }
 
+  has_many :project_roles, dependent: :destroy
+
   def account_approved?
     approved_at.present?
   end
