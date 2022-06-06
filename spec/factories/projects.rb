@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :project do
     name { Faker::Lorem.word }
-    user { create(:user, :approved) }
     default_witness { 'D' }
     witnesses do
       [
