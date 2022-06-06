@@ -23,3 +23,6 @@ en:
     errors:
       forbidden_request: Not authorized to perform this action.
       login_required: Login required.
+  importer:
+    errors:
+      invalid_file_format: 'File format is not supported'
