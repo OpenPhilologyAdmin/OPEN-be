@@ -36,7 +36,7 @@ module Importer
     def extract_data
       extractor.process
     rescue SyntaxError, NameError
-      add_error(:file, I18n.t('importer.errors.invalid_file_format'))
+      add_error(:file, I18n.t('importer.errors.unsupported_file_format'))
     end
   end
 end

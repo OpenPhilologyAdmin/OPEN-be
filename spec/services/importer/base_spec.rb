@@ -140,7 +140,7 @@ RSpec.describe Importer::Base, type: :service do
       end
 
       it 'assigns errors to service' do
-        expect(service.errors[:file]).to eq(I18n.t('importer.errors.invalid_file_format'))
+        expect(service.errors[:file]).to eq(I18n.t('importer.errors.unsupported_file_format'))
       end
     end
   end
