@@ -47,6 +47,10 @@ RSpec/AnyInstance:
 RSpec/MultipleExpectations:
   Enabled: false
 
+RSpec/MultipleMemoizedHelpers:
+  Enabled: true
+  Max: 10
+
 RSpec/NestedGroups:
   Enabled: false
 

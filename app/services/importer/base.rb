@@ -2,25 +2,35 @@
 
 module Importer
   class Base
-    ALLOWED_MIME_TYPES = ['text/plain'].freeze
-
+    include Importer::Concerns::Validators
     attr_reader :errors
 
-    def initialize(data_path: nil)
-      @data_path = Rails.root.join(data_path)
-      @errors    = {}
+    def initialize(data_path:, name:, default_witness:)
+      @data_path       = Rails.root.join(data_path)
+      @errors          = {}
+      @name            = name
+      @default_witness = default_witness
     end
 
-    def valid?
-      @errors.empty?
+    def process
+      perform_validations
+      return unless valid?
+
+      extractor.process
     end
 
     private
 
-    def validate_file_format
-      return if ALLOWED_MIME_TYPES.include?(Marcel::MimeType.for(@data_path, name: @data_path.basename))
+    def mime_type
+      @mime_type ||= Marcel::MimeType.for(@data_path, name: @data_path.basename)
+    end
 
-      @errors[:file] = I18n.t('importer.errors.invalid_file_format')
+    def extractor_klass
+      "Importer::Extractors::#{mime_type.titleize.gsub(%r{/}, '')}".constantize
+    end
+
+    def extractor
+      @extractor ||= extractor_klass.new(data_path: @data_path, default_witness: @default_witness)
     end
   end
 end

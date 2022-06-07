@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
-#
 require 'rails_helper'
 
 RSpec.describe Importer::Extractors::TextPlain, type: :service do
@@ -62,4 +60,3 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     end
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers
