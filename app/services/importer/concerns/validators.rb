@@ -4,14 +4,13 @@ module Importer
   module Concerns
     module Validators
       extend ActiveSupport::Concern
-      ALLOWED_MIME_TYPES = ['text/plain'].freeze
 
       def valid?
         @errors.empty?
       end
 
       def perform_validations
-        validate_mime_type
+        validate_file_presence
       end
 
       def add_error(key, message)
@@ -20,10 +19,10 @@ module Importer
 
       private
 
-      def validate_mime_type
-        return if ALLOWED_MIME_TYPES.include?(mime_type)
+      def validate_file_presence
+        return if File.exist?(@data_path)
 
-        add_error(:file, I18n.t('importer.errors.invalid_file_format'))
+        add_error(:file, I18n.t('importer.errors.missing_file'))
       end
     end
   end

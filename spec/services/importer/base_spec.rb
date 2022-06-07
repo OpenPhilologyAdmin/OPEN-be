@@ -31,21 +31,21 @@ RSpec.describe Importer::Base, type: :service do
       service.perform_validations
     end
 
-    context 'when file format is allowed' do
+    context 'when file is valid' do
       it 'the service is valid' do
         expect(service).to be_valid
       end
     end
 
-    context 'when file format is not allowed' do
-      let(:data_path) { 'spec/fixtures/sample_project.csv' }
+    context 'when file is missing' do
+      let(:data_path) { 'spec/fixtures/non_existent.txt' }
 
       it 'the service is not valid' do
         expect(service).not_to be_valid
       end
 
       it 'assigns errors to service' do
-        expect(service.errors[:file]).to eq(I18n.t('importer.errors.invalid_file_format'))
+        expect(service.errors[:file]).to eq(I18n.t('importer.errors.missing_file'))
       end
     end
   end
@@ -102,24 +102,45 @@ RSpec.describe Importer::Base, type: :service do
 
     before do
       allow(service).to receive(:perform_validations)
-      allow(service).to receive(:valid?).and_return(validation_result)
-      allow(extractor).to receive(:process)
-      service.process
     end
 
-    context 'when validation returned some errors' do
-      let(:validation_result) { false }
+    context 'when file format is supported' do
+      before do
+        allow(service).to receive(:valid?).and_return(validation_result)
+        allow(extractor).to receive(:process)
+        service.process
+      end
 
-      it 'does not run the extractor' do
-        expect(extractor).not_to have_received(:process)
+      context 'when validation returned some errors' do
+        let(:validation_result) { false }
+
+        it 'does not run the extractor' do
+          expect(extractor).not_to have_received(:process)
+        end
+      end
+
+      context 'when validation did not return any errors' do
+        let(:validation_result) { true }
+
+        it 'runs the extractor' do
+          expect(extractor).to have_received(:process)
+        end
       end
     end
 
-    context 'when validation did not return any errors' do
-      let(:validation_result) { true }
+    context 'when file format is not supported' do
+      let(:data_path) { 'spec/fixtures/sample_project.csv' }
 
-      it 'runs the extractor' do
-        expect(extractor).to have_received(:process)
+      before do
+        service.process
+      end
+
+      it 'the service is not valid' do
+        expect(service).not_to be_valid
+      end
+
+      it 'assigns errors to service' do
+        expect(service.errors[:file]).to eq(I18n.t('importer.errors.invalid_file_format'))
       end
     end
   end

@@ -16,7 +16,7 @@ module Importer
       perform_validations
       return unless valid?
 
-      extractor.process
+      extract_data
     end
 
     private
@@ -31,6 +31,12 @@ module Importer
 
     def extractor
       @extractor ||= extractor_klass.new(data_path: @data_path, default_witness: @default_witness)
+    end
+
+    def extract_data
+      extractor.process
+    rescue SyntaxError, NameError
+      add_error(:file, I18n.t('importer.errors.invalid_file_format'))
     end
   end
 end
