@@ -57,16 +57,25 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     end
 
     let(:expected_result) do
-      {
-        tokens:    [
-          [expected_index, expected_variants, expected_grouped_variants]
-        ],
-        witnesses: [expected_witness]
-      }
+      build(:extracted_data,
+            tokens:    [
+              [expected_index, expected_variants, expected_grouped_variants]
+            ],
+            witnesses: [expected_witness])
     end
 
-    it 'returns the whole file content as an only token' do
-      expect(service.process).to eq(expected_result)
+    let(:result) { service.process }
+
+    it 'returns Importer::Extractors::Models::ExtractedData model' do
+      expect(result).to be_a(Importer::Extractors::Models::ExtractedData)
+    end
+
+    it 'returns correct tokens - one token with the whole file content' do
+      expect(result.tokens).to eq(expected_result.tokens)
+    end
+
+    it 'returns correct witnesses - just one default witness' do
+      expect(result.witnesses).to eq(expected_result.witnesses)
     end
   end
 end

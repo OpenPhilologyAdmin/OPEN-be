@@ -8,10 +8,7 @@ module Importer
       def process
         prepare_tokens
 
-        {
-          tokens:    @tokens,
-          witnesses: [prepare_witness]
-        }
+        Models::ExtractedData.new(tokens: @tokens, witnesses: [prepare_witness])
       end
 
       private
