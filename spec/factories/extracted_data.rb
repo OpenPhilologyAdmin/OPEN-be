@@ -15,7 +15,7 @@ FactoryBot.define do
             t:        Faker::Lorem.sentence,
             selected: false,
             deleted:  false
-          }
+          }.stringify_keys
         ]
       ]
     end
@@ -24,7 +24,7 @@ FactoryBot.define do
         {
           siglum: 'A',
           name:   'A document'
-        }
+        }.stringify_keys
       ]
     end
   end
