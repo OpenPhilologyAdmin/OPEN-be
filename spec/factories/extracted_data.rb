@@ -9,14 +9,22 @@ FactoryBot.define do
 
     tokens do
       [
-        [
-          {
-            witness:  'A',
-            t:        Faker::Lorem.sentence,
-            selected: false,
-            deleted:  false
-          }.stringify_keys
-        ]
+        [0,
+         [[{ witness:  'A',
+             t:        'Lorem ipsum dolor sit amet',
+             selected: false,
+             deleted:  false }]],
+         [{ t:         'Lorem ipsum dolor sit amet',
+            witnesses: ['A'],
+            selected:  false }]],
+        [1,
+         [[{ witness:  'A',
+             t:        'Consectetur adipiscing elit',
+             selected: false,
+             deleted:  false }]],
+         [{ t:         'Consectetur adipiscing elit',
+            witnesses: ['A'],
+            selected:  false }]]
       ]
     end
     witnesses do
