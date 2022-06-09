@@ -6,13 +6,21 @@ module Importer
       STARTING_INDEX = 0
 
       def process
-        token_content = @file.read
-        @tokens << prepare_token(token_content, STARTING_INDEX)
-        @file.close
-        @tokens
+        prepare_tokens
+
+        {
+          tokens:    @tokens,
+          witnesses: [prepare_witness]
+        }
       end
 
       private
+
+      def prepare_tokens
+        token_content = @file.read
+        @tokens << prepare_token(token_content, STARTING_INDEX)
+        @file.close
+      end
 
       def prepare_token(content, index)
         [index, variants_for(content), grouped_variants_for(content)]
@@ -39,6 +47,13 @@ module Importer
             selected:  false
           }
         ]
+      end
+
+      def prepare_witness
+        {
+          siglum: @default_witness,
+          name:   nil
+        }
       end
     end
   end

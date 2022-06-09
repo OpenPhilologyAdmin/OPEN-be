@@ -49,10 +49,20 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
         }
       ]
     end
+    let(:expected_witness) do
+      {
+        siglum: default_witness,
+        name:   nil
+      }
+    end
+
     let(:expected_result) do
-      [
-        [expected_index, expected_variants, expected_grouped_variants]
-      ]
+      {
+        tokens:    [
+          [expected_index, expected_variants, expected_grouped_variants]
+        ],
+        witnesses: [expected_witness]
+      }
     end
 
     it 'returns the whole file content as an only token' do
