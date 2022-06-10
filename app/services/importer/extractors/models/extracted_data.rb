@@ -10,6 +10,10 @@ module Importer
           @tokens    = data[:tokens]
           @witnesses = data[:witnesses]
         end
+
+        def assign_project_id_to_tokens(project_id)
+          @tokens.each { |token| token << project_id }
+        end
       end
     end
   end
