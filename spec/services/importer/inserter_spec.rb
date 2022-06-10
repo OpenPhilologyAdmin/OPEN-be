@@ -14,6 +14,8 @@ RSpec.describe Importer::Inserter, type: :service do
     end
 
     context 'when project created' do
+      let(:project) { service.project }
+
       before { service.process }
 
       it 'passes correct name to project' do
@@ -26,6 +28,19 @@ RSpec.describe Importer::Inserter, type: :service do
 
       it 'passes correct witnesses to project' do
         expect(service.project.witnesses).to eq(extracted_data.witnesses)
+      end
+
+      it 'creates correct number of tokens' do
+        expect(service.project.tokens.size).to eq(extracted_data.tokens.size)
+      end
+
+      it 'creates correct tokens' do
+        extracted_data.tokens.each do |raw_token|
+          matching_saved_token = project.tokens.find_by(index: raw_token[0])
+
+          expect(matching_saved_token.variants).to eq(raw_token[1].as_json)
+          expect(matching_saved_token.grouped_variants).to eq(raw_token[2].as_json)
+        end
       end
     end
   end
