@@ -27,7 +27,7 @@ RSpec.describe Importer::Inserter, type: :service do
       end
 
       it 'passes correct witnesses to project' do
-        expect(service.project.witnesses).to eq(extracted_data.witnesses)
+        expect(service.project.witnesses).to eq(extracted_data.witnesses.as_json)
       end
 
       it 'creates correct number of tokens' do
