@@ -51,10 +51,9 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
       ]
     end
     let(:expected_witness) do
-      {
-        siglum: default_witness,
-        name:   nil
-      }
+      build(:witness,
+            siglum: default_witness,
+            name:   nil)
     end
     let(:expected_token) do
       build(:token,
@@ -80,7 +79,7 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     end
 
     it 'returns correct witnesses - just one default witness' do
-      expect(result.witnesses).to eq(expected_result.witnesses)
+      expect(result.witnesses.as_json).to eq(expected_result.witnesses.as_json)
     end
   end
   # rubocop:enable RSpec/MultipleMemoizedHelpers

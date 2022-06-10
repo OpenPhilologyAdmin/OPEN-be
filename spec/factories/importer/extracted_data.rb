@@ -11,12 +11,7 @@ FactoryBot.define do
       build_list(:token, 3, :without_project)
     end
     witnesses do
-      [
-        {
-          siglum: 'A',
-          name:   'A document'
-        }
-      ]
+      build_list(:witness, 3)
     end
   end
 end

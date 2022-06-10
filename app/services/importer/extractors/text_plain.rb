@@ -8,7 +8,7 @@ module Importer
       def process
         prepare_tokens
 
-        ::Importer::ExtractedData.new(tokens: @tokens, witnesses: [prepare_witness])
+        ::Importer::ExtractedData.new(tokens: @tokens, witnesses: [default_witness])
       end
 
       private
@@ -50,11 +50,11 @@ module Importer
         ]
       end
 
-      def prepare_witness
-        {
+      def default_witness
+        Witness.new(
           siglum: @default_witness,
           name:   nil
-        }
+        )
       end
     end
   end
