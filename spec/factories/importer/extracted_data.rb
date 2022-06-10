@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :extracted_data, class: 'Importer::Extractors::Models::ExtractedData' do
+  factory :extracted_data, class: 'Importer::ExtractedData' do
     skip_create
     initialize_with do
       new(attributes)

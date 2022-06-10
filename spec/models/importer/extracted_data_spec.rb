@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Importer::Extractors::Models::ExtractedData, type: :model do
+RSpec.describe Importer::ExtractedData, type: :model do
   describe '#assign_project_id_to_tokens' do
     let(:record) { build(:extracted_data) }
     let(:project) { create(:project) }

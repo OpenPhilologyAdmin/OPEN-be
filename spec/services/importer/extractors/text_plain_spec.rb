@@ -66,8 +66,8 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
 
     let(:result) { service.process }
 
-    it 'returns Importer::Extractors::Models::ExtractedData model' do
-      expect(result).to be_a(Importer::Extractors::Models::ExtractedData)
+    it 'returns Importer::ExtractedData model' do
+      expect(result).to be_a(Importer::ExtractedData)
     end
 
     it 'returns correct tokens - one token with the whole file content' do
