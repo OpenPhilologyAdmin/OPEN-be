@@ -15,12 +15,16 @@ module Importer
 
       def prepare_tokens
         token_content = @file.read
-        @tokens << prepare_token(token_content, STARTING_INDEX)
+        @tokens << token_at(STARTING_INDEX, token_content)
         @file.close
       end
 
-      def prepare_token(content, index)
-        [index, variants_for(content), grouped_variants_for(content)]
+      def token_at(index, content)
+        Token.new(
+          index:,
+          variants:         variants_for(content),
+          grouped_variants: grouped_variants_for(content)
+        )
       end
 
       def variants_for(content)

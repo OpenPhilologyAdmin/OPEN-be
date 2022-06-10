@@ -36,10 +36,10 @@ RSpec.describe Importer::Inserter, type: :service do
 
       it 'creates correct tokens' do
         extracted_data.tokens.each do |raw_token|
-          matching_saved_token = project.tokens.find_by(index: raw_token[0])
+          matching_saved_token = project.tokens.find_by(index: raw_token.index)
 
-          expect(matching_saved_token.variants).to eq(raw_token[1].as_json)
-          expect(matching_saved_token.grouped_variants).to eq(raw_token[2].as_json)
+          expect(matching_saved_token.variants).to eq(raw_token.variants)
+          expect(matching_saved_token.grouped_variants).to eq(raw_token.grouped_variants)
         end
       end
     end

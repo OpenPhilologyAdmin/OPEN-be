@@ -6,8 +6,8 @@ module Importer
 
     attr_accessor :tokens, :witnesses
 
-    def assign_project_id_to_tokens(project_id)
-      tokens.each { |token| token << project_id }
+    def assign_project_to_tokens(project)
+      tokens.each { |token| token.project = project }
     end
   end
 end

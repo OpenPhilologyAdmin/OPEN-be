@@ -17,5 +17,9 @@ FactoryBot.define do
         { t: 'Ipsume', witnesses: ['B'] }
       ]
     end
+
+    trait :without_project do
+      project { nil }
+    end
   end
 end
