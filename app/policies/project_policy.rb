@@ -12,12 +12,7 @@ class ProjectPolicy < ApplicationPolicy
   def permitted_attributes_for_create
     %i[
       name
-      source_file: [
-      data
-      filename
-      content_type
-      identify
-      ]
+      source_file: [data filename content_type identify]
     ]
   end
 

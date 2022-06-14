@@ -273,7 +273,6 @@ paths:
                   example: Project name
                 source_file:
                   type: string
-                  format: binary
                   example: 'Base64 encoded file in the following format: ''data:text/plain;base64,[base64
                     data]'''
   "/api/v1/users/sign_in":

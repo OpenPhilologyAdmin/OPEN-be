@@ -22,7 +22,6 @@ RSpec.describe 'v1/projects', type: :request do
           },
           source_file: {
             type:    :string,
-            format:  :binary,
             example: "Base64 encoded file in the following format: 'data:text/plain;base64,[base64 data]'"
           }
         }
