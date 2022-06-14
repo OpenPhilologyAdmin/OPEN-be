@@ -3,7 +3,7 @@
 class Project < ApplicationRecord
   include ActiveStorageSupport::SupportForBase64
 
-  validates :name, :witnesses, presence: true
+  validates :name, presence: true
 
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy
