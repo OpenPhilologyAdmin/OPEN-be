@@ -7,6 +7,7 @@ ruby '3.1.2'
 gem 'rails', '~> 7.0.3'
 
 gem 'activerecord-import'
+gem 'active_storage_base64'
 gem 'bootsnap', require: false
 gem 'devise'
 gem 'devise-jwt'

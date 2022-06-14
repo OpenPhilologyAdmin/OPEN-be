@@ -65,6 +65,19 @@ RSpec.configure do |config|
                 }
               }
             }
+          },
+          project:             {
+            type:       :object,
+            properties: {
+              id:              { type: :integer },
+              name:            { type: :string },
+              default_witness: { type: :string, example: 'A', nullable: true },
+              witnesses:       {
+                type:     :array,
+                items:    { type: :string, example: 'A' },
+                nullable: true
+              }
+            }
           }
         }
       },
