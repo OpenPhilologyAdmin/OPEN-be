@@ -32,5 +32,6 @@ module CollationBe
 
       config.credentials.key_path = "#{filename}.key" if File.exist? "#{filename}.key"
     end
+    config.active_job.queue_adapter = :sidekiq
   end
 end
