@@ -54,6 +54,8 @@ GEM
     activerecord (7.0.3)
       activemodel (= 7.0.3)
       activesupport (= 7.0.3)
+    activerecord-import (1.4.0)
+      activerecord (>= 4.2)
     activestorage (7.0.3)
       actionpack (= 7.0.3)
       activejob (= 7.0.3)
@@ -151,11 +153,11 @@ GEM
       activesupport (>= 5.0.0)
     json-schema (2.8.1)
       addressable (>= 2.4)
-    jwt (2.4.0)
+    jwt (2.4.1)
     kwalify (0.7.2)
     launchy (2.5.0)
       addressable (~> 2.7)
-    lefthook (0.7.7)
+    lefthook (0.8.0)
     letter_opener (1.8.1)
       launchy (>= 2.2, < 3)
     listen (3.7.1)
@@ -231,7 +233,7 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.4.2)
+    rails-html-sanitizer (1.4.3)
       loofah (~> 2.3)
     railties (7.0.3)
       actionpack (= 7.0.3)
@@ -351,6 +353,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-import
   bootsnap
   brakeman
   bundle-audit

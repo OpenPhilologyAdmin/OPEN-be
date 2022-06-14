@@ -6,16 +6,25 @@ module Importer
       STARTING_INDEX = 0
 
       def process
-        token_content = @file.read
-        @tokens << prepare_token(token_content, STARTING_INDEX)
-        @file.close
-        @tokens
+        prepare_tokens
+
+        ::Importer::ExtractedData.new(tokens: @tokens, witnesses: [default_witness])
       end
 
       private
 
-      def prepare_token(content, index)
-        [index, variants_for(content), grouped_variants_for(content)]
+      def prepare_tokens
+        token_content = @file.read
+        @tokens << token_at(STARTING_INDEX, token_content)
+        @file.close
+      end
+
+      def token_at(index, content)
+        Token.new(
+          index:,
+          variants:         variants_for(content),
+          grouped_variants: grouped_variants_for(content)
+        )
       end
 
       def variants_for(content)
@@ -39,6 +48,13 @@ module Importer
             selected:  false
           }
         ]
+      end
+
+      def default_witness
+        Witness.new(
+          siglum: @default_witness,
+          name:   nil
+        )
       end
     end
   end
