@@ -5,4 +5,6 @@ class Project < ApplicationRecord
 
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy
+
+  has_one_attached :source_file
 end
