@@ -63,6 +63,23 @@ components:
             password_confirmation:
               type: string
               format: password
+    project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        default_witness:
+          type: string
+          example: A
+          nullable: true
+        witnesses:
+          type: array
+          items:
+            type: string
+            example: A
+          nullable: true
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -207,6 +224,58 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/user_reset_password"
+  "/api/v1/projects":
+    post:
+      summary: Creates a new project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Creates a new project.
+      parameters: []
+      responses:
+        '200':
+          description: Project can be created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/project"
+        '422':
+          description: Project data invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                      example: Name can't be blank
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login required.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Project name
+                source_file:
+                  type: string
+                  format: binary
+                  example: 'Base64 encoded file in the following format: ''data:text/plain;base64,[base64
+                    data]'''
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in
