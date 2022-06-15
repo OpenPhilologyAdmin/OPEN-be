@@ -16,5 +16,17 @@ FactoryBot.define do
         }
       ]
     end
+
+    trait :processing do
+      status { :processing }
+    end
+
+    trait :processed do
+      status { :processed }
+    end
+
+    trait :invalid do
+      status { :invalid }
+    end
   end
 end

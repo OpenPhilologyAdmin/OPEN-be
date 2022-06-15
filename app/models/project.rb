@@ -2,6 +2,13 @@
 
 class Project < ApplicationRecord
   include ActiveStorageSupport::SupportForBase64
+  extend Enumerize
+
+  enumerize :status,
+            in:         %i[processing processed invalid],
+            default:    :processing,
+            predicates: true,
+            scope:      :shallow
 
   validates :name, presence: true
 
