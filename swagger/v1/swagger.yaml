@@ -422,18 +422,21 @@ paths:
             schema:
               type: object
               properties:
-                email:
-                  type: string
-                  example: email@example.com
-                password:
-                  type: string
-                  example: password
-                password_confirmation:
-                  type: string
-                  example: password
-                name:
-                  type: string
-                  example: name
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: email@example.com
+                    password:
+                      type: string
+                      example: password
+                    password_confirmation:
+                      type: string
+                      example: password
+                    name:
+                      type: string
+                      example: name
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user

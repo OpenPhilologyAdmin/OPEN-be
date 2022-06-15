@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 require 'swagger_helper'
 
 RSpec.describe 'v1/users', type: :request do
@@ -88,21 +87,26 @@ RSpec.describe 'v1/users', type: :request do
       parameter name: :user, in: :body, schema: {
         type:       :object,
         properties: {
-          email:                 {
-            type:    :string,
-            example: 'email@example.com'
-          },
-          password:              {
-            type:    :string,
-            example: 'password'
-          },
-          password_confirmation: {
-            type:    :string,
-            example: 'password'
-          },
-          name:                  {
-            type:    :string,
-            example: 'name'
+          user: {
+            type:       :object,
+            properties: {
+              email:                 {
+                type:    :string,
+                example: 'email@example.com'
+              },
+              password:              {
+                type:    :string,
+                example: 'password'
+              },
+              password_confirmation: {
+                type:    :string,
+                example: 'password'
+              },
+              name:                  {
+                type:    :string,
+                example: 'name'
+              }
+            }
           }
         }
       }
@@ -244,4 +248,3 @@ RSpec.describe 'v1/users', type: :request do
     end
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers
