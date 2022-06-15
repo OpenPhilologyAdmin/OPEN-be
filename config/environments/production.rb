@@ -23,4 +23,14 @@ Rails.application.configure do
   end
 
   config.active_record.dump_schema_after_migration = false
+
+  config.action_mailer.smtp_settings = {
+    user_name:            Rails.application.credentials.sendgrid.user_name,
+    password:             Rails.application.credentials.sendgrid.password,
+    domain:               ENV.fetch('APP_HOST', nil),
+    address:              'smtp.sendgrid.net',
+    port:                 '587',
+    authentication:       :plain,
+    enable_starttls_auto: true
+  }
 end
