@@ -63,6 +63,11 @@ RSpec.describe Importer::Base, type: :service do
       service.add_error(error_key, error_message)
       expect(service.errors[error_key]).to eq(error_message)
     end
+
+    it 'updates project status to :invalid' do
+      service.add_error(error_key, error_message)
+      expect(project.reload.status).to eq(:invalid)
+    end
   end
 
   describe '#extractor' do
