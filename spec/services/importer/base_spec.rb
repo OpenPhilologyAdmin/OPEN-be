@@ -4,11 +4,16 @@ require 'rails_helper'
 
 RSpec.describe Importer::Base, type: :service do
   let(:project) { create(:project, :with_source_file) }
-  let(:service) { described_class.new(project:) }
+  let(:user) { create(:user) }
+  let(:service) { described_class.new(project:, user:) }
 
   describe '#initialize' do
     it 'sets the project' do
       expect(service.instance_variable_get('@project')).to eq(project)
+    end
+
+    it 'sets the user' do
+      expect(service.instance_variable_get('@user')).to eq(user)
     end
 
     it 'initializes the errors hash' do
@@ -108,6 +113,12 @@ RSpec.describe Importer::Base, type: :service do
         it 'does not run the extractor' do
           expect(extractor).not_to have_received(:process)
         end
+
+        it 'saves the user as project owner' do
+          project_role = project.project_roles.last
+          expect(project_role.user).to eq(user)
+          expect(project_role.role).to eq(:owner)
+        end
       end
 
       context 'when validation did not return any errors' do
@@ -115,6 +126,12 @@ RSpec.describe Importer::Base, type: :service do
 
         it 'runs the extractor' do
           expect(extractor).to have_received(:process)
+        end
+
+        it 'saves the user as project owner' do
+          project_role = project.project_roles.last
+          expect(project_role.user).to eq(user)
+          expect(project_role.role).to eq(:owner)
         end
       end
     end
@@ -138,6 +155,16 @@ RSpec.describe Importer::Base, type: :service do
 
       it 'assigns errors to service' do
         expect(service.errors[:file]).to eq(I18n.t('importer.errors.unsupported_file_format'))
+      end
+
+      it 'updates project status to :invalid' do
+        expect(project.reload.status).to eq(:invalid)
+      end
+
+      it 'saves the user as project owner' do
+        project_role = project.project_roles.last
+        expect(project_role.user).to eq(user)
+        expect(project_role.role).to eq(:owner)
       end
     end
   end

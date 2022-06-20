@@ -5,12 +5,14 @@ module Importer
     include Importer::Concerns::Validators
     attr_reader :errors
 
-    def initialize(project:)
-      @project         = project
-      @errors          = {}
+    def initialize(project:, user:)
+      @project = project
+      @user = user
+      @errors = {}
     end
 
     def process
+      save_owner
       perform_validations
       return unless valid?
 
@@ -29,6 +31,10 @@ module Importer
 
     def extractor
       @extractor ||= extractor_klass.new(project: @project)
+    end
+
+    def save_owner
+      ProjectRole.create(user: @user, project: @project)
     end
 
     def extract_data
