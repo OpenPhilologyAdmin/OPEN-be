@@ -17,16 +17,26 @@ FactoryBot.define do
       ]
     end
 
-    trait :processing do
+    trait :status_processing do
       status { :processing }
     end
 
-    trait :processed do
+    trait :status_processed do
       status { :processed }
     end
 
-    trait :invalid do
+    trait :status_invalid do
       status { :invalid }
+    end
+
+    trait :with_source_file do
+      after(:build) do |record|
+        record.source_file.attach(
+          io:           File.open(Rails.root.join('spec/fixtures/sample_project.txt')),
+          filename:     "#{rand}_project.txt",
+          content_type: 'text/plain'
+        )
+      end
     end
   end
 end
