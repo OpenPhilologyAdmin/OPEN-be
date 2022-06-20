@@ -27,6 +27,10 @@ RSpec.describe 'v1/projects', type: :request do
         }
       }
 
+      before do
+        allow(ImportProjectJob).to receive(:perform_now)
+      end
+
       response '200', 'Project can be created' do
         let(:Authorization) { authorization_header_for(user) }
         let(:encoded_source_file) do
@@ -46,6 +50,10 @@ RSpec.describe 'v1/projects', type: :request do
         schema '$ref' => '#/components/schemas/project'
 
         run_test!
+
+        it 'queues importing project data' do
+          expect(ImportProjectJob).to have_received(:perform_now)
+        end
       end
 
       response '422', 'Project data invalid' do
@@ -72,6 +80,10 @@ RSpec.describe 'v1/projects', type: :request do
                }
 
         run_test!
+
+        it 'does not queue importing project data' do
+          expect(ImportProjectJob).not_to have_received(:perform_now)
+        end
       end
 
       response '401', 'Login required' do
@@ -87,6 +99,10 @@ RSpec.describe 'v1/projects', type: :request do
                }
 
         run_test!
+
+        it 'does not queue importing project data' do
+          expect(ImportProjectJob).not_to have_received(:perform_now)
+        end
       end
     end
   end

@@ -9,6 +9,7 @@ module Ver1
       authorize record, :create?
 
       if record.save
+        ImportProjectJob.perform_now(record.id)
         render(
           json: ProjectSerializer.new(record).as_json
         )
