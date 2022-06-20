@@ -20,7 +20,7 @@ module Importer
       private
 
       def validate_file_presence
-        return if File.exist?(@data_path)
+        return if @project.source_file.attached?
 
         add_error(:file, I18n.t('importer.errors.missing_file'))
       end

@@ -3,10 +3,10 @@
 module Importer
   module Extractors
     class Base
-      def initialize(data_path:, default_witness:)
-        @data_path = data_path
-        @file = File.open(data_path)
-        @default_witness = default_witness
+      def initialize(project:)
+        @project = project
+        @file = @project.source_file
+        @default_witness = @project.default_witness
         @tokens = []
       end
 

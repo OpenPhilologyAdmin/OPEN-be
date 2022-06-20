@@ -14,14 +14,14 @@ module Importer
       private
 
       def prepare_tokens
-        token_content = @file.read
+        token_content = @file.open(&:read)
         @tokens << token_at(STARTING_INDEX, token_content)
-        @file.close
       end
 
       def token_at(index, content)
         Token.new(
           index:,
+          project:          @project,
           variants:         variants_for(content),
           grouped_variants: grouped_variants_for(content)
         )

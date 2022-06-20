@@ -30,4 +30,18 @@ RSpec.describe Project, type: :model do
       expect(build(:project, :with_source_file)).to be_valid
     end
   end
+
+  describe '#source_file_content_type' do
+    context 'when there is no source file attached' do
+      it 'is nil' do
+        expect(build(:project).source_file_content_type).to be_nil
+      end
+    end
+
+    context 'when there is source file attached' do
+      it 'returns file content_type' do
+        expect(build(:project, :with_source_file).source_file_content_type).to eq('text/plain')
+      end
+    end
+  end
 end

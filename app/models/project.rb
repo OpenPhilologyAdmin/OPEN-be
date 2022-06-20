@@ -16,4 +16,10 @@ class Project < ApplicationRecord
   has_many :project_roles, dependent: :destroy
 
   has_one_base64_attached :source_file
+
+  def source_file_content_type
+    return unless source_file.attached?
+
+    source_file.blob.content_type
+  end
 end

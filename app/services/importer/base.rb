@@ -5,11 +5,9 @@ module Importer
     include Importer::Concerns::Validators
     attr_reader :errors
 
-    def initialize(data_path:, name:, default_witness:)
-      @data_path       = Rails.root.join(data_path)
+    def initialize(project:)
+      @project         = project
       @errors          = {}
-      @name            = name
-      @default_witness = default_witness
     end
 
     def process
@@ -22,7 +20,7 @@ module Importer
     private
 
     def mime_type
-      @mime_type ||= Marcel::MimeType.for(@data_path, name: @data_path.basename)
+      @mime_type ||= @project.source_file_content_type
     end
 
     def extractor_klass
@@ -30,7 +28,7 @@ module Importer
     end
 
     def extractor
-      @extractor ||= extractor_klass.new(data_path: @data_path, default_witness: @default_witness)
+      @extractor ||= extractor_klass.new(project: @project)
     end
 
     def extract_data

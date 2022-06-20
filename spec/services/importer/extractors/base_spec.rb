@@ -3,21 +3,20 @@
 require 'rails_helper'
 
 RSpec.describe Importer::Extractors::Base, type: :service do
-  let(:data_path) { Rails.root.join('spec/fixtures/sample_project.txt') }
-  let(:default_witness) { 'A' }
-  let(:service) { described_class.new(data_path:, default_witness:) }
+  let(:project) { create(:project, :with_source_file) }
+  let(:service) { described_class.new(project:) }
 
   describe '#initialize' do
-    it 'sets the data_path' do
-      expect(service.instance_variable_get('@data_path')).to eq(data_path)
+    it 'sets the project' do
+      expect(service.instance_variable_get('@project')).to eq(project)
     end
 
     it 'opens the data file' do
-      expect(service.instance_variable_get('@file')).to be_instance_of(File)
+      expect(service.instance_variable_get('@file')).to eq(project.source_file)
     end
 
     it 'sets the default_witness' do
-      expect(service.instance_variable_get('@default_witness')).to eq(default_witness)
+      expect(service.instance_variable_get('@default_witness')).to eq(project.default_witness)
     end
 
     it 'initializes tokens array' do

@@ -3,22 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Importer::Base, type: :service do
-  let(:data_path) { 'spec/fixtures/sample_project.txt' }
-  let(:name) { 'project name' }
-  let(:default_witness) { 'A' }
-  let(:service) { described_class.new(data_path:, name:, default_witness:) }
+  let(:project) { create(:project, :with_source_file) }
+  let(:service) { described_class.new(project:) }
 
   describe '#initialize' do
-    it 'sets the data_path' do
-      expect(service.instance_variable_get('@data_path')).to eq(Rails.root.join(data_path))
-    end
-
-    it 'sets the default_witness' do
-      expect(service.instance_variable_get('@default_witness')).to eq(default_witness)
-    end
-
-    it 'sets the name' do
-      expect(service.instance_variable_get('@name')).to eq(name)
+    it 'sets the project' do
+      expect(service.instance_variable_get('@project')).to eq(project)
     end
 
     it 'initializes the errors hash' do
@@ -38,7 +28,7 @@ RSpec.describe Importer::Base, type: :service do
     end
 
     context 'when file is missing' do
-      let(:data_path) { 'spec/fixtures/non_existent.txt' }
+      let(:project) { create(:project, source_file: nil) }
 
       it 'the service is not valid' do
         expect(service).not_to be_valid
@@ -82,12 +72,8 @@ RSpec.describe Importer::Base, type: :service do
       expect(extractor.class).to eq(Importer::Extractors::TextPlain)
     end
 
-    it 'passes the data_path to extractor' do
-      expect(extractor.instance_variable_get('@data_path')).to eq(Rails.root.join(data_path))
-    end
-
-    it 'passes the default_witness to extractor' do
-      expect(extractor.instance_variable_get('@default_witness')).to eq(default_witness)
+    it 'passes the project to extractor' do
+      expect(extractor.instance_variable_get('@project')).to eq(project)
     end
   end
 
@@ -129,9 +115,15 @@ RSpec.describe Importer::Base, type: :service do
     end
 
     context 'when file format is not supported' do
+      let(:project) { create(:project) }
       let(:data_path) { 'spec/fixtures/sample_project.csv' }
 
       before do
+        project.source_file.attach(
+          io:           File.open(Rails.root.join(data_path)),
+          filename:     "#{rand}_project.csv",
+          content_type: 'text/csv'
+        )
         service.process
       end
 

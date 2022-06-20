@@ -8,8 +8,9 @@ FactoryBot.define do
     end
 
     tokens do
-      build_list(:token, 3, :without_project)
+      build_list(:token, 3)
     end
+
     witnesses do
       build_list(:witness, 3)
     end
