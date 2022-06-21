@@ -3,7 +3,7 @@
 module Importer
   class Base
     include Importer::Concerns::Validators
-    attr_reader :errors
+    attr_accessor :errors, :extracted_data
 
     def initialize(project:, user:)
       @project = project
@@ -16,7 +16,7 @@ module Importer
       perform_validations
       return unless valid?
 
-      extract_data
+      process_data
     end
 
     private
@@ -33,6 +33,10 @@ module Importer
       @extractor ||= extractor_klass.new(project: @project)
     end
 
+    def inserter
+      @inserter ||= Inserter.new(project: @project, extracted_data: @extracted_data)
+    end
+
     def save_owner
       ProjectRole.create(user: @user, project: @project)
     end
@@ -41,6 +45,17 @@ module Importer
       extractor.process
     rescue SyntaxError, NameError
       add_error(:file, I18n.t('importer.errors.unsupported_file_format'))
+    end
+
+    def insert_data
+      inserter.process
+    end
+
+    def process_data
+      @extracted_data = extract_data
+      return unless valid?
+
+      insert_data
     end
   end
 end

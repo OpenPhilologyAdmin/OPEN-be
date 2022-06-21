@@ -95,6 +95,8 @@ RSpec.describe Importer::Base, type: :service do
 
   describe '#process' do
     let(:extractor) { service.send(:extractor) }
+    let(:extracted_data) { build(:extracted_data) }
+    let(:inserter) { service.send(:inserter) }
 
     before do
       allow(service).to receive(:perform_validations)
@@ -103,7 +105,8 @@ RSpec.describe Importer::Base, type: :service do
     context 'when file format is supported' do
       before do
         allow(service).to receive(:valid?).and_return(validation_result)
-        allow(extractor).to receive(:process)
+        allow(extractor).to receive(:process).and_return(extracted_data)
+        allow(inserter).to receive(:process)
         service.process
       end
 
@@ -112,6 +115,10 @@ RSpec.describe Importer::Base, type: :service do
 
         it 'does not run the extractor' do
           expect(extractor).not_to have_received(:process)
+        end
+
+        it 'does not run the inserter' do
+          expect(inserter).not_to have_received(:process)
         end
 
         it 'saves the user as project owner' do
@@ -128,6 +135,14 @@ RSpec.describe Importer::Base, type: :service do
           expect(extractor).to have_received(:process)
         end
 
+        it 'runs the inserter' do
+          expect(inserter).to have_received(:process)
+        end
+
+        it 'assigns results of extractor processing as @extracted_data' do
+          expect(service.extracted_data).to eq(extracted_data)
+        end
+
         it 'saves the user as project owner' do
           project_role = project.project_roles.last
           expect(project_role.user).to eq(user)
@@ -141,6 +156,8 @@ RSpec.describe Importer::Base, type: :service do
       let(:data_path) { 'spec/fixtures/sample_project.csv' }
 
       before do
+        allow(inserter).to receive(:process)
+
         project.source_file.attach(
           io:           File.open(Rails.root.join(data_path)),
           filename:     "#{rand}_project.csv",
@@ -159,6 +176,10 @@ RSpec.describe Importer::Base, type: :service do
 
       it 'updates project status to :invalid' do
         expect(project.reload.status).to eq(:invalid)
+      end
+
+      it 'does not run the inserter' do
+        expect(inserter).not_to have_received(:process)
       end
 
       it 'saves the user as project owner' do
