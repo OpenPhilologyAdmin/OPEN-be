@@ -3,26 +3,26 @@
 module Importer
   class Base
     include Importer::Concerns::Validators
-    attr_reader :errors
+    attr_accessor :errors, :extracted_data
 
-    def initialize(data_path:, name:, default_witness:)
-      @data_path       = Rails.root.join(data_path)
-      @errors          = {}
-      @name            = name
-      @default_witness = default_witness
+    def initialize(project:, user:)
+      @project = project
+      @user = user
+      @errors = {}
     end
 
     def process
+      save_owner
       perform_validations
       return unless valid?
 
-      extract_data
+      process_data
     end
 
     private
 
     def mime_type
-      @mime_type ||= Marcel::MimeType.for(@data_path, name: @data_path.basename)
+      @mime_type ||= @project.source_file_content_type
     end
 
     def extractor_klass
@@ -30,13 +30,32 @@ module Importer
     end
 
     def extractor
-      @extractor ||= extractor_klass.new(data_path: @data_path, default_witness: @default_witness)
+      @extractor ||= extractor_klass.new(project: @project)
+    end
+
+    def inserter
+      @inserter ||= Inserter.new(project: @project, extracted_data: @extracted_data)
+    end
+
+    def save_owner
+      ProjectRole.create(user: @user, project: @project)
     end
 
     def extract_data
       extractor.process
     rescue SyntaxError, NameError
       add_error(:file, I18n.t('importer.errors.unsupported_file_format'))
+    end
+
+    def insert_data
+      inserter.process
+    end
+
+    def process_data
+      @extracted_data = extract_data
+      return unless valid?
+
+      insert_data
     end
   end
 end

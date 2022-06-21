@@ -3,15 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Importer::ExtractedData, type: :model do
-  describe '#assign_project_to_tokens' do
-    let(:record) { build(:extracted_data) }
-    let(:project) { create(:project) }
-
-    it 'adds project_id at the end of raw token array' do
-      record.assign_project_to_tokens(project)
-      record.tokens.each do |token|
-        expect(token.project).to eq(project)
-      end
+  describe 'factories' do
+    it 'creates valid default factory' do
+      expect(build(:extracted_data)).to be_valid
     end
   end
 end

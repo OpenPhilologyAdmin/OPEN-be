@@ -15,6 +15,7 @@ Useful links:
 
 - Ruby v3.1.2
 - Ruby on Rails v7.0.3
+- Redis
 
 # Project setup instructions
 
@@ -31,6 +32,7 @@ Useful links:
 # Running tests and other services around the project
 
 - `rspec spec` to run tests.
+- `bundle exec sidekiq -C config/sidekiq.yml` to run Sidekiq.
 
 # Testing CI locally
 

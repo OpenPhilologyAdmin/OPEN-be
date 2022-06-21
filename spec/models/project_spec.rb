@@ -13,5 +13,44 @@ RSpec.describe Project, type: :model do
     it 'creates valid default factory' do
       expect(build(:project)).to be_valid
     end
+
+    it 'creates valid :status_processing factory' do
+      expect(build(:project, :status_processing)).to be_valid
+    end
+
+    it 'creates valid :status_processed factory' do
+      expect(build(:project, :status_processed)).to be_valid
+    end
+
+    it 'creates valid :status_invalid factory' do
+      expect(build(:project, :status_invalid)).to be_valid
+    end
+
+    it 'creates valid :with_source_file factory' do
+      expect(build(:project, :with_source_file)).to be_valid
+    end
+  end
+
+  describe '#source_file_content_type' do
+    context 'when there is no source file attached' do
+      it 'is nil' do
+        expect(build(:project).source_file_content_type).to be_nil
+      end
+    end
+
+    context 'when there is source file attached' do
+      it 'returns file content_type' do
+        expect(build(:project, :with_source_file).source_file_content_type).to eq('text/plain')
+      end
+    end
+  end
+
+  describe '#invalidate!' do
+    let(:project) { create(:project, :status_processing) }
+
+    it 'changes project status to :invalid' do
+      project.invalidate!
+      expect(project.status).to be_invalid
+    end
   end
 end
