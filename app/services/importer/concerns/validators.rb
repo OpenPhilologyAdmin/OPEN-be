@@ -22,9 +22,7 @@ module Importer
       private
 
       def update_project_status
-        return if @project.status.invalid?
-
-        @project.update(status: INVALID_STATUS)
+        @project.invalidate!
       end
 
       def validate_file_presence

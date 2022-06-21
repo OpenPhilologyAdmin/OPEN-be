@@ -22,4 +22,8 @@ class Project < ApplicationRecord
 
     source_file.blob.content_type
   end
+
+  def invalidate!
+    update(status: :invalid)
+  end
 end

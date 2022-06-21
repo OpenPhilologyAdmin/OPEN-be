@@ -44,4 +44,13 @@ RSpec.describe Project, type: :model do
       end
     end
   end
+
+  describe '#invalidate!' do
+    let(:project) { create(:project, :status_processing) }
+
+    it 'changes project status to :invalid' do
+      project.invalidate!
+      expect(project.status).to be_invalid
+    end
+  end
 end
