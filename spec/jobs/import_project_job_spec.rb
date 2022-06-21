@@ -22,8 +22,6 @@ RSpec.describe ImportProjectJob, type: :job do
   end
 
   context 'when resources cannot be found' do
-    before { described_class.perform_now('invalid-id', 'invalid-id') }
-
     it 'skips performing the job' do
       expect do
         described_class.perform_now('invalid-id', 'invalid-id')
