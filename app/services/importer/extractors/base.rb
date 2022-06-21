@@ -3,10 +3,12 @@
 module Importer
   module Extractors
     class Base
+      attr_accessor :project, :default_witness, :source_file
+
+      delegate :default_witness, :source_file, to: :project
+
       def initialize(project:)
         @project = project
-        @file = @project.source_file
-        @default_witness = @project.default_witness
         @tokens = []
       end
 

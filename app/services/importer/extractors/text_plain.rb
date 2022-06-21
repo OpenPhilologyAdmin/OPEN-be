@@ -8,13 +8,13 @@ module Importer
       def process
         prepare_tokens
 
-        ::Importer::ExtractedData.new(tokens: @tokens, witnesses: [default_witness])
+        ::Importer::ExtractedData.new(tokens: @tokens, witnesses: extracted_witnesses)
       end
 
       private
 
       def prepare_tokens
-        token_content = @file.open(&:read)
+        token_content = source_file.open(&:read)
         @tokens << token_at(STARTING_INDEX, token_content)
       end
 
@@ -31,7 +31,7 @@ module Importer
         [
           [
             {
-              witness:  @default_witness,
+              witness:  default_witness,
               t:        content,
               selected: false,
               deleted:  false
@@ -44,17 +44,19 @@ module Importer
         [
           {
             t:         content,
-            witnesses: [@default_witness],
+            witnesses: [default_witness],
             selected:  false
           }
         ]
       end
 
-      def default_witness
-        Witness.new(
-          siglum: @default_witness,
-          name:   nil
-        )
+      def extracted_witnesses
+        [
+          Witness.new(
+            siglum: default_witness,
+            name:   nil
+          )
+        ]
       end
     end
   end

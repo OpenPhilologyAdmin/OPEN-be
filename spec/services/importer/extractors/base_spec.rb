@@ -12,11 +12,11 @@ RSpec.describe Importer::Extractors::Base, type: :service do
     end
 
     it 'opens the data file' do
-      expect(service.instance_variable_get('@file')).to eq(project.source_file)
+      expect(service.source_file).to eq(project.source_file)
     end
 
     it 'sets the default_witness' do
-      expect(service.instance_variable_get('@default_witness')).to eq(project.default_witness)
+      expect(service.default_witness).to eq(project.default_witness)
     end
 
     it 'initializes tokens array' do

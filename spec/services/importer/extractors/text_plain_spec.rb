@@ -9,15 +9,15 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
 
   describe '#initialize' do
     it 'sets the project' do
-      expect(service.instance_variable_get('@project')).to eq(project)
+      expect(service.project).to eq(project)
     end
 
     it 'opens the data file' do
-      expect(service.instance_variable_get('@file')).to eq(project.source_file)
+      expect(service.source_file).to eq(project.source_file)
     end
 
     it 'sets the default_witness' do
-      expect(service.instance_variable_get('@default_witness')).to eq(project.default_witness)
+      expect(service.default_witness).to eq(project.default_witness)
     end
 
     it 'initializes tokens array' do
