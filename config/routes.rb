@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       post 'users', to: 'users#create'
       patch 'users/:id/approve', to: 'users#approve'
       post 'projects', to: 'projects#create'
+      get 'projects/:id', to: 'projects#show'
     end
   end
 

@@ -74,9 +74,16 @@ RSpec.configure do |config|
               default_witness: { type: :string, example: 'A', nullable: true },
               witnesses:       {
                 type:     :array,
-                items:    { type: :string, example: 'A' },
-                nullable: true
-              }
+                nullable: true,
+                items:    {
+                  type:       :object,
+                  properties: {
+                    name:    { type: :string, example: 'Full name of witness' },
+                    witness: { type: :string, example: 'A' }
+                  }
+                }
+              },
+              status:          { type: :string, enum: %i[processing processed invalid], default: :processing }
             }
           }
         }
