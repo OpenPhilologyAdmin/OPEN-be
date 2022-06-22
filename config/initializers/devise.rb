@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
+
 Devise.setup do |config|
   config.mailer_sender = ENV.fetch('DEFAULT_SENDER', nil)
   require 'devise/orm/active_record'
@@ -18,12 +20,15 @@ Devise.setup do |config|
 
   config.jwt do |jwt|
     jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    jwt.expiration_time = 21_600 # 6 hours
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/users/sign_in$}],
-      ['PUT', %r{^/api/v1/users/password$}]
+      ['PUT', %r{^/api/v1/users/password$}],
+      ['POST', %r{^/api/v1/users/session-token$}]
     ]
     jwt.revocation_requests = [
       ['DELETE', %r{^/api/v1/users/sign_out$}]
     ]
   end
 end
+# rubocop:enable Metrics/BlockLength

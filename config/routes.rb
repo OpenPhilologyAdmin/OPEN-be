@@ -12,6 +12,7 @@ Rails.application.routes.draw do
         put 'users/password', to: 'passwords#update'
         post 'users/confirmation', to: 'confirmations#create'
         get 'users/confirmation', to: 'confirmations#show'
+        post 'users/session-token', to: 'session_tokens#create'
       end
 
       get 'users', to: 'users#index'
