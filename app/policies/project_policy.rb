@@ -9,6 +9,10 @@ class ProjectPolicy < ApplicationPolicy
     false
   end
 
+  def show?
+    approved_admin?
+  end
+
   def permitted_attributes_for_create
     %i[
       name
