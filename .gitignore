@@ -40,3 +40,4 @@ coverage/*
 # Ignore credentials' keys
 /config/credentials/test.key
 /config/credentials/dvlp.key
+/config/credentials/staging.key
