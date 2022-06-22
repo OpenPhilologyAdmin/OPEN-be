@@ -12,7 +12,8 @@ describe ProjectSerializer do
         id:              resource.id,
         name:            resource.name,
         default_witness: resource.default_witness,
-        witnesses:       resource.witnesses
+        witnesses:       resource.witnesses,
+        status:          resource.status
       }.as_json
     end
 

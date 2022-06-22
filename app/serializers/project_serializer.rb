@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProjectSerializer
-  RECORD_ATTRIBUTES = %i[id name default_witness witnesses].freeze
+  RECORD_ATTRIBUTES = %i[id name default_witness witnesses status].freeze
 
   def initialize(record)
     @record = record
