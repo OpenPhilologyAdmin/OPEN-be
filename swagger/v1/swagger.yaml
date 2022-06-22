@@ -329,6 +329,33 @@ paths:
                   message:
                     type: string
                     example: Record not found.
+  "/api/v1/users/session-token":
+    post:
+      summary: Generates new JWT token
+      tags:
+      - Authorization
+      security:
+      - bearer: []
+      description: Returns new JWT token to prolong user's session
+      responses:
+        '204':
+          description: Token has been successfully generated and is available in response
+            headers
+          headers:
+            Authorization:
+              type: string
+              description: 'The JWT token for user with the following format: Bearer
+                {token}'
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login required.
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in
