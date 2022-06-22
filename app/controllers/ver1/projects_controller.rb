@@ -22,5 +22,14 @@ module Ver1
         )
       end
     end
+
+    def show
+      record = Project.find(params[:id])
+      authorize record, :show?
+
+      render(
+        json: ProjectSerializer.new(record).as_json
+      )
+    end
   end
 end

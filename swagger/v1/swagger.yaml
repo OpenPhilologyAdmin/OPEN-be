@@ -76,10 +76,23 @@ components:
           nullable: true
         witnesses:
           type: array
-          items:
-            type: string
-            example: A
           nullable: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Full name of witness
+              witness:
+                type: string
+                example: A
+        status:
+          type: string
+          enum:
+          - processing
+          - processed
+          - invalid
+          default: processing
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -275,6 +288,47 @@ paths:
                   type: string
                   example: 'Base64 encoded file in the following format: ''data:text/plain;base64,[base64
                     data]'''
+  "/api/v1/projects/{id}":
+    get:
+      summary: Retrieves project details
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Get selected project details.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/project"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login required.
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Record not found.
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in

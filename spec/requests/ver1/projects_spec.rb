@@ -106,4 +106,58 @@ RSpec.describe 'v1/projects', type: :request do
       end
     end
   end
+
+  path '/api/v1/projects/{id}' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:id) { create(:project).id }
+
+    get('Retrieves project details') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Get selected project details.'
+
+      parameter name: :id, in: :path, schema: {
+        type: :integer
+      }
+
+      response '200', 'Project found' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/project'
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.errors.login_required')
+                 }
+               }
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.errors.not_found')
+                 }
+               }
+
+        run_test!
+      end
+    end
+  end
 end
