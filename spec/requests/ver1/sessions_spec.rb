@@ -15,7 +15,7 @@ RSpec.describe 'v1/sessions', type: :request do
       end
       let(:expected_response) do
         {
-          message: I18n.t('devise.failure.invalid', authentication_keys: 'email')
+          error: I18n.t('devise.failure.invalid', authentication_keys: 'email')
         }.stringify_keys
       end
 
@@ -55,9 +55,10 @@ RSpec.describe 'v1/sessions', type: :request do
 
       response '401', 'Login credentials are incorrect, email not confirmed or user has not been approved yet' do
         schema type: :object, properties: {
-          message: {
-            type:    :string,
-            example: I18n.t('devise.failure.invalid', authentication_keys: 'email')
+          error: {
+            type:        :string,
+            description: 'Specifies why the user cannot be logged in.',
+            example:     I18n.t('devise.failure.invalid', authentication_keys: 'email')
           }
         }
 
