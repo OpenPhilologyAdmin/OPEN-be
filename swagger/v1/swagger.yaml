@@ -223,7 +223,8 @@ paths:
           description: Password updated
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
           content:
@@ -255,8 +256,10 @@ paths:
                 properties:
                   message:
                     type: array
-                    example:
-                    - Password can't be blank
+                    items:
+                      type: object
+                      description: Errors list
+                      example: Password can't be blank
       requestBody:
         content:
           application/json:
@@ -374,7 +377,8 @@ paths:
             headers
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
         '401':
@@ -399,7 +403,8 @@ paths:
           description: User has been successfully signed in
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
           content:
@@ -407,8 +412,8 @@ paths:
               schema:
                 "$ref": "#/components/schemas/user"
         '401':
-          description: Login credentials are incorrect or user has not been approved
-            yet
+          description: Login credentials are incorrect, email not confirmed or user
+            has not been approved yet
           content:
             application/json:
               schema:
@@ -417,9 +422,6 @@ paths:
                   message:
                     type: string
                     example: Invalid email or password.
-                    examples:
-                    - Invalid email or password.
-                    - Your account has not been approved by the administrator yet.
       requestBody:
         content:
           application/json:

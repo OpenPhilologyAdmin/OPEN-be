@@ -16,7 +16,7 @@ RSpec.describe 'v1/users/session-token', type: :request do
         let(:user) { create(:user, :admin, :approved) }
 
         header 'Authorization',
-               type:        :string,
+               schema:      { type: :string },
                description: 'The JWT token for user with the following format:'\
                             ' Bearer {token}'
 

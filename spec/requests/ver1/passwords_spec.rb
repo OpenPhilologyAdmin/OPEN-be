@@ -46,7 +46,8 @@ RSpec.describe 'v1/passwords', type: :request do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Updating the password using reset_password_token'
-      parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/user_reset_password' }
+      parameter name: :user, in: :body,
+                schema: { '$ref' => '#/components/schemas/user_reset_password' }
 
       let(:user) do
         user  = create(:user, :approved)
@@ -66,7 +67,7 @@ RSpec.describe 'v1/passwords', type: :request do
         let(:password) { attributes_for(:user)[:password] }
 
         header 'Authorization',
-               type:        :string,
+               schema:      { type: :string },
                description: 'The JWT token for user with the following format:'\
                             ' Bearer {token}'
 
@@ -114,8 +115,12 @@ RSpec.describe 'v1/passwords', type: :request do
         schema type:       :object,
                properties: {
                  message: {
-                   type:    :array,
-                   example: ["Password can't be blank"]
+                   type:  :array,
+                   items: {
+                     type:        :object,
+                     description: 'Errors list',
+                     example:     "Password can't be blank"
+                   }
                  }
                }
 
