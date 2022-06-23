@@ -23,7 +23,8 @@ RSpec.describe 'v1/projects', type: :request do
           },
           source_file: {
             type:        :string,
-            description: "Base64 encoded file in the following format: 'data:text/plain;base64,[base64 data]'. "\
+            format:      :byte,
+            description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64 data]`. '\
                          '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs) '\
                          'for more details on formatting.'
           }
