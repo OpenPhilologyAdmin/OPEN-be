@@ -27,6 +27,9 @@ components:
           default: admin
         account_approved:
           type: boolean
+      required:
+      - email
+      - name
     credentials:
       type: object
       properties:
@@ -39,6 +42,9 @@ components:
             password:
               type: string
               format: password
+          required:
+          - email
+          - password
     user_email:
       type: object
       properties:
@@ -48,6 +54,8 @@ components:
             email:
               type: string
               format: email
+          required:
+          - email
     user_reset_password:
       type: object
       properties:
@@ -59,10 +67,18 @@ components:
               example: reset_password_token
             password:
               type: string
-              format: password
+              minimum: 8
+              maximum: 128
+              example: password1
+              description: must contain at least one digit and one letter
             password_confirmation:
               type: string
-              format: password
+              example: password1
+              description: must match password
+          required:
+          - reset_password_token
+          - password
+          - password_confirmation
     project:
       type: object
       properties:
@@ -82,9 +98,11 @@ components:
             properties:
               name:
                 type: string
-                example: Full name of witness
+                description: Full name of witness
+                example: Lorem ipsum
               witness:
                 type: string
+                description: Siglum
                 example: A
         status:
           type: string
@@ -93,6 +111,8 @@ components:
           - processed
           - invalid
           default: processing
+      required:
+      - name
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -124,6 +144,10 @@ paths:
                 email:
                   type: string
                   example: example@example.com
+                  description: Email of the user who wants to receive confirmation
+                    email
+              required:
+              - email
     get:
       summary: Confirms user's email
       tags:
@@ -133,7 +157,8 @@ paths:
         in: query
         schema:
           type: string
-          example: confirmation_token
+        description: Confirmation token from the URL
+        required: true
       responses:
         '200':
           description: Email confirmed
@@ -198,7 +223,8 @@ paths:
           description: Password updated
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
           content:
@@ -230,8 +256,10 @@ paths:
                 properties:
                   message:
                     type: array
-                    example:
-                    - Password can't be blank
+                    items:
+                      type: string
+                      description: Errors list
+                      example: Password can't be blank
       requestBody:
         content:
           application/json:
@@ -283,11 +311,17 @@ paths:
               properties:
                 name:
                   type: string
+                  description: Project name
                   example: Project name
                 source_file:
                   type: string
-                  example: 'Base64 encoded file in the following format: ''data:text/plain;base64,[base64
-                    data]'''
+                  format: byte
+                  description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64
+                    data]`. [Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs)
+                    for more details on formatting.'
+              required:
+              - name
+              - source_file
   "/api/v1/projects/{id}":
     get:
       summary: Retrieves project details
@@ -302,6 +336,7 @@ paths:
         schema:
           type: integer
         required: true
+        description: ID of project
       responses:
         '200':
           description: Project found
@@ -343,7 +378,8 @@ paths:
             headers
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
         '401':
@@ -368,7 +404,8 @@ paths:
           description: User has been successfully signed in
           headers:
             Authorization:
-              type: string
+              schema:
+                type: string
               description: 'The JWT token for user with the following format: Bearer
                 {token}'
           content:
@@ -376,8 +413,8 @@ paths:
               schema:
                 "$ref": "#/components/schemas/user"
         '401':
-          description: Login credentials are incorrect or user has not been approved
-            yet
+          description: Login credentials are incorrect, email not confirmed or user
+            has not been approved yet
           content:
             application/json:
               schema:
@@ -386,9 +423,6 @@ paths:
                   message:
                     type: string
                     example: Invalid email or password.
-                    examples:
-                    - Invalid email or password.
-                    - Your account has not been approved by the administrator yet.
       requestBody:
         content:
           application/json:
@@ -418,14 +452,18 @@ paths:
         in: query
         schema:
           type: integer
-          required: false
-          example: Number of records per page
+          example: 1
+          default: 10
+        required: false
+        description: Number of records per page
       - name: page
         in: query
         schema:
           type: integer
-          required: false
-          example: Page number
+          default: 1
+          example: 1
+        required: false
+        description: Page number
       responses:
         '200':
           description: Users can be retrieved
@@ -446,6 +484,7 @@ paths:
                     type: integer
                     description: Current page
                     example: 1
+                    default: 1
                   pages:
                     type: integer
                     description: Number of all pages
@@ -511,13 +550,22 @@ paths:
                       example: email@example.com
                     password:
                       type: string
-                      example: password
+                      minimum: 8
+                      maximum: 128
+                      example: password1
+                      description: must contain at least one digit and one letter
                     password_confirmation:
                       type: string
-                      example: password
+                      example: password1
+                      description: must match password
                     name:
                       type: string
                       example: name
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+                  - name
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user
@@ -530,6 +578,7 @@ paths:
         in: path
         schema:
           type: integer
+        description: ID of user to be approved
         required: true
       description: Allows approving the new user account.
       responses:
@@ -553,4 +602,4 @@ servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.example.com
+      default: localhost:3000

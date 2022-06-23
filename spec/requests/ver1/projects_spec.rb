@@ -17,14 +17,19 @@ RSpec.describe 'v1/projects', type: :request do
         type:       :object,
         properties: {
           name:        {
-            type:    :string,
-            example: 'Project name'
+            type:        :string,
+            description: 'Project name',
+            example:     'Project name'
           },
           source_file: {
-            type:    :string,
-            example: "Base64 encoded file in the following format: 'data:text/plain;base64,[base64 data]'"
+            type:        :string,
+            format:      :byte,
+            description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64 data]`. '\
+                         '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs) '\
+                         'for more details on formatting.'
           }
-        }
+        },
+        required:   %w[name source_file]
       }
 
       before do
@@ -118,9 +123,12 @@ RSpec.describe 'v1/projects', type: :request do
       security [{ bearer: [] }]
       description 'Get selected project details.'
 
-      parameter name: :id, in: :path, schema: {
-        type: :integer
-      }
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of project'
 
       response '200', 'Project found' do
         let(:Authorization) { authorization_header_for(user) }

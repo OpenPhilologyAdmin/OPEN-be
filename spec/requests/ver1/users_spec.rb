@@ -19,17 +19,23 @@ RSpec.describe 'v1/users', type: :request do
       response '200', 'Users can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
 
-        parameter name: :items, in: :query, schema: {
-          type:     :integer,
-          required: false,
-          example:  'Number of records per page'
-        }
+        parameter name:        :items, in: :query,
+                  schema:      {
+                    type:    :integer,
+                    example: 1,
+                    default: 10
+                  },
+                  required:    false,
+                  description: 'Number of records per page'
 
-        parameter name: :page, in: :query, schema: {
-          type:     :integer,
-          required: false,
-          example:  'Page number'
-        }
+        parameter name:        :page, in: :query,
+                  schema:      {
+                    type:    :integer,
+                    default: 1,
+                    example: 1
+                  },
+                  required:    false,
+                  description: 'Page number'
 
         before do
           create_list(:user, 3)
@@ -50,7 +56,8 @@ RSpec.describe 'v1/users', type: :request do
                              current_page: {
                                type:        :integer,
                                description: 'Current page',
-                               example:     1
+                               example:     1,
+                               default:     1
                              },
                              pages:        {
                                type:        :integer,
@@ -95,18 +102,23 @@ RSpec.describe 'v1/users', type: :request do
                 example: 'email@example.com'
               },
               password:              {
-                type:    :string,
-                example: 'password'
+                type:        :string,
+                minimum:     8,
+                maximum:     128,
+                example:     'password1',
+                description: 'must contain at least one digit and one letter'
               },
               password_confirmation: {
-                type:    :string,
-                example: 'password'
+                type:        :string,
+                example:     'password1',
+                description: 'must match password'
               },
               name:                  {
                 type:    :string,
                 example: 'name'
               }
-            }
+            },
+            required:   %w[email password password_confirmation name]
           }
         }
       }
@@ -199,9 +211,12 @@ RSpec.describe 'v1/users', type: :request do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      parameter name: :id, in: :path, schema: {
-        type: :integer
-      }
+      parameter name:        :id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                description: 'ID of user to be approved',
+                required:    true
       description('Allows approving the new user account.')
 
       response '200', 'New user can be approved' do

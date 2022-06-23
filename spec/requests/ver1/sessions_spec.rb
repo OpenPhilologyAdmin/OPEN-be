@@ -44,7 +44,7 @@ RSpec.describe 'v1/sessions', type: :request do
         end
 
         header 'Authorization',
-               type:        :string,
+               schema:      { type: :string },
                description: 'The JWT token for user with the following format:'\
                             ' Bearer {token}'
 
@@ -53,15 +53,11 @@ RSpec.describe 'v1/sessions', type: :request do
         run_test!
       end
 
-      response '401', 'Login credentials are incorrect or user has not been approved yet' do
+      response '401', 'Login credentials are incorrect, email not confirmed or user has not been approved yet' do
         schema type: :object, properties: {
           message: {
-            type:     :string,
-            example:  I18n.t('devise.failure.invalid', authentication_keys: 'email'),
-            examples: [
-              I18n.t('devise.failure.invalid', authentication_keys: 'email'),
-              I18n.t('devise.failure.not_approved')
-            ]
+            type:    :string,
+            example: I18n.t('devise.failure.invalid', authentication_keys: 'email')
           }
         }
 
