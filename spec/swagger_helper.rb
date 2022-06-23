@@ -63,8 +63,18 @@ RSpec.configure do |config|
                 type:       :object,
                 properties: {
                   reset_password_token:  { type: :string, example: 'reset_password_token' },
-                  password:              { type: :string, format: :password },
-                  password_confirmation: { type: :string, format: :password }
+                  password:              {
+                    type:        :string,
+                    minimum:     8,
+                    maximum:     128,
+                    example:     'password1',
+                    description: 'must contain at least one digit and one letter'
+                  },
+                  password_confirmation: {
+                    type:        :string,
+                    example:     'password1',
+                    description: 'must match password'
+                  }
                 },
                 required:   %w[reset_password_token password password_confirmation]
               }
@@ -82,8 +92,16 @@ RSpec.configure do |config|
                 items:    {
                   type:       :object,
                   properties: {
-                    name:    { type: :string, example: 'Full name of witness' },
-                    witness: { type: :string, example: 'A' }
+                    name:    {
+                      type:        :string,
+                      description: 'Full name of witness',
+                      example:     'Lorem ipsum'
+                    },
+                    witness: {
+                      type:        :string,
+                      description: 'Siglum',
+                      example:     'A'
+                    }
                   }
                 }
               },
