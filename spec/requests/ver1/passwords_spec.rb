@@ -117,7 +117,7 @@ RSpec.describe 'v1/passwords', type: :request do
                  message: {
                    type:  :array,
                    items: {
-                     type:        :object,
+                     type:        :string,
                      description: 'Errors list',
                      example:     "Password can't be blank"
                    }
