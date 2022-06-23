@@ -164,16 +164,7 @@ RSpec.describe 'v1/users', type: :request do
                   } }
         end
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:  :array,
-                   items: {
-                     type:    :string,
-                     example: 'Password can\'t be blank'
-                   }
-                 }
-               }
+        schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
       end

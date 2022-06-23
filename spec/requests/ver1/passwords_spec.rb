@@ -112,17 +112,7 @@ RSpec.describe 'v1/passwords', type: :request do
         let(:Authorization) { nil }
         let(:password) { '' }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:  :array,
-                   items: {
-                     type:        :string,
-                     description: 'Errors list',
-                     example:     "Password can't be blank"
-                   }
-                 }
-               }
+        schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
       end

@@ -78,16 +78,7 @@ RSpec.describe 'confirmation', type: :request do
       response '422', 'Invalid confirmation_token' do
         let(:confirmation_token) { '' }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:  :array,
-                   items: {
-                     type:    :string,
-                     example: "Confirmation token can't be blank"
-                   }
-                 }
-               }
+        schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
       end
