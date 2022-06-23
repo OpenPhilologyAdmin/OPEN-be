@@ -106,7 +106,8 @@ RSpec.describe 'v1/users', type: :request do
                 type:    :string,
                 example: 'name'
               }
-            }
+            },
+            required:   %w[email password password_confirmation name]
           }
         }
       }

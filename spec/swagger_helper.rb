@@ -28,7 +28,8 @@ RSpec.configure do |config|
               name:             { type: :string },
               role:             { type: :string, enum: %i[admin], default: :admin },
               account_approved: { type: :boolean }
-            }
+            },
+            required:   %w[email name]
           },
           credentials:         {
             type:       :object,
@@ -38,7 +39,8 @@ RSpec.configure do |config|
                 properties: {
                   email:    { type: :string, format: :email },
                   password: { type: :string, format: :password }
-                }
+                },
+                required:   %w[email password]
               }
             }
           },
@@ -49,7 +51,8 @@ RSpec.configure do |config|
                 type:       :object,
                 properties: {
                   email: { type: :string, format: :email }
-                }
+                },
+                required:   ['email']
               }
             }
           },
@@ -62,7 +65,8 @@ RSpec.configure do |config|
                   reset_password_token:  { type: :string, example: 'reset_password_token' },
                   password:              { type: :string, format: :password },
                   password_confirmation: { type: :string, format: :password }
-                }
+                },
+                required:   %w[reset_password_token password password_confirmation]
               }
             }
           },
@@ -84,7 +88,8 @@ RSpec.configure do |config|
                 }
               },
               status:          { type: :string, enum: %i[processing processed invalid], default: :processing }
-            }
+            },
+            required:   ['name']
           }
         }
       },

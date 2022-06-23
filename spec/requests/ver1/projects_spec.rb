@@ -24,7 +24,8 @@ RSpec.describe 'v1/projects', type: :request do
             type:    :string,
             example: "Base64 encoded file in the following format: 'data:text/plain;base64,[base64 data]'"
           }
-        }
+        },
+        required:   %w[name source_file]
       }
 
       before do

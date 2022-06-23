@@ -26,7 +26,8 @@ RSpec.describe 'confirmation', type: :request do
                         type:    :string,
                         example: 'example@example.com'
                       }
-                    }
+                    },
+                    required:   ['email']
                   }
 
         schema type:       :object,
@@ -49,10 +50,10 @@ RSpec.describe 'confirmation', type: :request do
       tags 'Users'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :confirmation_token, in: :query, schema: {
-        type:    :string,
-        example: 'confirmation_token'
-      }
+      parameter name: :confirmation_token, in: :query,
+                schema: { type: :string },
+                description: 'Confirmation token from URL',
+                required: true
 
       response '200', 'Email confirmed' do
         let(:user) { create(:user, :not_confirmed) }

@@ -27,6 +27,9 @@ components:
           default: admin
         account_approved:
           type: boolean
+      required:
+      - email
+      - name
     credentials:
       type: object
       properties:
@@ -39,6 +42,9 @@ components:
             password:
               type: string
               format: password
+          required:
+          - email
+          - password
     user_email:
       type: object
       properties:
@@ -48,6 +54,8 @@ components:
             email:
               type: string
               format: email
+          required:
+          - email
     user_reset_password:
       type: object
       properties:
@@ -63,6 +71,10 @@ components:
             password_confirmation:
               type: string
               format: password
+          required:
+          - reset_password_token
+          - password
+          - password_confirmation
     project:
       type: object
       properties:
@@ -93,6 +105,8 @@ components:
           - processed
           - invalid
           default: processing
+      required:
+      - name
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -124,6 +138,8 @@ paths:
                 email:
                   type: string
                   example: example@example.com
+              required:
+              - email
     get:
       summary: Confirms user's email
       tags:
@@ -133,7 +149,8 @@ paths:
         in: query
         schema:
           type: string
-          example: confirmation_token
+        description: Confirmation token from URL
+        required: true
       responses:
         '200':
           description: Email confirmed
@@ -288,6 +305,9 @@ paths:
                   type: string
                   example: 'Base64 encoded file in the following format: ''data:text/plain;base64,[base64
                     data]'''
+              required:
+              - name
+              - source_file
   "/api/v1/projects/{id}":
     get:
       summary: Retrieves project details
@@ -518,6 +538,11 @@ paths:
                     name:
                       type: string
                       example: name
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+                  - name
   "/api/v1/users/{id}/approve":
     patch:
       summary: Approves the user
