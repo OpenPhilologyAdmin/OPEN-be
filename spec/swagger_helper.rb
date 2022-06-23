@@ -117,7 +117,7 @@ RSpec.configure do |config|
           url:       'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: ENV.fetch('APP_HOST', nil).to_s
             }
           }
         }
