@@ -125,7 +125,6 @@ RSpec.describe 'v1/users', type: :request do
 
       response '200', 'User can be created' do
         let(:Authorization) { nil }
-        let(:notifier_mock) { instance_double(SignupNotifier) }
         let(:password) { attributes_for(:user)[:password] }
         let(:user) do
           { user:
@@ -139,17 +138,7 @@ RSpec.describe 'v1/users', type: :request do
 
         schema '$ref' => '#/components/schemas/user'
 
-        before do
-          allow(SignupNotifier).to receive(:new).and_return(notifier_mock)
-          allow(notifier_mock).to receive(:perform!)
-        end
-
         run_test!
-
-        it 'notifies admins' do
-          expect(SignupNotifier).to have_received(:new)
-          expect(notifier_mock).to have_received(:perform!)
-        end
       end
 
       response '422', 'User data invalid' do
