@@ -122,6 +122,24 @@ components:
           default: processing
       required:
       - name
+    login_required:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Login required.
+    record_not_found:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Record not found.
+    forbidden_request:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Not authorized to perform this action.
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -296,11 +314,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
       requestBody:
         content:
           application/json:
@@ -347,21 +361,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
         '404':
           description: Project not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Record not found.
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users/session-token":
     post:
       summary: Generates new JWT token
@@ -385,11 +391,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in
@@ -496,11 +498,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
     post:
       summary: Creates new user account
       tags:
@@ -527,11 +525,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Not authorized to perform this action.
+                "$ref": "#/components/schemas/forbidden_request"
       requestBody:
         content:
           application/json:
@@ -589,11 +583,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
 servers:
 - url: https://{defaultHost}
   variables:

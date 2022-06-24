@@ -12,8 +12,7 @@ module Ver1
     def forbidden_request
       render(
         json:      {
-          success: false,
-          message: I18n.t('general.errors.forbidden_request')
+          error: I18n.t('general.errors.forbidden_request')
         }, status: :forbidden
       )
     end
@@ -22,15 +21,13 @@ module Ver1
       return if current_user
 
       render json:   {
-        success: false,
-        message: I18n.t('general.errors.login_required')
+        error: I18n.t('general.errors.login_required')
       }, status: :unauthorized
     end
 
     def record_not_found
       render json:   {
-        success: false,
-        message: I18n.t('general.errors.not_found')
+        error: I18n.t('general.errors.not_found')
       }, status: :not_found
     end
   end
