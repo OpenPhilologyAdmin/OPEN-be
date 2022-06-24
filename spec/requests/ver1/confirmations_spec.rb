@@ -70,20 +70,55 @@ RSpec.describe 'confirmation', type: :request do
         schema type:       :object,
                properties: {
                  message: {
-                   type:    :string,
-                   example: I18n.t('devise.confirmations.confirmed')
+                   type:        :string,
+                   description: 'Specifies whether the user can already sign in, or needs to wait for Admin to '\
+                                'approve their account.',
+                   example:     I18n.t('devise.confirmations.confirmed_but_not_approved')
                  }
                }
 
         run_test!
 
-        it 'confirms the user' do
-          expect(user.reload).to be_confirmed
+        context 'when account has already been accepted by the admin' do
+          let(:user) { create(:user, :not_confirmed, :approved) }
+          let(:expected_response) do
+            { message: I18n.t('devise.confirmations.confirmed') }
+          end
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
+
+          it 'confirms the user' do
+            expect(user.reload).to be_confirmed
+          end
+
+          it 'does not notify the admins' do
+            expect(SignupNotifier).not_to have_received(:new)
+            expect(notifier_mock).not_to have_received(:perform!)
+          end
         end
 
-        it 'notifies the admins' do
-          expect(SignupNotifier).to have_received(:new)
-          expect(notifier_mock).to have_received(:perform!)
+        context 'when account has not been accepted by the admin yet' do
+          let(:user) { create(:user, :not_confirmed, :not_approved) }
+          let(:expected_response) do
+            { message: I18n.t('devise.confirmations.confirmed_but_not_approved') }
+          end
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
+
+          it 'confirms the user' do
+            expect(user.reload).to be_confirmed
+          end
+
+          it 'notifies the admins' do
+            expect(SignupNotifier).to have_received(:new)
+            expect(notifier_mock).to have_received(:perform!)
+          end
         end
       end
 

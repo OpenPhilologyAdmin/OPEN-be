@@ -178,7 +178,11 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Your email address has been successfully confirmed.
+                    description: Specifies whether the user can already sign in, or
+                      needs to wait for Admin to approve their account.
+                    example: Your email address has been successfully confirmed. Admin
+                      will review your account, and we will let you know once you
+                      can sign in.
         '422':
           description: Invalid confirmation_token
           content:
