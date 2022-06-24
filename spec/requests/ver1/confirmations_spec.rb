@@ -56,6 +56,13 @@ RSpec.describe 'confirmation', type: :request do
                 description: 'Confirmation token from the URL',
                 required: true
 
+      let(:notifier_mock) { instance_double(SignupNotifier) }
+
+      before do
+        allow(SignupNotifier).to receive(:new).and_return(notifier_mock)
+        allow(notifier_mock).to receive(:perform!)
+      end
+
       response '200', 'Email confirmed' do
         let(:user) { create(:user, :not_confirmed) }
         let(:confirmation_token) { user.confirmation_token }
@@ -73,6 +80,11 @@ RSpec.describe 'confirmation', type: :request do
         it 'confirms the user' do
           expect(user.reload).to be_confirmed
         end
+
+        it 'notifies the admins' do
+          expect(SignupNotifier).to have_received(:new)
+          expect(notifier_mock).to have_received(:perform!)
+        end
       end
 
       response '422', 'Invalid confirmation_token' do
@@ -81,6 +93,11 @@ RSpec.describe 'confirmation', type: :request do
         schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
+
+        it 'does not notify the admins' do
+          expect(SignupNotifier).not_to have_received(:new)
+          expect(notifier_mock).not_to have_received(:perform!)
+        end
       end
     end
   end

@@ -16,6 +16,7 @@ module Ver1
       self.resource = User.confirm_by_token(params[:confirmation_token])
 
       if resource.errors.empty?
+        notify_admins(resource)
         render(
           json: {
             message: I18n.t('devise.confirmations.confirmed')
@@ -27,6 +28,12 @@ module Ver1
           status: :unprocessable_entity
         )
       end
+    end
+
+    private
+
+    def notify_admins(record)
+      SignupNotifier.new(record).perform!
     end
   end
 end
