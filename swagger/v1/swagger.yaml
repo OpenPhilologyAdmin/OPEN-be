@@ -254,7 +254,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
                     example: Your account has not been approved by the administrator
                       yet.

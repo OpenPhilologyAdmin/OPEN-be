@@ -99,7 +99,7 @@ RSpec.describe 'v1/passwords', type: :request do
         end
 
         schema type: :object, properties: {
-          message: {
+          error: {
             type:    :string,
             example: I18n.t('devise.failure.not_approved')
           }
