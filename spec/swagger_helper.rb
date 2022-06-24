@@ -20,6 +20,19 @@ RSpec.configure do |config|
           }
         },
         schemas:         {
+          invalid_record:      {
+            type:       :object,
+            properties: {
+              '$field_name': {
+                type:  :array,
+                items: {
+                  type:        :string,
+                  description: 'Errors related to $field_name',
+                  example:     'can\'t be blank'
+                }
+              }
+            }
+          },
           user:                {
             type:       :object,
             properties: {

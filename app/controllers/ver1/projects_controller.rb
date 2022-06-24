@@ -15,9 +15,7 @@ module Ver1
         )
       else
         render(
-          json:   {
-            message: record.errors.full_messages
-          },
+          json:   record.errors,
           status: :unprocessable_entity
         )
       end

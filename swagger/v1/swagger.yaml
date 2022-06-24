@@ -10,6 +10,15 @@ components:
       name: Authorization
       in: header
   schemas:
+    invalid_record:
+      type: object
+      properties:
+        "$field_name":
+          type: array
+          items:
+            type: string
+            description: Errors related to $field_name
+            example: can't be blank
     user:
       type: object
       properties:
@@ -175,13 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: array
-                    items:
-                      type: string
-                      example: Confirmation token can't be blank
+                "$ref": "#/components/schemas/invalid_record"
   "/api/v1/users/password":
     post:
       summary: Sends the reset password email
@@ -252,14 +255,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: array
-                    items:
-                      type: string
-                      description: Errors list
-                      example: Password can't be blank
+                "$ref": "#/components/schemas/invalid_record"
       requestBody:
         content:
           application/json:
@@ -286,13 +282,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: array
-                    items:
-                      type: string
-                      example: Name can't be blank
+                "$ref": "#/components/schemas/invalid_record"
         '401':
           description: Login required
           content:
@@ -420,8 +410,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
+                    description: Specifies why the user cannot be logged in.
                     example: Invalid email or password.
       requestBody:
         content:
@@ -519,13 +510,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: array
-                    items:
-                      type: string
-                      example: Password can't be blank
+                "$ref": "#/components/schemas/invalid_record"
         '403':
           description: Not Authorized if logged in
           content:
