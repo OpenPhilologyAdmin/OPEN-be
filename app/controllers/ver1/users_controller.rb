@@ -20,7 +20,6 @@ module Ver1
       record = User.new(permitted_attributes(User))
       authorize record, :create?
       if record.save
-        notify_admins(record)
         render(
           json: UserSerializer.new(record).as_json
         )
@@ -40,12 +39,6 @@ module Ver1
       render(
         json: UserSerializer.new(record).as_json
       )
-    end
-
-    private
-
-    def notify_admins(record)
-      SignupNotifier.new(record).perform!
     end
   end
 end
