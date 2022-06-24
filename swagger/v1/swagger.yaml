@@ -416,7 +416,10 @@ paths:
                 properties:
                   error:
                     type: string
-                    description: Specifies why the user cannot be logged in.
+                    description: 'Specifies why the user cannot be logged in: "Invalid
+                      email or password.", "You have to confirm your email address
+                      before continuing.", "Your account has not been approved by
+                      the administrator yet."'
                     example: Invalid email or password.
       requestBody:
         content:

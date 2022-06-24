@@ -44,6 +44,9 @@ class User < ApplicationRecord
   end
 
   def inactive_message
-    account_approved? ? super : :not_approved
+    return :unconfirmed unless confirmed?
+    return :not_approved unless account_approved?
+
+    super
   end
 end
