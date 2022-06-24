@@ -26,13 +26,7 @@ RSpec.describe 'v1/users/session-token', type: :request do
       response '401', 'Login required' do
         let(:Authorization) { nil }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.login_required')
-                 }
-               }
+        schema '$ref' => '#/components/schemas/login_required'
 
         run_test!
       end

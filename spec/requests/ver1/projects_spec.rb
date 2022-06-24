@@ -86,13 +86,7 @@ RSpec.describe 'v1/projects', type: :request do
         let(:Authorization) { nil }
         let(:project) { nil }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.login_required')
-                 }
-               }
+        schema '$ref' => '#/components/schemas/login_required'
 
         run_test!
 
@@ -132,13 +126,7 @@ RSpec.describe 'v1/projects', type: :request do
       response '401', 'Login required' do
         let(:Authorization) { nil }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.login_required')
-                 }
-               }
+        schema '$ref' => '#/components/schemas/login_required'
 
         run_test!
       end
@@ -147,13 +135,7 @@ RSpec.describe 'v1/projects', type: :request do
         let(:Authorization) { authorization_header_for(user) }
         let(:id) { 'invalid-id' }
 
-        schema type:       :object,
-               properties: {
-                 message: {
-                   type:    :string,
-                   example: I18n.t('general.errors.not_found')
-                 }
-               }
+        schema '$ref' => '#/components/schemas/record_not_found'
 
         run_test!
       end

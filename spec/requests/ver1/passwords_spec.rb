@@ -82,30 +82,69 @@ RSpec.describe 'v1/passwords', type: :request do
         run_test!
       end
 
-      response '401', 'Not approved yet' do
+      response '401', 'Not confirmed/approved yet' do
         let(:Authorization) { nil }
         let(:password) { attributes_for(:user)[:password] }
-        let(:user) do
-          user  = create(:user, :not_approved)
-          token = user.send_reset_password_instructions
-          {
-            user:
-                  {
-                    reset_password_token:  token,
-                    password:,
-                    password_confirmation: password
-                  }
-          }
-        end
 
         schema type: :object, properties: {
-          message: {
-            type:    :string,
-            example: I18n.t('devise.failure.not_approved')
+          error: {
+            type:        :string,
+            description: 'Specifies why the user cannot be signed in after updating their password: '\
+                         "\"#{I18n.t('devise.failure.unconfirmed')}\", "\
+                         "\"#{I18n.t('devise.failure.not_approved')}\".",
+            example:     I18n.t('devise.failure.unconfirmed')
           }
         }
 
-        run_test!
+        context 'when the user has not confirmed their email yet' do
+          let(:user) do
+            user  = create(:user, :not_confirmed)
+            token = user.send_reset_password_instructions
+            {
+              user:
+                    {
+                      reset_password_token:  token,
+                      password:,
+                      password_confirmation: password
+                    }
+            }
+          end
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.unconfirmed') }
+          end
+
+          run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
+        end
+
+        context 'when the user has confirmed their email but has not been approved' do
+          let(:user) do
+            user  = create(:user, :not_approved)
+            token = user.send_reset_password_instructions
+            {
+              user:
+                    {
+                      reset_password_token:  token,
+                      password:,
+                      password_confirmation: password
+                    }
+            }
+          end
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.not_approved') }
+          end
+
+          run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
+        end
       end
 
       response '422', 'Invalid password or reset password token' do

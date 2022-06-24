@@ -121,6 +121,33 @@ RSpec.configure do |config|
               status:          { type: :string, enum: %i[processing processed invalid], default: :processing }
             },
             required:   ['name']
+          },
+          login_required:      {
+            type:       :object,
+            properties: {
+              error: {
+                type:    :string,
+                example: I18n.t('general.errors.login_required')
+              }
+            }
+          },
+          record_not_found:    {
+            type:       :object,
+            properties: {
+              error: {
+                type:    :string,
+                example: I18n.t('general.errors.not_found')
+              }
+            }
+          },
+          forbidden_request:   {
+            type:       :object,
+            properties: {
+              error: {
+                type:    :string,
+                example: I18n.t('general.errors.forbidden_request')
+              }
+            }
           }
         }
       },

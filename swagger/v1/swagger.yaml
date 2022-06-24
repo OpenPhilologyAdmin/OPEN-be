@@ -122,6 +122,24 @@ components:
           default: processing
       required:
       - name
+    login_required:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Login required.
+    record_not_found:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Record not found.
+    forbidden_request:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Not authorized to perform this action.
 paths:
   "/api/v1/users/confirmation":
     post:
@@ -178,7 +196,15 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Your email address has been successfully confirmed.
+                    description: 'Specifies whether the user can already sign in,
+                      or needs to wait for Admin to approve their account: "Your email
+                      address has been successfully confirmed. You can now log in.",
+                      "Your email address has been successfully confirmed. Admin will
+                      review your account, and we will let you know once you can sign
+                      in.".'
+                    example: Your email address has been successfully confirmed. Admin
+                      will review your account, and we will let you know once you
+                      can sign in.
         '422':
           description: Invalid confirmation_token
           content:
@@ -240,16 +266,19 @@ paths:
                     example: Your password has been changed successfully. You are
                       now signed in.
         '401':
-          description: Not approved yet
+          description: Not confirmed/approved yet
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: Your account has not been approved by the administrator
-                      yet.
+                    description: 'Specifies why the user cannot be signed in after
+                      updating their password: "You have to confirm your email address
+                      before continuing.", "Your account has not been approved by
+                      the administrator yet.".'
+                    example: You have to confirm your email address before continuing.
         '422':
           description: Invalid password or reset password token
           content:
@@ -288,11 +317,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
       requestBody:
         content:
           application/json:
@@ -339,21 +364,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
         '404':
           description: Project not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Record not found.
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users/session-token":
     post:
       summary: Generates new JWT token
@@ -377,11 +394,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
   "/api/v1/users/sign_in":
     post:
       summary: Signs the user in
@@ -412,7 +425,10 @@ paths:
                 properties:
                   error:
                     type: string
-                    description: Specifies why the user cannot be logged in.
+                    description: 'Specifies why the user cannot be logged in: "Invalid
+                      email or password.", "You have to confirm your email address
+                      before continuing.", "Your account has not been approved by
+                      the administrator yet."'
                     example: Invalid email or password.
       requestBody:
         content:
@@ -485,11 +501,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
     post:
       summary: Creates new user account
       tags:
@@ -516,11 +528,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Not authorized to perform this action.
+                "$ref": "#/components/schemas/forbidden_request"
       requestBody:
         content:
           application/json:
@@ -578,11 +586,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login required.
+                "$ref": "#/components/schemas/login_required"
 servers:
 - url: https://{defaultHost}
   variables:

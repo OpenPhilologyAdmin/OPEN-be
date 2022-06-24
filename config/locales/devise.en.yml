@@ -3,7 +3,8 @@
 en:
   devise:
     confirmations:
-      confirmed: "Your email address has been successfully confirmed."
+      confirmed: "Your email address has been successfully confirmed. You can now log in."
+      confirmed_but_not_approved: "Your email address has been successfully confirmed. Admin will review your account, and we will let you know once you can sign in."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
     failure:

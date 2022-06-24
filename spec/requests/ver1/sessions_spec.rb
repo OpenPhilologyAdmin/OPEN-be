@@ -57,33 +57,78 @@ RSpec.describe 'v1/sessions', type: :request do
         schema type: :object, properties: {
           error: {
             type:        :string,
-            description: 'Specifies why the user cannot be logged in.',
+            description: 'Specifies why the user cannot be logged in: '\
+                         "\"#{I18n.t('devise.failure.invalid', authentication_keys: 'email')}\", "\
+                         "\"#{I18n.t('devise.failure.unconfirmed')}\", "\
+                         "\"#{I18n.t('devise.failure.not_approved')}\"",
             example:     I18n.t('devise.failure.invalid', authentication_keys: 'email')
           }
         }
 
         context 'when credentials are incorrect' do
           let(:user) { create(:user) }
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.invalid', authentication_keys: 'email') }
+          end
 
           run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
         end
 
-        context 'when user has not been approved yet' do
+        context 'when the user not confirmed their email address yet' do
+          let(:password) { attributes_for(:user)[:password] }
+          let(:user) do
+            user = create(:user, :not_confirmed, :not_approved, password:)
+            { user: { email: user.email, password: } }
+          end
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.unconfirmed') }
+          end
+
+          run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
+        end
+
+        context 'when the user has not been approved yet' do
           let(:password) { attributes_for(:user)[:password] }
           let(:user) do
             user = create(:user, :not_approved, password:)
             { user: { email: user.email, password: } }
           end
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.not_approved') }
+          end
 
           run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
         end
 
         context 'when login credentials empty' do
           let(:user) do
             { user: { email: '', password: '' } }
           end
+          let(:expected_response) do
+            { error: I18n.t('devise.failure.invalid', authentication_keys: 'email') }
+          end
 
           run_test!
+
+          it 'returns correct message' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
         end
       end
     end

@@ -17,9 +17,10 @@ module Ver1
 
       if resource.errors.empty?
         notify_admins(resource)
+        message_key = resource.active_for_authentication? ? 'confirmed' : 'confirmed_but_not_approved'
         render(
           json: {
-            message: I18n.t('devise.confirmations.confirmed')
+            message: I18n.t("devise.confirmations.#{message_key}")
           }
         )
       else
@@ -33,6 +34,8 @@ module Ver1
     private
 
     def notify_admins(record)
+      return if record.account_approved?
+
       SignupNotifier.new(record).perform!
     end
   end
