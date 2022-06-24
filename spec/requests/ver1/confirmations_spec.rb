@@ -72,7 +72,9 @@ RSpec.describe 'confirmation', type: :request do
                  message: {
                    type:        :string,
                    description: 'Specifies whether the user can already sign in, or needs to wait for Admin to '\
-                                'approve their account.',
+                                'approve their account: '\
+                                "\"#{I18n.t('devise.confirmations.confirmed')}\", "\
+                                "\"#{I18n.t('devise.confirmations.confirmed_but_not_approved')}\"",
                    example:     I18n.t('devise.confirmations.confirmed_but_not_approved')
                  }
                }
