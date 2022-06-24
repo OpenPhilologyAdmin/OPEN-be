@@ -201,7 +201,7 @@ paths:
                       address has been successfully confirmed. You can now log in.",
                       "Your email address has been successfully confirmed. Admin will
                       review your account, and we will let you know once you can sign
-                      in."'
+                      in.".'
                     example: Your email address has been successfully confirmed. Admin
                       will review your account, and we will let you know once you
                       can sign in.
@@ -266,7 +266,7 @@ paths:
                     example: Your password has been changed successfully. You are
                       now signed in.
         '401':
-          description: Not approved yet
+          description: Not confirmed/approved yet
           content:
             application/json:
               schema:
@@ -274,8 +274,11 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Your account has not been approved by the administrator
-                      yet.
+                    description: 'Specifies why the user cannot be signed in after
+                      updating their password: "You have to confirm your email address
+                      before continuing.", "Your account has not been approved by
+                      the administrator yet.".'
+                    example: You have to confirm your email address before continuing.
         '422':
           description: Invalid password or reset password token
           content:
