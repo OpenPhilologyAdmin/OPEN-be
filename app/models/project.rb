@@ -24,6 +24,7 @@ class Project < ApplicationRecord
   end
 
   def invalidate!
-    update(status: :invalid)
+    self.status = :invalid
+    save
   end
 end

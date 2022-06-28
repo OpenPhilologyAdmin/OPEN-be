@@ -29,6 +29,10 @@ RSpec.describe Project, type: :model do
     it 'creates valid :with_source_file factory' do
       expect(build(:project, :with_source_file)).to be_valid
     end
+
+    it 'creates valid :with_json_source_file factory' do
+      expect(build(:project, :with_json_source_file)).to be_valid
+    end
   end
 
   describe '#source_file_content_type' do

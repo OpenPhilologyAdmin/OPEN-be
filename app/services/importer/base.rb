@@ -3,12 +3,13 @@
 module Importer
   class Base
     include Importer::Concerns::Validators
-    attr_accessor :errors, :extracted_data
+    attr_accessor :extracted_data, :project
+
+    delegate :import_errors, to: :project
 
     def initialize(project:, user:)
       @project = project
       @user = user
-      @errors = {}
     end
 
     def process
@@ -22,23 +23,27 @@ module Importer
     private
 
     def mime_type
-      @mime_type ||= @project.source_file_content_type
+      @mime_type ||= project.source_file_content_type
+    end
+
+    def processed_mime_type
+      mime_type.titleize.gsub(%r{/}, '')
     end
 
     def extractor_klass
-      "Importer::Extractors::#{mime_type.titleize.gsub(%r{/}, '')}".constantize
+      "Importer::Extractors::#{processed_mime_type}".constantize
     end
 
     def extractor
-      @extractor ||= extractor_klass.new(project: @project)
+      @extractor ||= extractor_klass.new(project:)
     end
 
     def inserter
-      @inserter ||= Inserter.new(project: @project, extracted_data: @extracted_data)
+      @inserter ||= Inserter.new(project:, extracted_data: @extracted_data)
     end
 
     def save_owner
-      ProjectRole.create(user: @user, project: @project)
+      ProjectRole.create(user: @user, project:)
     end
 
     def extract_data

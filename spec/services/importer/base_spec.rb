@@ -15,19 +15,12 @@ RSpec.describe Importer::Base, type: :service do
     it 'sets the user' do
       expect(service.instance_variable_get('@user')).to eq(user)
     end
-
-    it 'initializes the errors hash' do
-      expect(service.instance_variable_get('@errors')).to eq({})
-    end
   end
 
   describe '#perform_validations' do
-    before do
-      service.perform_validations
-    end
-
     context 'when file is valid' do
       it 'the service is valid' do
+        service.perform_validations
         expect(service).to be_valid
       end
     end
@@ -35,12 +28,46 @@ RSpec.describe Importer::Base, type: :service do
     context 'when file is missing' do
       let(:project) { create(:project, source_file: nil) }
 
+      before do
+        service.perform_validations
+      end
+
       it 'the service is not valid' do
         expect(service).not_to be_valid
       end
 
       it 'assigns errors to service' do
-        expect(service.errors[:file]).to eq(I18n.t('importer.errors.missing_file'))
+        expect(service.import_errors['file']).to eq(I18n.t('importer.errors.missing_file'))
+      end
+
+      it 'assigns errors to project' do
+        expect(project.import_errors['file']).to eq(I18n.t('importer.errors.missing_file'))
+      end
+    end
+
+    context 'when file format is incorrect' do
+      let(:project) { create(:project, source_file: nil) }
+      let(:data_path) { 'spec/fixtures/invalid/invalid_json.json' }
+
+      before do
+        project.source_file.attach(
+          io:           File.open(Rails.root.join(data_path)),
+          filename:     "#{rand}_project.json",
+          content_type: 'application/json'
+        )
+        service.perform_validations
+      end
+
+      it 'the service is not valid' do
+        expect(service).not_to be_valid
+      end
+
+      it 'assigns errors to service' do
+        expect(service.import_errors['file_format']).to eq([I18n.t('importer.errors.json_files.invalid_json')])
+      end
+
+      it 'assigns errors to project' do
+        expect(project.import_errors['file_format']).to eq([I18n.t('importer.errors.json_files.invalid_json')])
       end
     end
   end
@@ -61,17 +88,22 @@ RSpec.describe Importer::Base, type: :service do
   end
 
   describe '#add_error' do
-    let(:error_key) { :base }
+    let(:error_key) { 'base' }
     let(:error_message) { 'error message' }
 
     it 'assigns error with given details' do
       service.add_error(error_key, error_message)
-      expect(service.errors[error_key]).to eq(error_message)
+      expect(service.import_errors[error_key]).to eq(error_message)
     end
 
     it 'updates project status to :invalid' do
       service.add_error(error_key, error_message)
       expect(project.reload.status).to eq(:invalid)
+    end
+
+    it 'saves errors on project' do
+      service.add_error(error_key, error_message)
+      expect(project.reload.import_errors).to eq({ "#{error_key}": error_message }.stringify_keys)
     end
   end
 
@@ -170,8 +202,8 @@ RSpec.describe Importer::Base, type: :service do
         expect(service).not_to be_valid
       end
 
-      it 'assigns errors to service' do
-        expect(service.errors[:file]).to eq(I18n.t('importer.errors.unsupported_file_format'))
+      it 'assigns errors to project' do
+        expect(project.reload.import_errors['file']).to eq(I18n.t('importer.errors.unsupported_file_format'))
       end
 
       it 'updates project status to :invalid' do
