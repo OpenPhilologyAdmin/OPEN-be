@@ -29,24 +29,22 @@ module Importer
 
       def variants_for(content)
         [
-          [
-            {
-              witness:  default_witness,
-              t:        content,
-              selected: false,
-              deleted:  false
-            }
-          ]
+          TokenVariant.new(
+            witness:  default_witness,
+            t:        content,
+            selected: false,
+            deleted:  false
+          )
         ]
       end
 
       def grouped_variants_for(content)
         [
-          {
+          TokenGroupedVariant.new(
             t:         content,
             witnesses: [default_witness],
             selected:  false
-          }
+          )
         ]
       end
 

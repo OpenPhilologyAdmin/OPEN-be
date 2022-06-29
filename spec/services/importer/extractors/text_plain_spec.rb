@@ -31,23 +31,19 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     let(:expected_index) { described_class::STARTING_INDEX }
     let(:expected_variants) do
       [
-        [
-          {
-            witness:  default_witness,
-            t:        file_content,
-            selected: false,
-            deleted:  false
-          }
-        ]
+        build(:token_variant,
+              witness:  default_witness,
+              t:        file_content,
+              selected: false,
+              deleted:  false)
       ]
     end
     let(:expected_grouped_variants) do
       [
-        {
-          t:         file_content,
-          witnesses: [default_witness],
-          selected:  false
-        }
+        build(:token_grouped_variant,
+              t:         file_content,
+              witnesses: [default_witness],
+              selected:  false)
       ]
     end
     let(:expected_witness) do

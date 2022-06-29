@@ -53,22 +53,22 @@ module Importer
 
         def variants
           @variants ||= @simplified_variants.map do |variant|
-            [{
+            TokenVariant.new(
               witness:  variant[:witness],
               t:        variant[:t],
               selected: false,
               deleted:  false
-            }]
+            )
           end
         end
 
         def grouped_variants
           @grouped_variants ||= variants_hash.map do |(variant, witnesses)|
-            {
+            TokenGroupedVariant.new(
               t:         variant,
               witnesses:,
               selected:  false
-            }
+            )
           end
         end
 
