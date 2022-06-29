@@ -24,7 +24,6 @@ class Project < ApplicationRecord
   end
 
   def invalidate!
-    self.status = :invalid
-    save
+    update(status: :invalid, import_errors:)
   end
 end

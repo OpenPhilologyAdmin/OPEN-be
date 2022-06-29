@@ -33,6 +33,10 @@ RSpec.describe Project, type: :model do
     it 'creates valid :with_json_source_file factory' do
       expect(build(:project, :with_json_source_file)).to be_valid
     end
+
+    it 'creates valid :with_simplified_json_source_file factory' do
+      expect(build(:project, :with_simplified_json_source_file)).to be_valid
+    end
   end
 
   describe '#source_file_content_type' do
@@ -51,10 +55,24 @@ RSpec.describe Project, type: :model do
 
   describe '#invalidate!' do
     let(:project) { create(:project, :status_processing) }
+    let(:import_errors) do
+      {
+        base: I18n.t('importer.errors.missing_file')
+      }.stringify_keys
+    end
+
+    before do
+      project.import_errors = import_errors
+      project.invalidate!
+      project.reload
+    end
 
     it 'changes project status to :invalid' do
-      project.invalidate!
       expect(project.status).to be_invalid
+    end
+
+    it 'saves :import_errors as well' do
+      expect(project.import_errors).to eq(import_errors)
     end
   end
 end

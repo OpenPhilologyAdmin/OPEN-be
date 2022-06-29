@@ -48,5 +48,15 @@ FactoryBot.define do
         )
       end
     end
+
+    trait :with_simplified_json_source_file do
+      after(:build) do |record|
+        record.source_file.attach(
+          io:           File.open(Rails.root.join('spec/fixtures/sample_simplified_project.json')),
+          filename:     "#{rand}_project.json",
+          content_type: 'application/json'
+        )
+      end
+    end
   end
 end

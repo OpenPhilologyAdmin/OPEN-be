@@ -9,7 +9,19 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
   describe '#validate' do
     let(:result) { service.validate }
 
-    context 'when valid file' do
+    context 'when valid standard file' do
+      it 'returns success' do
+        expect(result).to be_success
+      end
+
+      it 'returns empty errors' do
+        expect(result.errors).to be_empty
+      end
+    end
+
+    context 'when valid simplified file' do
+      let(:project) { create(:project, :with_simplified_json_source_file) }
+
       it 'returns success' do
         expect(result).to be_success
       end

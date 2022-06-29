@@ -1,0 +1,8 @@
+{
+  "witnesses":["A","B"],
+  "table":[
+    [ [ "Lorem" ], [ "Lorum" ] ],
+    [ [ "ipsum" ], [ "ipsum" ] ],
+    [ [ "dolor" ], [] ]
+  ]
+}
