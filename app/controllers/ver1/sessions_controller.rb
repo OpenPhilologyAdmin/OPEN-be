@@ -2,7 +2,7 @@
 
 module Ver1
   class SessionsController < ::Devise::SessionsController
-    respond_to :json
+    skip_after_action :verify_authorized
 
     def create
       if empty_login_params?

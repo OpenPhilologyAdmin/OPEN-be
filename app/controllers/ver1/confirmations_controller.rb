@@ -2,6 +2,8 @@
 
 module Ver1
   class ConfirmationsController < ::Devise::ConfirmationsController
+    skip_after_action :verify_authorized
+
     def create
       self.resource = User.send_confirmation_instructions(resource_params)
 
@@ -24,10 +26,7 @@ module Ver1
           }
         )
       else
-        render(
-          json:   resource.errors,
-          status: :unprocessable_entity
-        )
+        respond_with_record_errors(resource, :unprocessable_entity)
       end
     end
 

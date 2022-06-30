@@ -7,9 +7,10 @@ module Importer
 
     delegate :import_errors, to: :project
 
-    def initialize(project:, user:)
+    def initialize(project:, user:, default_witness_name: nil)
       @project = project
       @user = user
+      @default_witness_name = default_witness_name
     end
 
     def process
@@ -35,7 +36,7 @@ module Importer
     end
 
     def extractor
-      @extractor ||= extractor_klass.new(project:)
+      @extractor ||= extractor_klass.new(project:, default_witness_name: @default_witness_name)
     end
 
     def inserter

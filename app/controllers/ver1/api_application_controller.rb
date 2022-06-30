@@ -2,6 +2,8 @@
 
 module Ver1
   class ApiApplicationController < ::ApplicationController
+    include ApiResponders
+
     respond_to :json
 
     after_action :verify_authorized

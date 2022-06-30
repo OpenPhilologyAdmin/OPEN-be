@@ -24,10 +24,7 @@ module Ver1
           json: UserSerializer.new(record).as_json
         )
       else
-        render(
-          json:   record.errors,
-          status: :unprocessable_entity
-        )
+        respond_with_record_errors(record, :unprocessable_entity)
       end
     end
 

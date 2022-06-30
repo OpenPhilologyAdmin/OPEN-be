@@ -6,17 +6,18 @@ RSpec.describe ImportProjectJob, type: :job do
   context 'when resources can be found' do
     let(:project) { create(:project) }
     let(:user) { create(:user) }
+    let(:default_witness_name) { 'Witness name' }
     let(:importer_mock) { instance_double(Importer::Base) }
 
     before do
       allow(Importer::Base).to receive(:new).and_return(importer_mock)
       allow(importer_mock).to receive(:process)
 
-      described_class.perform_now(project.id, user.id)
+      described_class.perform_now(project.id, user.id, default_witness_name)
     end
 
     it 'imports contents of the file' do
-      expect(Importer::Base).to have_received(:new).with(project:, user:)
+      expect(Importer::Base).to have_received(:new).with(project:, user:, default_witness_name:)
       expect(importer_mock).to have_received(:process)
     end
   end

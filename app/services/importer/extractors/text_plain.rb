@@ -52,7 +52,7 @@ module Importer
         [
           Witness.new(
             siglum: default_witness,
-            name:   nil
+            name:   @default_witness_name
           )
         ]
       end

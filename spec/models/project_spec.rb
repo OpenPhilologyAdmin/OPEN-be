@@ -7,6 +7,20 @@ RSpec.describe Project, type: :model do
     subject(:project) { described_class.new }
 
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_length_of(:name).is_at_most(50) }
+    it { is_expected.to validate_length_of(:default_witness_name).is_at_most(50).allow_blank }
+
+    context 'when TXT source file' do
+      subject(:project) { build(:project, :with_source_file) }
+
+      it { is_expected.to validate_presence_of(:default_witness) }
+    end
+
+    context 'when JSON source file' do
+      subject(:project) { build(:project, :with_json_source_file) }
+
+      it { is_expected.not_to validate_presence_of(:default_witness) }
+    end
   end
 
   describe 'factories' do
@@ -73,6 +87,24 @@ RSpec.describe Project, type: :model do
 
     it 'saves :import_errors as well' do
       expect(project.import_errors).to eq(import_errors)
+    end
+  end
+
+  describe '#default_witness_required?' do
+    context 'when TXT source file' do
+      let(:project) { build(:project, :with_source_file) }
+
+      it 'is truthy' do
+        expect(project).to be_default_witness_required
+      end
+    end
+
+    context 'when JSON source file' do
+      let(:project) { build(:project, :with_json_source_file) }
+
+      it 'is falsey' do
+        expect(project).not_to be_default_witness_required
+      end
     end
   end
 end

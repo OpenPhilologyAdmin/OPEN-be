@@ -4,6 +4,7 @@ module Ver1
   class PasswordsController < ::Devise::PasswordsController
     include ::RackSessionFix
 
+    skip_after_action :verify_authorized
     prepend_before_action :require_no_authentication
 
     def create
@@ -28,10 +29,7 @@ module Ver1
           status: :ok
         )
       else
-        render(
-          json:   resource.errors,
-          status: :unprocessable_entity
-        )
+        respond_with_record_errors(resource, :unprocessable_entity)
       end
     end
 

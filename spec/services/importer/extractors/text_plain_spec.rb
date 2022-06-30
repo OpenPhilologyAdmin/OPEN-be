@@ -4,8 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Importer::Extractors::TextPlain, type: :service do
   let(:project) { create(:project, :with_source_file) }
-  let(:service) { described_class.new(project:) }
+  let(:service) { described_class.new(project:, default_witness_name:) }
   let(:default_witness) { project.default_witness }
+  let(:default_witness_name) { 'Witness name' }
 
   describe '#initialize' do
     it 'sets the project' do
@@ -49,7 +50,7 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     let(:expected_witness) do
       build(:witness,
             siglum: default_witness,
-            name:   nil)
+            name:   default_witness_name)
     end
     let(:expected_token) do
       build(:token,

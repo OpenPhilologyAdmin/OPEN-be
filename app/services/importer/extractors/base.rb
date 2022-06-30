@@ -7,9 +7,10 @@ module Importer
 
       delegate :default_witness, :source_file, to: :project
 
-      def initialize(project:)
+      def initialize(project:, default_witness_name: nil)
         @project = project
         @tokens = []
+        @default_witness_name = default_witness_name
       end
 
       def process

@@ -16,6 +16,8 @@ class ProjectPolicy < ApplicationPolicy
   def permitted_attributes_for_create
     %i[
       name
+      default_witness
+      default_witness_name
       source_file: [data filename content_type identify]
     ]
   end

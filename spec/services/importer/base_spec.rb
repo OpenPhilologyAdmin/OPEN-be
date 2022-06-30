@@ -5,7 +5,8 @@ require 'rails_helper'
 RSpec.describe Importer::Base, type: :service do
   let(:project) { create(:project, :with_source_file) }
   let(:user) { create(:user) }
-  let(:service) { described_class.new(project:, user:) }
+  let(:default_witness_name) { 'Witness name' }
+  let(:service) { described_class.new(project:, user:, default_witness_name:) }
 
   describe '#initialize' do
     it 'sets the project' do
@@ -116,6 +117,10 @@ RSpec.describe Importer::Base, type: :service do
 
     it 'passes the project to extractor' do
       expect(extractor.instance_variable_get('@project')).to eq(project)
+    end
+
+    it 'passes the default witness name to extractor' do
+      expect(extractor.instance_variable_get('@default_witness_name')).to eq(default_witness_name)
     end
   end
 

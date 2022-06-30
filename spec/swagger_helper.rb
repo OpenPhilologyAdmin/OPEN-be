@@ -28,7 +28,7 @@ RSpec.configure do |config|
                 items: {
                   type:        :string,
                   description: 'Errors related to $field_name',
-                  example:     'can\'t be blank'
+                  example:     '$field_name can\'t be blank'
                 }
               }
             }
@@ -97,8 +97,13 @@ RSpec.configure do |config|
             type:       :object,
             properties: {
               id:              { type: :integer },
-              name:            { type: :string },
-              default_witness: { type: :string, example: 'A', nullable: true },
+              name:            { type: :string, maximum: 50 },
+              default_witness: {
+                type:        :string,
+                nullable:    true,
+                example:     'A',
+                description: 'It is required when then source file is text/plain'
+              },
               witnesses:       {
                 type:     :array,
                 nullable: true,
