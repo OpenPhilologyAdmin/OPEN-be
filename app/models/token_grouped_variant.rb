@@ -6,4 +6,5 @@ class TokenGroupedVariant
   attribute :witnesses, :array_of_strings, default: -> { [] }
   attribute :t, :string
   attribute :selected, :boolean, default: false
+  attribute :possible, :boolean, default: false
 end

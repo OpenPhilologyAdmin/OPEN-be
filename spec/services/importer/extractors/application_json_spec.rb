@@ -57,23 +57,27 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
                     witness:  'A',
                     t:        'Lorem',
                     selected: false,
+                    possible: false,
                     deleted:  false),
 
               build(:token_variant,
                     witness:  'B',
                     t:        'Lorum',
                     selected: false,
+                    possible: false,
                     deleted:  false)
             ],
             grouped_variants: [
               build(:token_grouped_variant,
                     t:         'Lorem',
                     witnesses: ['A'],
-                    selected:  false),
+                    selected:  false,
+                    possible:  false),
               build(:token_grouped_variant,
                     t:         'Lorum',
                     witnesses: ['B'],
-                    selected:  false)
+                    selected:  false,
+                    possible:  false)
             ])
     end
     let(:expected_token_grouped_variants) do
@@ -85,19 +89,22 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
                     witness:  'A',
                     t:        'ipsum',
                     selected: false,
+                    possible: false,
                     deleted:  false),
 
               build(:token_variant,
                     witness:  'B',
                     t:        'ipsum',
                     selected: false,
+                    possible: false,
                     deleted:  false)
             ],
             grouped_variants: [
               build(:token_grouped_variant,
                     t:         'ipsum',
                     witnesses: %w[A B],
-                    selected:  false)
+                    selected:  false,
+                    possible:  false)
             ])
     end
     let(:expected_token_empty_variant) do
@@ -109,23 +116,27 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
                     witness:  'A',
                     t:        'dolor',
                     selected: false,
+                    possible: false,
                     deleted:  false),
 
               build(:token_variant,
                     witness:  'B',
                     t:        described_class::EMPTY_VARIANT_VALUE,
                     selected: false,
+                    possible: false,
                     deleted:  false)
             ],
             grouped_variants: [
               build(:token_grouped_variant,
                     t:         'dolor',
                     witnesses: ['A'],
-                    selected:  false),
+                    selected:  false,
+                    possible:  false),
               build(:token_grouped_variant,
                     t:         described_class::EMPTY_VARIANT_VALUE,
                     witnesses: ['B'],
-                    selected:  false)
+                    selected:  false,
+                    possible:  false)
             ])
     end
 

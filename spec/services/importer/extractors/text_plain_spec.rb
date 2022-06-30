@@ -36,6 +36,7 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
               witness:  default_witness,
               t:        file_content,
               selected: false,
+              possible: false,
               deleted:  false)
       ]
     end
@@ -44,7 +45,8 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
         build(:token_grouped_variant,
               t:         file_content,
               witnesses: [default_witness],
-              selected:  false)
+              selected:  false,
+              possible:  false)
       ]
     end
     let(:expected_witness) do

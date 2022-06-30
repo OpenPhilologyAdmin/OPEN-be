@@ -9,5 +9,6 @@ FactoryBot.define do
     witnesses { [Faker::Alphanumeric.alpha(number: 2), Faker::Alphanumeric.alpha(number: 2)] }
     t { Faker::Lorem.sentence }
     selected { false }
+    possible { false }
   end
 end

@@ -57,6 +57,7 @@ module Importer
               witness:  variant[:witness],
               t:        variant[:t],
               selected: false,
+              possible: false,
               deleted:  false
             )
           end
@@ -67,7 +68,8 @@ module Importer
             TokenGroupedVariant.new(
               t:         variant,
               witnesses:,
-              selected:  false
+              selected:  false,
+              possible:  false
             )
           end
         end

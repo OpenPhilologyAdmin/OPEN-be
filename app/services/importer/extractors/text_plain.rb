@@ -33,6 +33,7 @@ module Importer
             witness:  default_witness,
             t:        content,
             selected: false,
+            possible: false,
             deleted:  false
           )
         ]
@@ -43,7 +44,8 @@ module Importer
           TokenGroupedVariant.new(
             t:         content,
             witnesses: [default_witness],
-            selected:  false
+            selected:  false,
+            possible:  false
           )
         ]
       end
