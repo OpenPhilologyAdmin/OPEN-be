@@ -9,10 +9,10 @@ module Ver1
       pagy, records = pagy(policy_scope(User))
 
       render(
-        json: UsersSerializer.new(
+        json: PaginatedRecordsSerializer.new(
           records,
           metadata: pagy_metadata(pagy)
-        ).as_json
+        )
       )
     end
 
@@ -21,7 +21,7 @@ module Ver1
       authorize record, :create?
       if record.save
         render(
-          json: UserSerializer.new(record).as_json
+          json: UserSerializer.new(record)
         )
       else
         respond_with_record_errors(record, :unprocessable_entity)
@@ -34,7 +34,7 @@ module Ver1
       NotificationMailer.account_approved(record).deliver_later if record_approved
 
       render(
-        json: UserSerializer.new(record).as_json
+        json: UserSerializer.new(record)
       )
     end
   end

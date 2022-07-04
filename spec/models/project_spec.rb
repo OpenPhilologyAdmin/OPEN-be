@@ -51,6 +51,10 @@ RSpec.describe Project, type: :model do
     it 'creates valid :with_simplified_json_source_file factory' do
       expect(build(:project, :with_simplified_json_source_file)).to be_valid
     end
+
+    it 'creates valid :with_owner factory' do
+      expect(build(:project, :with_owner)).to be_valid
+    end
   end
 
   describe '#source_file_content_type' do
@@ -104,6 +108,53 @@ RSpec.describe Project, type: :model do
 
       it 'is falsey' do
         expect(project).not_to be_default_witness_required
+      end
+    end
+  end
+
+  describe 'witnesses_count' do
+    context 'when there are no witnesses at all' do
+      it 'is 0' do
+        expect(build(:project, witnesses: []).witnesses_count).to eq(0)
+      end
+    end
+
+    context 'when there are some witnesses' do
+      it 'returns number of witnesses' do
+        expect(build(:project, witnesses: build_list(:witness, 2)).witnesses_count).to eq(2)
+      end
+    end
+  end
+
+  describe '#creator' do
+    let(:project) { create(:project) }
+    let(:owner) { create(:project_role, :owner, project:).user }
+
+    before do
+      create(:project_role)
+      owner
+      create(:project_role, :owner, project:)
+    end
+
+    it 'equals the first person who has been added as an owner' do
+      expect(project.creator).to eq(owner)
+    end
+  end
+
+  describe '#created_by' do
+    let(:project) { create(:project) }
+
+    context 'when there is an owner of project' do
+      let!(:owner) { create(:project_role, :owner, project:).user }
+
+      it 'equals the first person who has been added as an owner' do
+        expect(project.created_by).to eq(owner.name)
+      end
+    end
+
+    context 'when the owner is missing' do
+      it 'is nil' do
+        expect(project.created_by).to be_nil
       end
     end
   end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Witness
-  include ActiveModel::Model
+  include StoreModel::Model
 
-  attr_accessor :siglum, :name
+  attribute :siglum, :string
+  attribute :name, :string
 end

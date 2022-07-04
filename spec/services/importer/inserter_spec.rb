@@ -12,7 +12,9 @@ RSpec.describe Importer::Inserter, type: :service do
     before { service.process }
 
     it 'passes correct witnesses to project' do
-      expect(service.project.witnesses).to eq(extracted_data.witnesses.as_json)
+      service.project.witnesses.each_with_index do |witness, index|
+        expect(witness.attributes).to eq(extracted_data.witnesses[index].attributes)
+      end
     end
 
     it 'updates project status to :processed' do

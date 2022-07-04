@@ -5,7 +5,7 @@ require 'rails_helper'
 describe ProjectPolicy do
   subject(:record_policy) { described_class }
 
-  permissions :create?, :show? do
+  permissions :create?, :show?, :index? do
     context 'when logged in admin' do
       context 'when admin is approved' do
         let(:current_user) { build(:user, :admin, :approved) }
@@ -33,7 +33,7 @@ describe ProjectPolicy do
     end
   end
 
-  permissions :index?, :new?, :update?, :edit?, :destroy? do
+  permissions :new?, :update?, :edit?, :destroy? do
     context 'when logged in admin' do
       context 'when admin is approved' do
         let(:current_user) { build(:user, :admin, :approved) }

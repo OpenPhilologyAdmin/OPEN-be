@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ProjectPolicy < ApplicationPolicy
+  def index?
+    approved_admin?
+  end
+
   def create?
     approved_admin?
   end

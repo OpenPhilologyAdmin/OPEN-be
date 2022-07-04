@@ -3,7 +3,12 @@
 require 'rails_helper'
 
 describe ProjectSerializer do
-  let(:resource) { create(:project) }
+  let(:resource) do
+    create(:project,
+           :with_owner,
+           created_at: Time.zone.yesterday.beginning_of_day,
+           updated_at: Time.zone.now.beginning_of_day)
+  end
   let(:serializer) { described_class.new(resource) }
 
   describe '#as_json' do
@@ -13,7 +18,11 @@ describe ProjectSerializer do
         name:            resource.name,
         default_witness: resource.default_witness,
         witnesses:       resource.witnesses,
-        status:          resource.status
+        status:          resource.status,
+        created_by:      resource.created_by,
+        creation_date:   resource.created_at,
+        last_edit_date:  resource.updated_at,
+        witnesses_count: resource.witnesses_count
       }.as_json
     end
 

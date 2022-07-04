@@ -15,11 +15,10 @@ Rails.application.routes.draw do
         post 'users/session-token', to: 'session_tokens#create'
       end
 
-      get 'users', to: 'users#index'
-      post 'users', to: 'users#create'
-      patch 'users/:id/approve', to: 'users#approve'
-      post 'projects', to: 'projects#create'
-      get 'projects/:id', to: 'projects#show'
+      resources :users, only: %i[index create] do
+        patch 'approve', on: :member
+      end
+      resources :projects, only: %i[index create show]
     end
   end
 

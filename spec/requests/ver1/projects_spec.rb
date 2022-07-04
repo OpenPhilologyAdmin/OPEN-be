@@ -5,6 +5,77 @@ require 'swagger_helper'
 RSpec.describe 'v1/projects', type: :request do
   path '/api/v1/projects' do
     let(:user) { create(:user, :admin, :approved) }
+    get('Retrieves paginated list of projects') do
+      let(:page) { 1 }
+      let(:items) { 10 }
+
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description('Allows retrieving all projects list.')
+
+      response '200', 'Projects can be retrieved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        parameter name:        :items, in: :query,
+                  schema:      {
+                    type:    :integer,
+                    example: 1,
+                    default: 10
+                  },
+                  required:    false,
+                  description: 'Number of records per page'
+
+        parameter name:        :page, in: :query,
+                  schema:      {
+                    type:    :integer,
+                    default: 1,
+                    example: 1
+                  },
+                  required:    false,
+                  description: 'Page number'
+
+        before do
+          create_list(:project, 3)
+        end
+
+        schema type:       :object,
+               properties:
+                           {
+                             records:      {
+                               type:  :array,
+                               items: { '$ref' => '#/components/schemas/project' }
+                             },
+                             count:        {
+                               type:        :integer,
+                               description: 'Number of all records',
+                               example:     50
+                             },
+                             current_page: {
+                               type:        :integer,
+                               description: 'Current page',
+                               example:     1,
+                               default:     1
+                             },
+                             pages:        {
+                               type:        :integer,
+                               description: 'Number of all pages',
+                               example:     5
+                             }
+                           }
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+    end
 
     post('Creates a new project') do
       tags 'Projects'
@@ -113,7 +184,7 @@ RSpec.describe 'v1/projects', type: :request do
 
   path '/api/v1/projects/{id}' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:id) { create(:project).id }
+    let(:id) { create(:project, :with_owner).id }
 
     get('Retrieves project details') do
       tags 'Projects'

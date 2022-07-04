@@ -4,18 +4,7 @@ FactoryBot.define do
   factory :project do
     name { Faker::Lorem.word }
     default_witness { 'D' }
-    witnesses do
-      [
-        {
-          witness: 'D',
-          name:    'D witness'
-        },
-        {
-          witness: 'E',
-          name:    'E witness'
-        }
-      ]
-    end
+    witnesses { build_list(:witness, 3) }
 
     trait :status_processing do
       status { :processing }
@@ -27,6 +16,12 @@ FactoryBot.define do
 
     trait :status_invalid do
       status { :invalid }
+    end
+
+    trait :with_owner do
+      after(:create) do |record|
+        create(:project_role, :owner, project: record)
+      end
     end
 
     trait :with_source_file do

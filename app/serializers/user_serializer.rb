@@ -8,7 +8,7 @@ class UserSerializer
     @record = record
   end
 
-  def as_json
+  def as_json(_options = {})
     @record.as_json(
       only:    RECORD_ATTRIBUTES,
       methods: RECORD_METHODS

@@ -33,5 +33,8 @@ module CollationBe
       config.credentials.key_path = "#{filename}.key" if File.exist? "#{filename}.key"
     end
     config.active_job.queue_adapter = :sidekiq
+
+    # ensure the API uses ISO 8601 date and time format
+    ActiveSupport::JSON::Encoding.use_standard_json_time_format = true
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_27_052712) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_01_062307) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,7 +61,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_27_052712) do
   create_table "projects", force: :cascade do |t|
     t.string "name"
     t.string "default_witness"
-    t.jsonb "witnesses"
+    t.jsonb "witnesses", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"

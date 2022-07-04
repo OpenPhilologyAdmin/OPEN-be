@@ -115,6 +115,9 @@ components:
                 type: string
                 description: Siglum
                 example: A
+        witnesses_count:
+          type: integer
+          description: Number of witnesses
         status:
           type: string
           enum:
@@ -122,6 +125,20 @@ components:
           - processed
           - invalid
           default: processing
+        created_by:
+          type: string
+          default: John Doe
+          nullable: true
+        creation_date:
+          type: string
+          format: date_time
+          description: Date in ISO 8601 format
+          example: '2022-06-30T00:00:00.000+02:00'
+        last_edit_date:
+          type: string
+          format: date_time
+          description: Date in ISO 8601 format
+          example: '2022-07-01T00:00:00.000+02:00'
       required:
       - name
     login_required:
@@ -293,6 +310,61 @@ paths:
             schema:
               "$ref": "#/components/schemas/user_reset_password"
   "/api/v1/projects":
+    get:
+      summary: Retrieves paginated list of projects
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Allows retrieving all projects list.
+      parameters:
+      - name: items
+        in: query
+        schema:
+          type: integer
+          example: 1
+          default: 10
+        required: false
+        description: Number of records per page
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+          example: 1
+        required: false
+        description: Page number
+      responses:
+        '200':
+          description: Projects can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/project"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+                  current_page:
+                    type: integer
+                    description: Current page
+                    example: 1
+                    default: 1
+                  pages:
+                    type: integer
+                    description: Number of all pages
+                    example: 5
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
     post:
       summary: Creates a new project
       tags:
