@@ -14,14 +14,15 @@ RSpec.describe 'v1/passwords', type: :request do
 
       response '200', 'Reset password sent' do
         let(:Authorization) { nil }
+        let(:requester) { create(:user, :admin, :approved) }
         let(:user) do
           {
-            user: { email: 'email@example.com' }
+            user: { email: requester.email }
           }
         end
 
         before do
-          allow(User).to receive(:send_reset_password_instructions)
+          allow(User).to receive(:send_reset_password_instructions).and_return(requester)
         end
 
         schema type:       :object,
@@ -36,6 +37,24 @@ RSpec.describe 'v1/passwords', type: :request do
 
         it 'triggers User.send_reset_password_instructions' do
           expect(User).to have_received(:send_reset_password_instructions)
+        end
+      end
+
+      response '422', 'Invalid or empty email address given' do
+        let(:Authorization) { nil }
+        let(:user) do
+          {
+            user: { email: 'invalid' }
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+
+        it 'returns only email related errors' do
+          parsed_response = JSON.parse(response.body, symbolize_names: true)
+          expect(parsed_response.keys).to match_array(%i[email])
         end
       end
     end
@@ -68,8 +87,8 @@ RSpec.describe 'v1/passwords', type: :request do
 
         header 'Authorization',
                schema:      { type: :string },
-               description: 'The JWT token for user with the following format:'\
-                            ' Bearer {token}'
+               description: 'The JWT token for user with the following format: ' \
+                            'Bearer {token}'
 
         schema type:       :object,
                properties: {
@@ -89,8 +108,8 @@ RSpec.describe 'v1/passwords', type: :request do
         schema type: :object, properties: {
           error: {
             type:        :string,
-            description: 'Specifies why the user cannot be signed in after updating their password: '\
-                         "\"#{I18n.t('devise.failure.unconfirmed')}\", "\
+            description: 'Specifies why the user cannot be signed in after updating their password: ' \
+                         "\"#{I18n.t('devise.failure.unconfirmed')}\", " \
                          "\"#{I18n.t('devise.failure.not_approved')}\".",
             example:     I18n.t('devise.failure.unconfirmed')
           }

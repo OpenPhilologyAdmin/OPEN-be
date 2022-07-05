@@ -253,6 +253,12 @@ paths:
                     example: If your email address exists in our database, you will
                       receive a password recovery link at your email address in a
                       few minutes.
+        '422':
+          description: Invalid or empty email address given
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
       requestBody:
         content:
           application/json:

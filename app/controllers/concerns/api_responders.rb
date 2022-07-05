@@ -7,8 +7,12 @@ module ApiResponders
 
   def respond_with_record_errors(record, status = :unprocessable_entity)
     render(
-      json:   record.errors.as_json(full_messages: true),
+      json:   record_errors(record),
       status:
     )
+  end
+
+  def record_errors(record)
+    record.errors.as_json(full_messages: true)
   end
 end

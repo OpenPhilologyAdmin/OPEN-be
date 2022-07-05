@@ -8,13 +8,22 @@ module Ver1
     prepend_before_action :require_no_authentication
 
     def create
-      User.send_reset_password_instructions(resource_params)
-      render(
-        json:   {
-          message: I18n.t('devise.passwords.send_paranoid_instructions')
-        },
-        status: :ok
-      )
+      record = User.send_reset_password_instructions(resource_params)
+      record.valid?
+      if record.errors[:email].empty?
+        render(
+          json:   {
+            message: I18n.t('devise.passwords.send_paranoid_instructions')
+          },
+          status: :ok
+        )
+      else
+        # Respond with email-related errors
+        render(
+          json:   record_errors(record).slice(:email),
+          status: :unprocessable_entity
+        )
+      end
     end
 
     def update
