@@ -319,6 +319,17 @@ GEM
       simplecov (>= 0.17.0)
       tty-which (~> 0.4.0)
       virtus (~> 1.0)
+    sentry-rails (5.3.1)
+      railties (>= 5.0)
+      sentry-ruby-core (~> 5.3.1)
+    sentry-ruby (5.3.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      sentry-ruby-core (= 5.3.1)
+    sentry-ruby-core (5.3.1)
+      concurrent-ruby
+    sentry-sidekiq (5.3.1)
+      sentry-ruby-core (~> 5.3.1)
+      sidekiq (>= 3.0)
     sexp_processor (4.16.1)
     shoulda-matchers (5.1.0)
       activesupport (>= 5.2.0)
@@ -395,6 +406,9 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rspec
   rubycritic
+  sentry-rails
+  sentry-ruby
+  sentry-sidekiq
   shoulda-matchers (~> 5.0)
   sidekiq
   simplecov
