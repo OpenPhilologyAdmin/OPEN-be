@@ -17,6 +17,10 @@ class UserPolicy < ApplicationPolicy
     user.blank?
   end
 
+  def me?
+    approved_admin? && record == user
+  end
+
   def permitted_attributes_for_create
     %i[
       name

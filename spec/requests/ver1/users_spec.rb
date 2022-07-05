@@ -224,4 +224,36 @@ RSpec.describe 'v1/users', type: :request do
       end
     end
   end
+
+  path '/api/v1/users/me' do
+    let(:user) { create(:user, :admin, :approved) }
+
+    get('Retrieves logged in user details') do
+      tags 'Users'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+
+      response '200', 'User details can be retrieved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/user'
+
+        run_test!
+
+        it 'returns details of logged in user' do
+          parsed_response = JSON.parse(response.body, symbolize_names: true)
+          expect(parsed_response[:id]).to eq(user.id)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+    end
+  end
 end

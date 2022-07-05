@@ -37,5 +37,12 @@ module Ver1
         json: UserSerializer.new(record)
       )
     end
+
+    def me
+      record = authorize current_user
+      render(
+        json: UserSerializer.new(record)
+      )
+    end
   end
 end

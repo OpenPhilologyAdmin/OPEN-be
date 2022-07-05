@@ -33,6 +33,42 @@ describe UserPolicy do
     end
   end
 
+  permissions :me? do
+    context 'when logged in admin' do
+      context 'when admin is approved' do
+        let(:current_user) { build(:user, :admin, :approved) }
+
+        context 'when own account' do
+          it 'grants access' do
+            expect(record_policy).to permit(current_user, current_user)
+          end
+        end
+
+        context 'when other user account' do
+          it 'denies access' do
+            expect(record_policy).not_to permit(current_user, build(:user))
+          end
+        end
+      end
+
+      context 'when admin is not approved' do
+        let(:current_user) { build(:user, :admin, :not_approved) }
+
+        it 'denies access' do
+          expect(record_policy).not_to permit(current_user, build(:user))
+        end
+      end
+    end
+
+    context 'when not logged in' do
+      let(:current_user) { nil }
+
+      it 'denies access' do
+        expect(record_policy).not_to permit(current_user, build(:user))
+      end
+    end
+  end
+
   permissions :approve? do
     context 'when logged in admin' do
       context 'when admin is approved' do

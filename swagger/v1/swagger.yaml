@@ -717,6 +717,26 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
+  "/api/v1/users/me":
+    get:
+      summary: Retrieves logged in user details
+      tags:
+      - Users
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: User details can be retrieved
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
 servers:
 - url: https://{defaultHost}
   variables:
