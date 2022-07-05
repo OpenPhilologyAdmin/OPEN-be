@@ -38,5 +38,18 @@ module Ver1
         json: ProjectSerializer.new(record)
       )
     end
+
+    def destroy
+      record = Project.find(params[:id])
+      authorize record, :destroy?
+
+      record.destroy
+      render(
+        json:   {
+          message: I18n.t('general.notifications.deleted')
+        },
+        status: :ok
+      )
+    end
   end
 end

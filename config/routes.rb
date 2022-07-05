@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       resources :users, only: %i[index create] do
         patch 'approve', on: :member
       end
-      resources :projects, only: %i[index create show]
+      resources :projects, only: %i[index create show destroy]
     end
   end
 

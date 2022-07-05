@@ -184,7 +184,7 @@ RSpec.describe 'v1/projects', type: :request do
 
   path '/api/v1/projects/{id}' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:id) { create(:project, :with_owner).id }
+    let(:id) { create(:project).id }
 
     get('Retrieves project details') do
       tags 'Projects'
@@ -212,6 +212,68 @@ RSpec.describe 'v1/projects', type: :request do
         let(:Authorization) { nil }
 
         schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+
+    delete('Deletes the project') do
+      let(:record) { create(:project) }
+      let(:id) { record.id }
+
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Deletes the project. Available only for project creators.'
+
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of project'
+
+      response '200', 'Project successfully deleted' do
+        let(:user) { create(:project_role, :owner, project: record).user }
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.notifications.deleted')
+                 }
+               }
+
+        run_test!
+
+        it 'deletes the project' do
+          expect(Project.where(id:)).to be_empty
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '403', 'Request forbidden if not created the project' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/forbidden_request'
 
         run_test!
       end

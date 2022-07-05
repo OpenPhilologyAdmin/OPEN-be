@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :project_role do
-    user
+    user { create(:user, :admin, :approved) }
     project
 
     trait :owner do

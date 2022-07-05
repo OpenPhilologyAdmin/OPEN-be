@@ -458,6 +458,49 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+    delete:
+      summary: Deletes the project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Deletes the project. Available only for project creators.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of project
+      responses:
+        '200':
+          description: Project successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Record successfully deleted
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '403':
+          description: Request forbidden if not created the project
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/forbidden_request"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users/session-token":
     post:
       summary: Generates new JWT token

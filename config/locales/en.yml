@@ -29,6 +29,8 @@ en:
       forbidden_request: Not authorized to perform this action.
       login_required: Login required.
       not_found: Record not found.
+    notifications:
+      deleted: 'Record successfully deleted'
   importer:
     errors:
       unsupported_file_format: 'File format is not supported'

@@ -17,6 +17,10 @@ class ProjectPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def destroy?
+    approved_admin? && record.creator == user
+  end
+
   def permitted_attributes_for_create
     %i[
       name

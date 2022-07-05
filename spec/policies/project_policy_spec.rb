@@ -33,7 +33,46 @@ describe ProjectPolicy do
     end
   end
 
-  permissions :new?, :update?, :edit?, :destroy? do
+  permissions :destroy? do
+    context 'when logged in admin' do
+      context 'when admin is approved' do
+        let(:current_user) { build(:user, :admin, :approved) }
+        let(:project) { build(:project) }
+
+        context 'when admin is a creator of the project' do
+          it 'grants access' do
+            allow(project).to receive(:creator).and_return(current_user)
+            expect(record_policy).to permit(current_user, project)
+          end
+        end
+
+        context 'when admin is not a creator of the project' do
+          it 'denies access' do
+            allow(project).to receive(:creator).and_return(nil)
+            expect(record_policy).not_to permit(current_user, project)
+          end
+        end
+      end
+
+      context 'when admin is not approved' do
+        let(:current_user) { build(:user, :admin, :not_approved) }
+
+        it 'denies access' do
+          expect(record_policy).not_to permit(current_user, build(:project))
+        end
+      end
+    end
+
+    context 'when not logged in' do
+      let(:current_user) { nil }
+
+      it 'denies access' do
+        expect(record_policy).not_to permit(current_user, build(:project))
+      end
+    end
+  end
+
+  permissions :new?, :update?, :edit? do
     context 'when logged in admin' do
       context 'when admin is approved' do
         let(:current_user) { build(:user, :admin, :approved) }
