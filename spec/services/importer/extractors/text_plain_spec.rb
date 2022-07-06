@@ -51,8 +51,9 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     end
     let(:expected_witness) do
       build(:witness,
-            siglum: default_witness,
-            name:   default_witness_name)
+            siglum:  default_witness,
+            name:    default_witness_name,
+            default: true)
     end
     let(:expected_token) do
       build(:token,

@@ -5,4 +5,5 @@ class Witness
 
   attribute :siglum, :string
   attribute :name, :string
+  attribute :default, :boolean, default: false
 end

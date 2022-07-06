@@ -2,6 +2,10 @@
 
 FactoryBot.define do
   factory :project do
+    transient do
+      creator { create(:user, :admin, :approved) }
+    end
+
     name { Faker::Lorem.word }
     default_witness { 'D' }
     witnesses { build_list(:witness, 3) }
@@ -18,9 +22,9 @@ FactoryBot.define do
       status { :invalid }
     end
 
-    trait :with_owner do
-      after(:create) do |record|
-        create(:project_role, :owner, project: record)
+    trait :with_creator do
+      after(:create) do |record, evaluator|
+        create(:project_role, :owner, project: record, user: evaluator.creator)
       end
     end
 

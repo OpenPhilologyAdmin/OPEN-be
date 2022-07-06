@@ -8,5 +8,6 @@ FactoryBot.define do
     end
     siglum { Faker::Alphanumeric.alpha(number: 2) }
     name { Faker::Lorem.sentence }
+    default { false }
   end
 end

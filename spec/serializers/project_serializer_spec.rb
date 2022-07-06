@@ -5,7 +5,7 @@ require 'rails_helper'
 describe ProjectSerializer do
   let(:resource) do
     create(:project,
-           :with_owner,
+           :with_creator,
            created_at: Time.zone.yesterday.beginning_of_day,
            updated_at: Time.zone.now.beginning_of_day)
   end

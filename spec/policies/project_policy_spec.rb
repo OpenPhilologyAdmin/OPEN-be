@@ -37,18 +37,19 @@ describe ProjectPolicy do
     context 'when logged in admin' do
       context 'when admin is approved' do
         let(:current_user) { build(:user, :admin, :approved) }
-        let(:project) { build(:project) }
 
         context 'when admin is a creator of the project' do
+          let(:project) { create(:project, :with_creator, creator: current_user) }
+
           it 'grants access' do
-            allow(project).to receive(:creator).and_return(current_user)
             expect(record_policy).to permit(current_user, project)
           end
         end
 
         context 'when admin is not a creator of the project' do
+          let(:project) { create(:project, :with_creator) }
+
           it 'denies access' do
-            allow(project).to receive(:creator).and_return(nil)
             expect(record_policy).not_to permit(current_user, project)
           end
         end

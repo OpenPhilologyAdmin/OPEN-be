@@ -258,7 +258,7 @@ RSpec.describe 'v1/projects', type: :request do
         run_test!
 
         it 'deletes the project' do
-          expect(Project.where(id:)).to be_empty
+          expect(Project).not_to exist(id:)
         end
       end
 

@@ -52,8 +52,8 @@ RSpec.describe Project, type: :model do
       expect(build(:project, :with_simplified_json_source_file)).to be_valid
     end
 
-    it 'creates valid :with_owner factory' do
-      expect(build(:project, :with_owner)).to be_valid
+    it 'creates valid :with_creator factory' do
+      expect(build(:project, :with_creator)).to be_valid
     end
   end
 

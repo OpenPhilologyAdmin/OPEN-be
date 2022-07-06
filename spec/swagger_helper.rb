@@ -115,10 +115,14 @@ RSpec.configure do |config|
                       description: 'Full name of witness',
                       example:     'Lorem ipsum'
                     },
-                    witness: {
+                    siglum:  {
                       type:        :string,
                       description: 'Siglum',
                       example:     'A'
+                    },
+                    default: {
+                      type:    :boolean,
+                      example: false
                     }
                   }
                 }
@@ -140,6 +144,25 @@ RSpec.configure do |config|
               }
             },
             required:   ['name']
+          },
+          witness:             {
+            type:       :object,
+            properties: {
+              name:    {
+                type:        :string,
+                description: 'Full name of witness',
+                example:     'Lorem ipsum'
+              },
+              siglum:  {
+                type:        :string,
+                description: 'Siglum',
+                example:     'A'
+              },
+              default: {
+                type:    :boolean,
+                example: false
+              }
+            }
           },
           login_required:      {
             type:       :object,

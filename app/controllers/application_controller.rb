@@ -7,7 +7,7 @@ class ApplicationController < ActionController::API
 
   # :nocov:
   def set_sentry_context
-    return unless Rails.application.credentials.sentry_dsn
+    return unless Rails.env.production?
 
     Sentry.set_extras(url: request.url)
     return unless user_signed_in?

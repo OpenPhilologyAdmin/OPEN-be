@@ -111,10 +111,13 @@ components:
                 type: string
                 description: Full name of witness
                 example: Lorem ipsum
-              witness:
+              siglum:
                 type: string
                 description: Siglum
                 example: A
+              default:
+                type: boolean
+                example: false
         witnesses_count:
           type: integer
           description: Number of witnesses
@@ -141,6 +144,20 @@ components:
           example: '2022-07-01T00:00:00.000+02:00'
       required:
       - name
+    witness:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Full name of witness
+          example: Lorem ipsum
+        siglum:
+          type: string
+          description: Siglum
+          example: A
+        default:
+          type: boolean
+          example: false
     login_required:
       type: object
       properties:
@@ -743,6 +760,58 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
+  "/api/v1/projects/{project_id}/witnesses":
+    get:
+      summary: Retrieves witnesses of the specified project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Get witnesses of the project.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of project
+      responses:
+        '200':
+          description: Witnesses can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/witness"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+                  current_page:
+                    type: integer
+                    description: Current page
+                    example: 1
+                    default: 1
+                  pages:
+                    type: integer
+                    description: Number of all pages
+                    example: 5
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
 servers:
 - url: https://{defaultHost}
   variables:
