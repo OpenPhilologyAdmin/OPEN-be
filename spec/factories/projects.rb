@@ -4,11 +4,20 @@ FactoryBot.define do
   factory :project do
     transient do
       creator { create(:user, :admin, :approved) }
+      witnesses_number { 3 }
     end
 
     name { Faker::Lorem.word }
-    default_witness { 'D' }
-    witnesses { build_list(:witness, 3) }
+    default_witness { Faker::Alphanumeric.alpha(number: 2) }
+
+    witnesses do
+      build_list(:witness, witnesses_number) do |witness, index|
+        next unless index.zero?
+
+        # make first witness the default one
+        witness.siglum = default_witness
+      end
+    end
 
     trait :status_processing do
       status { :processing }

@@ -21,6 +21,22 @@ class ProjectPolicy < ApplicationPolicy
     approved_admin? && record.creator == user
   end
 
+  def manage_witnesses?
+    show?
+  end
+
+  def index_witnesses?
+    manage_witnesses?
+  end
+
+  def update_witnesses?
+    manage_witnesses?
+  end
+
+  def destroy_witnesses?
+    manage_witnesses? && record.witnesses_count > 1
+  end
+
   def permitted_attributes_for_create
     %i[
       name

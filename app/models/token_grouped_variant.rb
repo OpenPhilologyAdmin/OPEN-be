@@ -7,4 +7,8 @@ class TokenGroupedVariant
   attribute :t, :string
   attribute :selected, :boolean, default: false
   attribute :possible, :boolean, default: false
+
+  def for_witness?(siglum)
+    witnesses.include?(siglum)
+  end
 end

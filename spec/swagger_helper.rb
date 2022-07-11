@@ -110,6 +110,11 @@ RSpec.configure do |config|
                 items:    {
                   type:       :object,
                   properties: {
+                    id:      {
+                      type:        :string,
+                      description: 'ID, It is the same as Siglum',
+                      example:     'A'
+                    },
                     name:    {
                       type:        :string,
                       description: 'Full name of witness',
@@ -148,10 +153,17 @@ RSpec.configure do |config|
           witness:             {
             type:       :object,
             properties: {
+              id:      {
+                type:        :string,
+                description: 'ID, It is the same as Siglum',
+                example:     'A'
+              },
               name:    {
                 type:        :string,
                 description: 'Full name of witness',
-                example:     'Lorem ipsum'
+                example:     'Lorem ipsum',
+                maximum:     50,
+                nullable:    true
               },
               siglum:  {
                 type:        :string,
@@ -161,6 +173,28 @@ RSpec.configure do |config|
               default: {
                 type:    :boolean,
                 example: false
+              }
+            }
+          },
+          witness_update:      {
+            type:       :object,
+            properties: {
+              witness: {
+                type:       :object,
+                properties: {
+                  name:    {
+                    type:        :string,
+                    description: 'Full name of witness',
+                    example:     'Lorem ipsum',
+                    maximum:     50,
+                    nullable:    true
+                  },
+                  default: {
+                    type:        :boolean,
+                    description: 'Whether it should be a default witness of the project',
+                    example:     false
+                  }
+                }
               }
             }
           },

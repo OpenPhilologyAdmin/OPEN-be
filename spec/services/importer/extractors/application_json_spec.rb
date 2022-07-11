@@ -27,7 +27,9 @@ RSpec.shared_examples 'extracting data from JSON file' do
   end
 
   it 'returns correct witnesses' do
-    expect(result.witnesses.as_json).to eq(expected_witnesses.as_json)
+    result.witnesses.each_with_index do |witness, index|
+      expect(witness.attributes).to eq(expected_witnesses[index].attributes)
+    end
   end
 end
 

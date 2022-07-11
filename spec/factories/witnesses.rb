@@ -6,8 +6,11 @@ FactoryBot.define do
     initialize_with do
       new(attributes)
     end
-    siglum { Faker::Alphanumeric.alpha(number: 2) }
+    siglum { Faker::Alphanumeric.unique.alpha(number: 3) }
     name { Faker::Lorem.sentence }
-    default { false }
+
+    trait :with_project do
+      parent { build(:project) }
+    end
   end
 end

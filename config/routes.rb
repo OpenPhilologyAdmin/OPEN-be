@@ -20,7 +20,7 @@ Rails.application.routes.draw do
         get 'me', on: :collection
       end
       resources :projects, only: %i[index create show destroy] do
-        resources :witnesses, only: [:index]
+        resources :witnesses, only: %i[index update destroy]
       end
     end
   end

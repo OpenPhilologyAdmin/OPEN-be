@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WitnessSerializer
-  RECORD_ATTRIBUTES = %i[default name siglum].freeze
+  RECORD_ATTRIBUTES = %i[id default name siglum].freeze
 
   def initialize(record)
     @record = record

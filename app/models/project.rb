@@ -19,6 +19,7 @@ class Project < ApplicationRecord
   validates :name, presence: true, length: { maximum: 50 }
   validates :default_witness, presence: true, if: :default_witness_required?
   validates :default_witness_name, length: { maximum: 50, allow_blank: true }
+  validates :witnesses, store_model: { merge_array_errors: true }
 
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy
@@ -52,5 +53,10 @@ class Project < ApplicationRecord
 
   def created_by
     creator&.name
+  end
+
+  def find_witness!(siglum)
+    selected_witness = witnesses.find { |witness| witness.siglum == siglum }
+    selected_witness.presence || raise(ActiveRecord::RecordNotFound)
   end
 end

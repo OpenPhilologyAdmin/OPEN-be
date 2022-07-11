@@ -3,13 +3,14 @@
 require 'rails_helper'
 
 describe WitnessSerializer do
-  let(:resource) { build(:witness) }
+  let(:resource) { build(:witness, :with_project) }
   let(:serializer) { described_class.new(resource) }
 
   describe '#as_json' do
     let(:expected_hash) do
       {
-        default: resource.default,
+        id:      resource.id,
+        default: resource.default?,
         name:    resource.name,
         siglum:  resource.siglum
       }.as_json

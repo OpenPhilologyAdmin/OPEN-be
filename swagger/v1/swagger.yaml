@@ -107,6 +107,10 @@ components:
           items:
             type: object
             properties:
+              id:
+                type: string
+                description: ID, It is the same as Siglum
+                example: A
               name:
                 type: string
                 description: Full name of witness
@@ -147,10 +151,16 @@ components:
     witness:
       type: object
       properties:
+        id:
+          type: string
+          description: ID, It is the same as Siglum
+          example: A
         name:
           type: string
           description: Full name of witness
           example: Lorem ipsum
+          maximum: 50
+          nullable: true
         siglum:
           type: string
           description: Siglum
@@ -158,6 +168,22 @@ components:
         default:
           type: boolean
           example: false
+    witness_update:
+      type: object
+      properties:
+        witness:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Full name of witness
+              example: Lorem ipsum
+              maximum: 50
+              nullable: true
+            default:
+              type: boolean
+              description: Whether it should be a default witness of the project
+              example: false
     login_required:
       type: object
       properties:
@@ -774,7 +800,7 @@ paths:
         schema:
           type: integer
         required: true
-        description: ID of project
+        description: ID of the project
       responses:
         '200':
           description: Witnesses can be retrieved
@@ -808,6 +834,110 @@ paths:
                 "$ref": "#/components/schemas/login_required"
         '404':
           description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{project_id}/witnesses/{id}":
+    put:
+      summary: Updates the specified witness
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Update the given witness.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the edited witness
+      responses:
+        '200':
+          description: Witnesses updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/witness"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project or witness not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Witness is invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/witness_update"
+    delete:
+      summary: Deletes the specified witness and its token variants
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Deletes the given witness. It also deletes all token variants for
+        this witness. If any of the token variants was selected, the selection would
+        be removed as well. <br>If the witness was the default one, the **first**
+        of the remaining witnesses would be a new default witness. <br>**It is not
+        possible to delete witness if there are no other witnesses.**
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the removed witness
+      responses:
+        '200':
+          description: Witness removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Record successfully deleted
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '403':
+          description: Forbidden if there are no other witnesses
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/forbidden_request"
+        '404':
+          description: Project or witness not found
           content:
             application/json:
               schema:

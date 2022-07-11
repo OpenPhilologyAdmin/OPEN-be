@@ -158,4 +158,26 @@ RSpec.describe Project, type: :model do
       end
     end
   end
+
+  describe '#find_witness!' do
+    context 'when witness with given siglum can be found' do
+      let(:project) { build(:project, default_witness: siglum) }
+      let(:siglum) { 'A' }
+
+      it 'returns matching witness' do
+        result = project.find_witness!(siglum)
+        expect(result).to be_a(Witness)
+        expect(result.siglum).to eq(siglum)
+      end
+    end
+
+    context 'when witness with given siglum cannot be found' do
+      let(:project) { build(:project) }
+      let(:siglum) { 'not-existing-siglum' }
+
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect { project.find_witness!(siglum) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end

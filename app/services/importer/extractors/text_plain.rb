@@ -53,9 +53,8 @@ module Importer
       def extracted_witnesses
         [
           Witness.new(
-            siglum:  default_witness,
-            name:    @default_witness_name,
-            default: true
+            siglum: default_witness,
+            name:   @default_witness_name
           )
         ]
       end
