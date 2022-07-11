@@ -16,20 +16,7 @@ RSpec.describe 'confirmation', type: :request do
           allow(User).to receive(:send_confirmation_instructions)
         end
 
-        parameter name:   :user,
-                  in:     :body,
-                  type:   :object,
-                  schema: {
-                    type:       :object,
-                    properties: {
-                      email: {
-                        type:        :string,
-                        example:     'example@example.com',
-                        description: 'Email of the user who wants to receive confirmation email'
-                      }
-                    },
-                    required:   ['email']
-                  }
+        parameter name: :user, in: :body, schema: { '$ref' => '#/components/schemas/user_email' }
 
         schema type:       :object,
                properties: {
@@ -71,9 +58,9 @@ RSpec.describe 'confirmation', type: :request do
                properties: {
                  message: {
                    type:        :string,
-                   description: 'Specifies whether the user can already sign in, or needs to wait for Admin to '\
-                                'approve their account: '\
-                                "\"#{I18n.t('devise.confirmations.confirmed')}\", "\
+                   description: 'Specifies whether the user can already sign in, or needs to wait for Admin to ' \
+                                'approve their account: ' \
+                                "\"#{I18n.t('devise.confirmations.confirmed')}\", " \
                                 "\"#{I18n.t('devise.confirmations.confirmed_but_not_approved')}\".",
                    example:     I18n.t('devise.confirmations.confirmed_but_not_approved')
                  }

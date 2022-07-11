@@ -228,15 +228,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  example: example@example.com
-                  description: Email of the user who wants to receive confirmation
-                    email
-              required:
-              - email
+              "$ref": "#/components/schemas/user_email"
     get:
       summary: Confirms user's email
       tags:
