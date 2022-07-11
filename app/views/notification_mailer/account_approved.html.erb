@@ -1,3 +1,6 @@
 <p><%= I18n.t('mailers.notification_mailer.account_approved.greeting', name: @recipient.name) %></p>
 
 <p><%= I18n.t('mailers.notification_mailer.account_approved.message') %></p>
+<p>
+  <%= link_to I18n.t('mailers.notification_mailer.account_approved.link_description'), ENV.fetch('FRONTEND_APP_SIGN_IN_URL', ''), target: "_blank" %>
+</p>

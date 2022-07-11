@@ -18,7 +18,8 @@ en:
       account_approved:
         subject: Your account has been approved
         greeting: "Hello %{name},"
-        message: Your account has been approved. You can now sign in.
+        message: "Your account has been approved."
+        link_description: Click here to sign in
     registrations:
       email_confirmation:
         greeting: "Hello %{email},"

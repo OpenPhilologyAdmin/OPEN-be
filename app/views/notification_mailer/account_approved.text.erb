@@ -1,3 +1,5 @@
 <%= I18n.t('mailers.notification_mailer.account_approved.greeting', name: @recipient.name) %>
 
 <%= I18n.t('mailers.notification_mailer.account_approved.message') %>
+<%=I18n.t('mailers.notification_mailer.account_approved.link_description') %>
+<%= ENV.fetch('FRONTEND_APP_SIGN_IN_URL', '') %>
