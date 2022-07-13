@@ -5,36 +5,16 @@ require 'swagger_helper'
 RSpec.describe 'v1/projects', type: :request do
   path '/api/v1/projects' do
     let(:user) { create(:user, :admin, :approved) }
-    get('Retrieves paginated list of projects') do
-      let(:page) { 1 }
-      let(:items) { 10 }
-
+    get('Retrieves list of projects') do
       tags 'Projects'
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description('Allows retrieving all projects list.')
+      description 'Allows retrieving all projects list. The projects are sorted by the ' \
+                  'updated_at date with the most recently updated records first.'
 
       response '200', 'Projects can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
-
-        parameter name:        :items, in: :query,
-                  schema:      {
-                    type:    :integer,
-                    example: 1,
-                    default: 10
-                  },
-                  required:    false,
-                  description: 'Number of records per page'
-
-        parameter name:        :page, in: :query,
-                  schema:      {
-                    type:    :integer,
-                    default: 1,
-                    example: 1
-                  },
-                  required:    false,
-                  description: 'Page number'
 
         before do
           create_list(:project, 3)
@@ -43,25 +23,14 @@ RSpec.describe 'v1/projects', type: :request do
         schema type:       :object,
                properties:
                            {
-                             records:      {
+                             records: {
                                type:  :array,
                                items: { '$ref' => '#/components/schemas/project' }
                              },
-                             count:        {
+                             count:   {
                                type:        :integer,
                                description: 'Number of all records',
                                example:     50
-                             },
-                             current_page: {
-                               type:        :integer,
-                               description: 'Current page',
-                               example:     1,
-                               default:     1
-                             },
-                             pages:        {
-                               type:        :integer,
-                               description: 'Number of all pages',
-                               example:     5
                              }
                            }
 

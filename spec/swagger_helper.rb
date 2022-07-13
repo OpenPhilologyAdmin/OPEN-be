@@ -36,11 +36,18 @@ RSpec.configure do |config|
           user:                {
             type:       :object,
             properties: {
-              id:               { type: :integer },
-              email:            { type: :string, format: :email },
-              name:             { type: :string },
-              role:             { type: :string, enum: %i[admin], default: :admin },
-              account_approved: { type: :boolean }
+              id:                { type: :integer },
+              email:             { type: :string, format: :email },
+              name:              { type: :string },
+              role:              { type: :string, enum: %i[admin], default: :admin },
+              account_approved:  { type:        :boolean,
+                                   description: 'The account has been approved/activated by the admin' },
+              registration_date: {
+                type:        :string,
+                format:      :date_time,
+                description: 'Registration date in ISO 8601 format',
+                example:     '2022-06-30T00:00:00.000+02:00'
+              }
             },
             required:   %w[email name]
           },

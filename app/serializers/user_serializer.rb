@@ -2,7 +2,7 @@
 
 class UserSerializer
   RECORD_ATTRIBUTES = %i[id email name role zip_code].freeze
-  RECORD_METHODS    = %i[account_approved].freeze
+  RECORD_METHODS    = %i[registration_date account_approved].freeze
 
   def initialize(record)
     @record = record

@@ -8,6 +8,8 @@ class User < ApplicationRecord
          :confirmable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
+  alias_attribute :registration_date, :created_at
+
   enumerize :role,
             in:         %i[admin],
             default:    :admin,
@@ -19,6 +21,7 @@ class User < ApplicationRecord
                        unless: -> { password.blank? }
 
   scope :approved, -> { where.not(approved_at: nil) }
+  scope :most_recent_first, -> { order('created_at desc') }
 
   has_many :project_roles, dependent: :destroy
 

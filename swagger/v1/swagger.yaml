@@ -36,6 +36,12 @@ components:
           default: admin
         account_approved:
           type: boolean
+          description: The account has been approved/activated by the admin
+        registration_date:
+          type: string
+          format: date_time
+          description: Registration date in ISO 8601 format
+          example: '2022-06-30T00:00:00.000+02:00'
       required:
       - email
       - name
@@ -352,29 +358,13 @@ paths:
               "$ref": "#/components/schemas/user_reset_password"
   "/api/v1/projects":
     get:
-      summary: Retrieves paginated list of projects
+      summary: Retrieves list of projects
       tags:
       - Projects
       security:
       - bearer: []
-      description: Allows retrieving all projects list.
-      parameters:
-      - name: items
-        in: query
-        schema:
-          type: integer
-          example: 1
-          default: 10
-        required: false
-        description: Number of records per page
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-          example: 1
-        required: false
-        description: Page number
+      description: Allows retrieving all projects list. The projects are sorted by
+        the updated_at date with the most recently updated records first.
       responses:
         '200':
           description: Projects can be retrieved
@@ -391,15 +381,6 @@ paths:
                     type: integer
                     description: Number of all records
                     example: 50
-                  current_page:
-                    type: integer
-                    description: Current page
-                    example: 1
-                    default: 1
-                  pages:
-                    type: integer
-                    description: Number of all pages
-                    example: 5
         '401':
           description: Login required
           content:
@@ -619,29 +600,13 @@ paths:
           description: 'User has been signed out '
   "/api/v1/users":
     get:
-      summary: Retrieves paginated list of users
+      summary: Retrieves list of users
       tags:
       - Users
       security:
       - bearer: []
-      description: Allows retrieving all users list.
-      parameters:
-      - name: items
-        in: query
-        schema:
-          type: integer
-          example: 1
-          default: 10
-        required: false
-        description: Number of records per page
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-          example: 1
-        required: false
-        description: Page number
+      description: Allows retrieving all users list. The users are sorted by the registration
+        date with the most records reords first.
       responses:
         '200':
           description: Users can be retrieved
@@ -658,15 +623,6 @@ paths:
                     type: integer
                     description: Number of all records
                     example: 50
-                  current_page:
-                    type: integer
-                    description: Current page
-                    example: 1
-                    default: 1
-                  pages:
-                    type: integer
-                    description: Number of all pages
-                    example: 5
         '401':
           description: Login required
           content:
@@ -809,15 +765,6 @@ paths:
                     type: integer
                     description: Number of all records
                     example: 50
-                  current_page:
-                    type: integer
-                    description: Current page
-                    example: 1
-                    default: 1
-                  pages:
-                    type: integer
-                    description: Number of all pages
-                    example: 5
         '401':
           description: Login required
           content:

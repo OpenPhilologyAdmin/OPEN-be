@@ -27,25 +27,14 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         schema type:       :object,
                properties:
                            {
-                             records:      {
+                             records: {
                                type:  :array,
                                items: { '$ref' => '#/components/schemas/witness' }
                              },
-                             count:        {
+                             count:   {
                                type:        :integer,
                                description: 'Number of all records',
                                example:     50
-                             },
-                             current_page: {
-                               type:        :integer,
-                               description: 'Current page',
-                               example:     1,
-                               default:     1
-                             },
-                             pages:        {
-                               type:        :integer,
-                               description: 'Number of all pages',
-                               example:     5
                              }
                            }
 

@@ -9,11 +9,12 @@ describe UserSerializer do
   describe '#as_json' do
     let(:expected_hash) do
       {
-        id:               resource.id,
-        email:            resource.email,
-        name:             resource.name,
-        role:             resource.role,
-        account_approved: resource.account_approved?
+        id:                resource.id,
+        email:             resource.email,
+        name:              resource.name,
+        role:              resource.role,
+        account_approved:  resource.account_approved?,
+        registration_date: resource.registration_date
       }.as_json
     end
 

@@ -6,36 +6,16 @@ RSpec.describe 'v1/users', type: :request do
   path '/api/v1/users' do
     let(:user) { create(:user, :admin, :approved) }
 
-    get('Retrieves paginated list of users') do
-      let(:page) { 1 }
-      let(:items) { 10 }
-
+    get('Retrieves list of users') do
       tags 'Users'
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description('Allows retrieving all users list.')
+      description 'Allows retrieving all users list. The users are sorted by the ' \
+                  'registration date with the most records reords first.'
 
       response '200', 'Users can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
-
-        parameter name:        :items, in: :query,
-                  schema:      {
-                    type:    :integer,
-                    example: 1,
-                    default: 10
-                  },
-                  required:    false,
-                  description: 'Number of records per page'
-
-        parameter name:        :page, in: :query,
-                  schema:      {
-                    type:    :integer,
-                    default: 1,
-                    example: 1
-                  },
-                  required:    false,
-                  description: 'Page number'
 
         before do
           create_list(:user, 3)
@@ -44,25 +24,14 @@ RSpec.describe 'v1/users', type: :request do
         schema type:       :object,
                properties:
                            {
-                             records:      {
+                             records: {
                                type:  :array,
                                items: { '$ref' => '#/components/schemas/user' }
                              },
-                             count:        {
+                             count:   {
                                type:        :integer,
                                description: 'Number of all records',
                                example:     50
-                             },
-                             current_page: {
-                               type:        :integer,
-                               description: 'Current page',
-                               example:     1,
-                               default:     1
-                             },
-                             pages:        {
-                               type:        :integer,
-                               description: 'Number of all pages',
-                               example:     5
                              }
                            }
 

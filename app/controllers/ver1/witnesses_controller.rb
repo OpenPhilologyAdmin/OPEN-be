@@ -7,13 +7,9 @@ module Ver1
 
     def index
       authorize @project, :index_witnesses?
-      pagy, records = pagy_array(@project.witnesses)
 
       render(
-        json: PaginatedRecordsSerializer.new(
-          records,
-          metadata: pagy_metadata(pagy)
-        )
+        json: RecordsSerializer.new(@project.witnesses)
       )
     end
 

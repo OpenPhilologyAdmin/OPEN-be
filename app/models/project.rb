@@ -21,6 +21,8 @@ class Project < ApplicationRecord
   validates :default_witness_name, length: { maximum: 50, allow_blank: true }
   validates :witnesses, store_model: { merge_array_errors: true }
 
+  scope :most_recently_updated_first, -> { order('updated_at desc') }
+
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy
   has_many :owners, -> { merge(ProjectRole.owner) },

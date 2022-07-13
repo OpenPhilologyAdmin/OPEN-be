@@ -1,17 +1,14 @@
 # frozen_string_literal: true
 
-class PaginatedRecordsSerializer
-  def initialize(records, metadata: {})
+class RecordsSerializer
+  def initialize(records)
     @records = records
-    @metadata = metadata
   end
 
   def as_json(_options = {})
     {
-      records:      serialized_records,
-      count:        @metadata.fetch(:count, @records.size),
-      current_page: @metadata.fetch(:page, 1),
-      pages:        @metadata.fetch(:pages, 1)
+      records: serialized_records,
+      count:   @records.size
     }
   end
 

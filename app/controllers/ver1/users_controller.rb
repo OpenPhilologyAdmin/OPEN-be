@@ -6,13 +6,10 @@ module Ver1
 
     def index
       authorize User, :index?
-      pagy, records = pagy(policy_scope(User))
+      records = policy_scope(User).most_recent_first
 
       render(
-        json: PaginatedRecordsSerializer.new(
-          records,
-          metadata: pagy_metadata(pagy)
-        )
+        json: RecordsSerializer.new(records)
       )
     end
 

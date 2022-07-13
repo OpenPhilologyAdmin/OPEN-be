@@ -196,8 +196,6 @@ GEM
     nokogiri (1.13.6-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    pagy (5.10.1)
-      activesupport
     parallel (1.22.1)
     parser (3.1.2.0)
       ast (~> 2.4.1)
@@ -390,7 +388,6 @@ DEPENDENCIES
   lefthook
   letter_opener
   listen
-  pagy
   pg (~> 1.1)
   pry-rails
   puma (~> 5.0)
