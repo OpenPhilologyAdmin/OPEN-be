@@ -266,7 +266,7 @@ paths:
                       will review your account, and we will let you know once you
                       can sign in.
         '422':
-          description: Invalid confirmation_token
+          description: Invalid/blank confirmation_token or already confirmed
           content:
             application/json:
               schema:

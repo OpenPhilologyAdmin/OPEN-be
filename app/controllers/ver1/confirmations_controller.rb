@@ -26,7 +26,7 @@ module Ver1
           }
         )
       else
-        respond_with_record_errors(resource, :unprocessable_entity)
+        respond_with_confirmation_token_error(resource)
       end
     end
 
@@ -36,6 +36,16 @@ module Ver1
       return if record.account_approved?
 
       SignupNotifier.new(record).perform!
+    end
+
+    # assign all errors to :confirmation_token field
+    def respond_with_confirmation_token_error(resource)
+      render(
+        json:   {
+          confirmation_token: resource.errors.full_messages
+        },
+        status: :unprocessable_entity
+      )
     end
   end
 end

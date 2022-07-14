@@ -111,16 +111,37 @@ RSpec.describe 'confirmation', type: :request do
         end
       end
 
-      response '422', 'Invalid confirmation_token' do
-        let(:confirmation_token) { '' }
-
+      response '422', 'Invalid/blank confirmation_token or already confirmed' do
         schema '$ref' => '#/components/schemas/invalid_record'
 
-        run_test!
+        context 'when token is invalid/blank' do
+          let(:confirmation_token) { '' }
 
-        it 'does not notify the admins' do
-          expect(SignupNotifier).not_to have_received(:new)
-          expect(notifier_mock).not_to have_received(:perform!)
+          run_test!
+
+          it 'does not notify the admins' do
+            expect(SignupNotifier).not_to have_received(:new)
+            expect(notifier_mock).not_to have_received(:perform!)
+          end
+        end
+
+        context 'when the user already confirmed their account' do
+          let(:user) { create(:user, :not_confirmed) }
+          let(:confirmation_token) { user.confirmation_token }
+          let(:expected_response) do
+            {
+              confirmation_token: ["Email #{I18n.t('errors.messages.already_confirmed')}"]
+            }
+          end
+
+          before { user.confirm }
+
+          run_test!
+
+          it 'assigns all errors to :confirmation_token field' do
+            parsed_response = JSON.parse(response.body, symbolize_names: true)
+            expect(parsed_response).to eq(expected_response)
+          end
         end
       end
     end
