@@ -38,11 +38,11 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def permitted_attributes_for_create
-    %i[
-      name
-      default_witness
-      default_witness_name
-      source_file: [data filename content_type identify]
+    [
+      :name,
+      :default_witness,
+      :default_witness_name,
+      { source_file: %i[data filename content_type identify] }
     ]
   end
 

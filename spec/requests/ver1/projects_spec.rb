@@ -63,11 +63,16 @@ RSpec.describe 'v1/projects', type: :request do
             example:     'Project name'
           },
           source_file:          {
-            type:        :string,
-            format:      :byte,
-            description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64 data]`. ' \
-                         '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs) ' \
-                         'for more details on formatting.'
+            type:       :object,
+            properties: {
+              data: {
+                type:        :string,
+                format:      :byte,
+                description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64 data]`. ' \
+                             '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/' \
+                             'Basics_of_HTTP/Data_URLs) for more details on formatting.'
+              }
+            }
           },
           default_witness:      {
             type:        :string,
@@ -95,12 +100,17 @@ RSpec.describe 'v1/projects', type: :request do
         let(:encoded_source_file) do
           Base64.encode64(File.read(Rails.root.join('spec/fixtures/sample_project.txt')))
         end
-        let(:source_file) { "data:text/plain;base64,#{encoded_source_file}" }
+        let(:source_file) do
+          {
+            data: "data:text/plain;base64,#{encoded_source_file}"
+          }
+        end
         let(:project) do
           {
             project:
                      {
-                       name:        Faker::Lorem.word,
+                       name:            Faker::Lorem.word,
+                       default_witness: 'A',
                        source_file:
                      }
           }
