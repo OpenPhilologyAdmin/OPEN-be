@@ -51,44 +51,52 @@ RSpec.describe 'v1/projects', type: :request do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Creates a new project.'
+      description 'Creates a new project. The project data is imported using background job. ' \
+                  'Please check `GET /api/v1/projects/{id}` endpoint to review the import result.'
 
       parameter name: :project, in: :body, schema: {
         type:       :object,
-        properties: {
-          name:                 {
-            type:        :string,
-            maximum:     50,
-            description: 'Project name',
-            example:     'Project name'
-          },
-          source_file:          {
-            type:       :object,
-            properties: {
-              data: {
-                type:        :string,
-                format:      :byte,
-                description: 'Base64 encoded file in the following format: `data:text/plain;base64,[base64 data]`. ' \
-                             '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/' \
-                             'Basics_of_HTTP/Data_URLs) for more details on formatting.'
-              }
-            }
-          },
-          default_witness:      {
-            type:        :string,
-            example:     'A',
-            nullable:    true,
-            description: 'It is required only when then source file is text/plain'
-          },
-          default_witness_name: {
-            type:        :string,
-            example:     'Name',
-            nullable:    true,
-            maximum:     50,
-            description: 'Optional, can be provided when then source file is text/plain'
-          }
-        },
-        required:   %w[name source_file]
+        properties:
+                    {
+                      project: {
+                        type:       :object,
+                        properties: {
+                          name:                 {
+                            type:        :string,
+                            maximum:     50,
+                            description: 'Project name',
+                            example:     'Project name'
+                          },
+                          source_file:          {
+                            type:       :object,
+                            properties: {
+                              data: {
+                                type:        :string,
+                                format:      :byte,
+                                description: 'Base64 encoded file in the following format: ' \
+                                             '`data:text/plain;base64,[base64 data]`. ' \
+                                             '[Click here](https://developer.mozilla.org/en-US/docs/Web/HTTP/' \
+                                             'Basics_of_HTTP/Data_URLs) for more details on formatting.'
+                              }
+                            }
+                          },
+                          default_witness:      {
+                            type:        :string,
+                            example:     'A',
+                            nullable:    true,
+                            description: 'It is required only when then source file is text/plain'
+                          },
+                          default_witness_name: {
+                            type:        :string,
+                            example:     'Name',
+                            nullable:    true,
+                            maximum:     50,
+                            description: 'Optional, can be provided when then source file is text/plain'
+                          }
+                        },
+                        required:   %w[name source_file]
+                      }
+                    }
       }
 
       before do
