@@ -17,10 +17,12 @@ module Importer
     private
 
     def update_project
-      @project.update(
+      @project.assign_attributes(
         witnesses: @extracted_data.witnesses,
         status:    :processed
       )
+      @project.witnesses.first.default!
+      @project.save
     end
 
     def save_tokens

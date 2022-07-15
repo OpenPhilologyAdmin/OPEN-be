@@ -1,7 +1,7 @@
 {
   "witnesses":["A","B"],
   "table":[
-    [ [ {"t":"Lorem","ref":123 } ], [ {"t":"Lorum" } ] ],
+    [ [ {"t":"Lo ","ref":123 } , {"t":"rem","ref":123 }], [ {"t":"Lo " }, {"t":"rum" } ] ],
     [ [ {"t":"ipsum","adj":true } ], [ {"t":"ipsum","adj":true } ] ],
     [ [ {"t":"dolor","id":"xyz" } ], [] ]
   ]

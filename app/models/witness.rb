@@ -30,7 +30,7 @@ class Witness
     parent.default_witness = nil
   end
 
-  def handle_default!(value)
+  def assign_default(value)
     value ? default! : not_default!
   end
 end

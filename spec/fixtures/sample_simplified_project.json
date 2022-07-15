@@ -1,7 +1,7 @@
 {
   "witnesses":["A","B"],
   "table":[
-    [ [ "Lorem" ], [ "Lorum" ] ],
+    [ [ "Lo ", "rem" ], [ "Lo ", "rum" ] ],
     [ [ "ipsum" ], [ "ipsum" ] ],
     [ [ "dolor" ], [] ]
   ]

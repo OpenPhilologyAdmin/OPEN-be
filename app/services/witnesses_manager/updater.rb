@@ -25,7 +25,7 @@ module WitnessesManager
     def handle_default_witness_change
       return unless @witness.valid?
 
-      @witness.handle_default!(@default_witness_value)
+      @witness.assign_default(@default_witness_value)
     end
 
     def as_boolean(value)

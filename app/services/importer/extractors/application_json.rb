@@ -7,7 +7,7 @@ module Importer
       WITNESSES_KEY = 'witnesses'
       TOKENS_KEY = 'table'
 
-      def initialize(project:)
+      def initialize(project:, default_witness_name: nil)
         super
         prepare_tokens
       end
@@ -89,13 +89,14 @@ module Importer
           @witnesses[index].siglum
         end
 
-        def variant_value_for(variant)
-          return EMPTY_VARIANT_VALUE if variant.empty?
+        def variant_value_for(variant_values)
+          return EMPTY_VARIANT_VALUE if variant_values.empty?
 
-          value = variant.first
-
-          # The value can be either a simple string or a Hash
-          value.is_a?(Hash) ? value.fetch('t', EMPTY_VARIANT_VALUE) : value
+          # The variant_values can be either an array of Strings or Hashes
+          if variant_values.first.is_a?(Hash)
+            variant_values = variant_values.map { |v| v.fetch('t', EMPTY_VARIANT_VALUE) }
+          end
+          variant_values.join
         end
 
         def variants_hash

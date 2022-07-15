@@ -9,20 +9,27 @@ RSpec.describe Importer::Inserter, type: :service do
   let(:service) { described_class.new(project:, extracted_data:) }
 
   describe '#process' do
-    before { service.process }
+    before do
+      service.process
+      project.reload
+    end
 
     it 'passes correct witnesses to project' do
-      service.project.witnesses.each_with_index do |witness, index|
+      project.witnesses.each_with_index do |witness, index|
         expect(witness.attributes).to eq(extracted_data.witnesses[index].attributes)
       end
     end
 
     it 'updates project status to :processed' do
-      expect(service.project.status).to eq(:processed)
+      expect(project.status).to eq(:processed)
+    end
+
+    it 'saves first of witnesses as default_witness' do
+      expect(project.default_witness).to eq(extracted_data.witnesses.first.siglum)
     end
 
     it 'creates correct number of tokens' do
-      expect(service.project.tokens.size).to eq(extracted_data.tokens.size)
+      expect(project.tokens.size).to eq(extracted_data.tokens.size)
     end
 
     it 'creates correct tokens' do

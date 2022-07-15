@@ -36,7 +36,6 @@ end
 RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
   let(:project) { create(:project, :with_json_source_file) }
   let(:service) { described_class.new(project:) }
-  let(:default_witness) { project.default_witness }
 
   describe '#process' do
     let(:expected_number_of_tokens) { 3 }
@@ -57,26 +56,26 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
             variants:         [
               build(:token_variant,
                     witness:  'A',
-                    t:        'Lorem',
+                    t:        'Lo rem',
                     selected: false,
                     possible: false,
                     deleted:  false),
 
               build(:token_variant,
                     witness:  'B',
-                    t:        'Lorum',
+                    t:        'Lo rum',
                     selected: false,
                     possible: false,
                     deleted:  false)
             ],
             grouped_variants: [
               build(:token_grouped_variant,
-                    t:         'Lorem',
+                    t:         'Lo rem',
                     witnesses: ['A'],
                     selected:  false,
                     possible:  false),
               build(:token_grouped_variant,
-                    t:         'Lorum',
+                    t:         'Lo rum',
                     witnesses: ['B'],
                     selected:  false,
                     possible:  false)

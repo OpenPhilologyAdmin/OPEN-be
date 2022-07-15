@@ -75,13 +75,13 @@ RSpec.describe Witness, type: :model do
     end
   end
 
-  describe 'handle_default!' do
+  describe 'assign_default' do
     let(:witness) { build(:witness) }
 
     before do
       allow(witness).to receive(:default!)
       allow(witness).to receive(:not_default!)
-      witness.handle_default!(default_value)
+      witness.assign_default(default_value)
     end
 
     context 'when the given value is true' do
@@ -95,7 +95,7 @@ RSpec.describe Witness, type: :model do
     context 'when the given value is false' do
       let(:default_value) { false }
 
-      it 'runs witness.not_default!!' do
+      it 'runs witness.not_default!' do
         expect(witness).to have_received(:not_default!)
       end
     end
