@@ -20,7 +20,9 @@ describe ProjectSerializer do
         witnesses:       resource.witnesses,
         status:          resource.status,
         created_by:      resource.created_by,
+        creator_id:      resource.creator_id,
         creation_date:   resource.created_at,
+        last_edit_by:    resource.last_edit_by,
         last_edit_date:  resource.updated_at,
         witnesses_count: resource.witnesses_count
       }.as_json

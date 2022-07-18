@@ -159,6 +159,43 @@ RSpec.describe Project, type: :model do
     end
   end
 
+  describe '#creator_id' do
+    let(:project) { create(:project) }
+
+    context 'when there is an owner of project' do
+      let!(:owner) { create(:project_role, :owner, project:).user }
+
+      it 'equals the ID of first person who has been added as an owner' do
+        expect(project.creator_id).to eq(owner.id)
+      end
+    end
+
+    context 'when the owner is missing' do
+      it 'is nil' do
+        expect(project.creator_id).to be_nil
+      end
+    end
+  end
+
+  describe '#last_edit_by' do
+    context 'when there is a user who edited the project' do
+      let(:user) { create(:user, :admin, :approved) }
+      let(:project) { create(:project, last_editor: user) }
+
+      it 'equals the name of last_editor' do
+        expect(project.last_edit_by).to eq(user.name)
+      end
+    end
+
+    context 'when the project has not been edited yet' do
+      let(:project) { create(:project, last_editor: nil) }
+
+      it 'is nil' do
+        expect(project.last_edit_by).to be_nil
+      end
+    end
+  end
+
   describe '#find_witness!' do
     context 'when witness with given siglum can be found' do
       let(:project) { build(:project, default_witness: siglum) }

@@ -142,12 +142,14 @@ RSpec.configure do |config|
               witnesses_count: { type: :integer, description: 'Number of witnesses' },
               status:          { type: :string, enum: %i[processing processed invalid], default: :processing },
               created_by:      { type: :string, default: 'John Doe', nullable: true },
+              creator_id:      { type: :integer, default: '1', nullable: true },
               creation_date:   {
                 type:        :string,
                 format:      :date_time,
                 description: 'Date in ISO 8601 format',
                 example:     '2022-06-30T00:00:00.000+02:00'
               },
+              last_edit_by:    { type: :string, default: 'John Doe', nullable: true },
               last_edit_date:  {
                 type:        :string,
                 format:      :date_time,

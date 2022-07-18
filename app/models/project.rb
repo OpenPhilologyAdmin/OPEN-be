@@ -59,6 +59,14 @@ class Project < ApplicationRecord
     creator&.name
   end
 
+  def creator_id
+    creator&.id
+  end
+
+  def last_edit_by
+    last_editor&.name
+  end
+
   def find_witness!(siglum)
     selected_witness = witnesses.find { |witness| witness.siglum == siglum }
     selected_witness.presence || raise(ActiveRecord::RecordNotFound)
