@@ -13,6 +13,14 @@ class ProjectPolicy < ApplicationPolicy
     false
   end
 
+  def edit?
+    false
+  end
+
+  def update?
+    approved_admin?
+  end
+
   def show?
     approved_admin?
   end
@@ -44,6 +52,10 @@ class ProjectPolicy < ApplicationPolicy
       :default_witness_name,
       { source_file: %i[data filename content_type identify] }
     ]
+  end
+
+  def permitted_attributes_for_update
+    [:name]
   end
 
   class Scope < Scope

@@ -18,6 +18,7 @@ module Ver1
       result = WitnessesManager::Updater.perform!(
         project: @project,
         siglum:  witness_siglum,
+        user:    current_user,
         params:  permitted_attributes(Witness)
       )
 
@@ -34,6 +35,7 @@ module Ver1
       authorize @project, :destroy_witnesses?
       WitnessesManager::Remover.perform!(
         project: @project,
+        user:    current_user,
         siglum:  witness_siglum
       )
       render(

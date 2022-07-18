@@ -4,12 +4,17 @@ require 'rails_helper'
 
 RSpec.describe WitnessesManager::Base, type: :service do
   let(:project) { create(:project, witnesses_number: 3) }
+  let(:user) { create(:user, :admin, :approved) }
   let(:expected_witness) { project.witnesses.first }
   let(:siglum) { expected_witness.siglum }
   let(:params) { {} }
-  let(:service) { described_class.new(project:, siglum:, params:) }
+  let(:service) { described_class.new(project:, siglum:, user:, params:) }
 
   describe '#initialize' do
+    it 'assigns given user as last editor of the project' do
+      expect(service.instance_variable_get('@project').last_editor).to eq(user)
+    end
+
     context 'when witness with given siglum can be found' do
       it 'sets the @witness' do
         expect(service.instance_variable_get('@witness')).to eq(expected_witness)
@@ -37,11 +42,11 @@ RSpec.describe WitnessesManager::Base, type: :service do
     before do
       allow(described_class).to receive(:new).and_return(instance_mock)
       allow(instance_mock).to receive(:perform!)
-      described_class.perform!(project:, siglum:, params:)
+      described_class.perform!(project:, siglum:, user:, params:)
     end
 
     it 'initializes new instance with given options' do
-      expect(described_class).to have_received(:new).with(project:, siglum:, params:)
+      expect(described_class).to have_received(:new).with(project:, siglum:, user:, params:)
     end
 
     it 'runs perform! on the new instance' do

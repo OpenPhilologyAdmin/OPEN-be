@@ -110,8 +110,14 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
 
         run_test!
 
+        before { project.reload }
+
         it 'changes the value of project default_witness as well' do
-          expect(project.reload.default_witness).to eq(id)
+          expect(project.default_witness).to eq(id)
+        end
+
+        it 'saves the current user as last_editor of project' do
+          expect(project.last_editor).to eq(user)
         end
 
         it 'runs the WitnessesManager::Updater' do
@@ -200,8 +206,12 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
 
         it 'runs the WitnessesManager::Remover' do
           expect(WitnessesManager::Remover).to have_received(:perform!).with(
-            project:, siglum: id
+            project:, siglum: id, user:
           )
+        end
+
+        it 'saves the current user as last_editor of project' do
+          expect(project.reload.last_editor).to eq(user)
         end
       end
 

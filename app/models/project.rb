@@ -31,6 +31,8 @@ class Project < ApplicationRecord
 
   has_one_base64_attached :source_file
 
+  belongs_to :last_editor, class_name: 'User', optional: true
+
   def source_file_content_type
     return unless source_file.attached?
 

@@ -4,9 +4,10 @@ require 'rails_helper'
 
 RSpec.describe WitnessesManager::Remover, type: :service do
   let(:project) { create(:project, witnesses_number: 3) }
+  let(:user) { create(:user, :admin, :approved) }
   let(:removed_witness) { project.witnesses.last }
   let(:siglum) { removed_witness.siglum }
-  let(:service) { described_class.new(project:, siglum:) }
+  let(:service) { described_class.new(project:, siglum:, user:) }
 
   describe '#initialize' do
     context 'when witness with given siglum can be found' do
@@ -35,7 +36,7 @@ RSpec.describe WitnessesManager::Remover, type: :service do
       allow(WitnessesManager::Remover::ProjectWitnessesProcessor).to receive(:new).and_return(project_processor_mock)
       allow(project_processor_mock).to receive(:remove_witness!)
 
-      described_class.perform!(project:, siglum:)
+      described_class.perform!(project:, siglum:, user:)
     end
 
     it 'runs TokensProcessor' do
@@ -48,6 +49,10 @@ RSpec.describe WitnessesManager::Remover, type: :service do
       expect(WitnessesManager::Remover::ProjectWitnessesProcessor).to have_received(:new).with(project:,
                                                                                                siglum:)
       expect(project_processor_mock).to have_received(:remove_witness!)
+    end
+
+    it 'saves the user as the last editor of project' do
+      expect(project.last_editor).to eq(user)
     end
   end
 end

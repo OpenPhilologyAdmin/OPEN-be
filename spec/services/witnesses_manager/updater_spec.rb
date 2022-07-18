@@ -4,11 +4,12 @@ require 'rails_helper'
 
 RSpec.describe WitnessesManager::Updater, type: :service do
   let(:project) { create(:project, witnesses_number: 3, default_witness: 'A') }
+  let(:user) { create(:user, :admin, :approved) }
   let(:previous_default_witness) { project.witnesses.first }
   let(:edited_witness) { project.witnesses.last }
   let(:siglum) { edited_witness.siglum }
   let(:params) { { name: 'New name', default: true } }
-  let(:service) { described_class.new(project:, siglum:, params:) }
+  let(:service) { described_class.new(project:, siglum:, user:, params:) }
 
   describe '#initialize' do
     context 'when witness with given siglum can be found' do
@@ -43,9 +44,11 @@ RSpec.describe WitnessesManager::Updater, type: :service do
   end
 
   describe '#perform!' do
-    let!(:result) { described_class.perform!(project:, siglum:, params:) }
+    let!(:result) { described_class.perform!(project:, siglum:, user:, params:) }
 
     context 'when the edited witness is the new default one' do
+      before { project.reload }
+
       it 'updates the edited witness with the given attributes' do
         params.each_pair do |key, value|
           expect(edited_witness.send(key)).to eq(value)
@@ -53,7 +56,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       end
 
       it 'saves witness\'s siglum as a default_witness' do
-        project.reload
         expect(project.default_witness).to eq(siglum)
       end
 
@@ -68,10 +70,16 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
       end
+
+      it 'saves the user as the last editor of project' do
+        expect(project.last_editor).to eq(user)
+      end
     end
 
     context 'when the edited witness is not set as default' do
       let(:params) { { name: 'New name' } }
+
+      before { project.reload }
 
       it 'updates the edited witness with the given attributes' do
         params.each_pair do |key, value|
@@ -80,7 +88,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       end
 
       it 'does not update project\'s default_witness' do
-        project.reload
         expect(project.default_witness).to eq(previous_default_witness.siglum)
       end
 
@@ -95,12 +102,18 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
       end
+
+      it 'saves the user as the last editor of project' do
+        expect(project.last_editor).to eq(user)
+      end
     end
 
     context 'when the edited witness was deselected from being the default one' do
       let(:params) { { name: 'New name', default: false } }
       let(:edited_witness) { previous_default_witness }
       let(:siglum) { previous_default_witness.siglum }
+
+      before { project.reload }
 
       it 'updates the edited witness with the given attributes' do
         params.each_pair do |key, value|
@@ -109,7 +122,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       end
 
       it 'clears the project default witness' do
-        project.reload
         expect(project.default_witness).to be_nil
       end
 
@@ -119,6 +131,10 @@ RSpec.describe WitnessesManager::Updater, type: :service do
 
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
+      end
+
+      it 'saves the user as the last editor of project' do
+        expect(project.last_editor).to eq(user)
       end
     end
 

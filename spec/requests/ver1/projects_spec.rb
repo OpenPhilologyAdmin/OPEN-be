@@ -171,7 +171,8 @@ RSpec.describe 'v1/projects', type: :request do
 
   path '/api/v1/projects/{id}' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:id) { create(:project).id }
+    let(:record) { create(:project) }
+    let(:id) { record.id }
 
     get('Retrieves project details') do
       tags 'Projects'
@@ -208,6 +209,101 @@ RSpec.describe 'v1/projects', type: :request do
         let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+
+    put('Updates project details') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Update selected project details.'
+
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of project'
+      parameter name: :project, in: :body, schema: {
+        type:       :object,
+        properties:
+                    {
+                      project: {
+                        type:       :object,
+                        properties: {
+                          name: {
+                            type:        :string,
+                            maximum:     50,
+                            description: 'Project name',
+                            example:     'Project name'
+                          }
+                        },
+                        required:   %w[name]
+                      }
+                    }
+      }
+
+      let(:project) do
+        {
+          project:
+                   {
+                     name: 'New name'
+                   }
+        }
+      end
+
+      response '200', 'Project updated' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/project'
+
+        run_test!
+
+        before { record.reload }
+
+        it 'saves the current user as last_editor of project' do
+          expect(record.last_editor).to eq(user)
+        end
+
+        it 'updates the project' do
+          project[:project].each do |key, value|
+            expect(record.send(key)).to eq(value)
+          end
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+
+      response '422', 'Project data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project) do
+          {
+            project:
+                     {
+                       name: nil
+                     }
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
       end

@@ -2,7 +2,7 @@
 
 module WitnessesManager
   class Updater < Base
-    def initialize(project:, siglum:, params: nil)
+    def initialize(project:, siglum:, user:, params: nil)
       @default_witness_value = as_boolean(params.delete(:default))
       super
     end
