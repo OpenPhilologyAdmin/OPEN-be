@@ -6,10 +6,6 @@ class SessionTokenPolicy < ApplicationPolicy
     super
   end
 
-  def new?
-    false
-  end
-
   def create?
     approved_admin?
   end

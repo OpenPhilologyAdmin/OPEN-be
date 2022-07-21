@@ -198,6 +198,22 @@ components:
               type: boolean
               description: Whether it should be a default witness of the project
               example: false
+    token:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        t:
+          type: string
+          description: Token value
+          example: Lorem ipsum
+          nullable: true
+        apparatus_index:
+          type: integer
+          description: Index of apparatus, available only if the token is listed there
+          example: 1
+          nullable: true
     login_required:
       type: object
       properties:
@@ -673,6 +689,49 @@ paths:
       responses:
         '204':
           description: 'User has been signed out '
+  "/api/v1/projects/{project_id}/tokens":
+    get:
+      summary: Retrieves tokens of the specified project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Get tokens of the project.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      responses:
+        '200':
+          description: Tokens can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/token"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users":
     get:
       summary: Retrieves list of users

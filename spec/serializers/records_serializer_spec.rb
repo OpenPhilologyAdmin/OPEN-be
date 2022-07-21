@@ -26,7 +26,7 @@ describe RecordsSerializer do
     context 'when there are some records' do
       let(:expected_hash) do
         {
-          records: [record_serializer.new(resource).as_json, UserSerializer.new(resource2).as_json],
+          records: [record_serializer.new(resource).as_json, record_serializer.new(resource2).as_json],
           count:   2
         }
       end

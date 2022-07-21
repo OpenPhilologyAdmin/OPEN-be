@@ -207,6 +207,27 @@ RSpec.configure do |config|
               }
             }
           },
+          token:               {
+            type:       :object,
+            properties: {
+              id:              {
+                type:    :integer,
+                example: 1
+              },
+              t:               {
+                type:        :string,
+                description: 'Token value',
+                example:     'Lorem ipsum',
+                nullable:    true
+              },
+              apparatus_index: {
+                type:        :integer,
+                description: 'Index of apparatus, available only if the token is listed there',
+                example:     1,
+                nullable:    true
+              }
+            }
+          },
           login_required:      {
             type:       :object,
             properties: {

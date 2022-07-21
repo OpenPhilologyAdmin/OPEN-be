@@ -9,10 +9,6 @@ class UserPolicy < ApplicationPolicy
     approved_admin?
   end
 
-  def new?
-    false
-  end
-
   def create?
     user.blank?
   end

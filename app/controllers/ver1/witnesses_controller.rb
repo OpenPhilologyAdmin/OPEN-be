@@ -2,8 +2,9 @@
 
 module Ver1
   class WitnessesController < ApiApplicationController
+    include WithProject
+
     before_action :require_login
-    before_action :fetch_project
 
     def index
       authorize @project, :index_witnesses?
@@ -47,10 +48,6 @@ module Ver1
     end
 
     private
-
-    def fetch_project
-      @project = Project.find(params[:project_id])
-    end
 
     def witness_siglum
       @witness_siglum ||= params[:id]

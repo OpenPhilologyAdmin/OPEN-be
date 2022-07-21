@@ -9,14 +9,6 @@ class ProjectPolicy < ApplicationPolicy
     approved_admin?
   end
 
-  def new?
-    false
-  end
-
-  def edit?
-    false
-  end
-
   def update?
     approved_admin?
   end
