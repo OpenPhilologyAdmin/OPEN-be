@@ -160,7 +160,7 @@ GEM
     kwalify (0.7.2)
     launchy (2.5.0)
       addressable (~> 2.7)
-    lefthook (1.0.4)
+    lefthook (1.0.5)
     letter_opener (1.8.1)
       launchy (>= 2.2, < 3)
     listen (3.7.1)

@@ -349,10 +349,14 @@ paths:
                   error:
                     type: string
                     description: 'Specifies why the user cannot be signed in after
-                      updating their password: "You have to confirm your email address
-                      before continuing.", "Your account has not been approved by
-                      the administrator yet.".'
-                    example: You have to confirm your email address before continuing.
+                      updating their password: "Your password has been changed successfully.
+                      However we cannot sign you in, because you have to confirm your
+                      email address first.", "Your password has been changed successfully.
+                      However we cannot sign you in, because your account has not
+                      been approved by the administrator yet.".'
+                    example: Your password has been changed successfully. However
+                      we cannot sign you in, because your account has not been approved
+                      by the administrator yet.
         '422':
           description: Invalid password or reset password token
           content:

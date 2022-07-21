@@ -109,9 +109,9 @@ RSpec.describe 'v1/passwords', type: :request do
           error: {
             type:        :string,
             description: 'Specifies why the user cannot be signed in after updating their password: ' \
-                         "\"#{I18n.t('devise.failure.unconfirmed')}\", " \
-                         "\"#{I18n.t('devise.failure.not_approved')}\".",
-            example:     I18n.t('devise.failure.unconfirmed')
+                         "\"#{I18n.t('devise.passwords.updated_not_active_unconfirmed')}\", " \
+                         "\"#{I18n.t('devise.passwords.updated_not_active_not_approved')}\".",
+            example:     I18n.t('devise.passwords.updated_not_active_not_approved')
           }
         }
 
@@ -129,7 +129,7 @@ RSpec.describe 'v1/passwords', type: :request do
             }
           end
           let(:expected_response) do
-            { error: I18n.t('devise.failure.unconfirmed') }
+            { error: I18n.t('devise.passwords.updated_not_active_unconfirmed') }
           end
 
           run_test!
@@ -154,7 +154,7 @@ RSpec.describe 'v1/passwords', type: :request do
             }
           end
           let(:expected_response) do
-            { error: I18n.t('devise.failure.not_approved') }
+            { error: I18n.t('devise.passwords.updated_not_active_not_approved') }
           end
 
           run_test!
