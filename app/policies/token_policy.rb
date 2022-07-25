@@ -5,6 +5,10 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def significant_variants?
+    index?
+  end
+
   class Scope < Scope
     def resolve
       scope

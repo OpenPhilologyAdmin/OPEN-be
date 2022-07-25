@@ -14,5 +14,20 @@ FactoryBot.define do
     t { Faker::Lorem.sentence }
     selected { false }
     possible { false }
+
+    trait :selected do
+      selected { true }
+      possible { true }
+    end
+
+    trait :secondary do
+      selected { false }
+      possible { true }
+    end
+
+    trait :insignificant do
+      selected { false }
+      possible { false }
+    end
   end
 end

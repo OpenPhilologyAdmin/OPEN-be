@@ -228,6 +228,26 @@ RSpec.configure do |config|
               }
             }
           },
+          significant_variant: {
+            type:       :object,
+            properties: {
+              token_id: {
+                type:        :integer,
+                description: 'The ID of token',
+                example:     1
+              },
+              index:    {
+                type:        :integer,
+                description: 'Index of apparatus, starting with 1',
+                example:     1
+              },
+              value:    {
+                type:        :string,
+                description: 'Value',
+                example:     'raged] A B, continued C D'
+              }
+            }
+          },
           login_required:      {
             type:       :object,
             properties: {

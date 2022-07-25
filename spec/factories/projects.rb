@@ -8,7 +8,7 @@ FactoryBot.define do
     end
 
     name { Faker::Lorem.word }
-    default_witness { Faker::Alphanumeric.alpha(number: 2) }
+    default_witness { Faker::Alphanumeric.alpha(number: 2).upcase }
 
     witnesses do
       build_list(:witness, witnesses_number) do |witness, index|

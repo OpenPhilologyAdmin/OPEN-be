@@ -18,6 +18,10 @@ RSpec.describe Token, type: :model do
     it 'creates valid variant_selected factory' do
       expect(build(:token, :variant_selected)).to be_valid
     end
+
+    it 'creates valid variant_selected_and_secondary factory' do
+      expect(build(:token, :variant_selected_and_secondary)).to be_valid
+    end
   end
 
   context 'when variants & apparatus' do
@@ -41,6 +45,12 @@ RSpec.describe Token, type: :model do
       describe '#current_variant' do
         it 'equals the default_variant' do
           expect(token.current_variant).to eq(token.default_variant)
+        end
+      end
+
+      describe '#secondary_variants' do
+        it 'is empty' do
+          expect(token.secondary_variants).to be_empty
         end
       end
 
@@ -79,6 +89,22 @@ RSpec.describe Token, type: :model do
       describe '#current_variant' do
         it 'equals the selected_variant' do
           expect(token.current_variant).to eq(selected_variant)
+        end
+      end
+
+      describe '#secondary_variants' do
+        context 'when there is only the selected variant and insignificant ones' do
+          it 'is empty' do
+            expect(token.secondary_variants).to be_empty
+          end
+        end
+
+        context 'when there are secondary variants as well' do
+          let(:token) { create(:token, :variant_selected_and_secondary) }
+
+          it 'returns marching secondary variants' do
+            expect(token.secondary_variants).to all(be_secondary)
+          end
         end
       end
 

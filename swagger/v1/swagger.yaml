@@ -214,6 +214,21 @@ components:
           description: Index of apparatus, available only if the token is listed there
           example: 1
           nullable: true
+    significant_reading:
+      type: object
+      properties:
+        token_id:
+          type: integer
+          description: The ID of token
+          example: 1
+        index:
+          type: integer
+          description: Index of apparatus, starting with 1
+          example: 1
+        significant_readings:
+          type: string
+          description: Significant readings
+          example: raged] A B, continued C D
     login_required:
       type: object
       properties:
@@ -689,6 +704,49 @@ paths:
       responses:
         '204':
           description: 'User has been signed out '
+  "/api/v1/projects/{project_id}/significant_readings":
+    get:
+      summary: Retrieves significant readings of the specified project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: 'Apparatus: Significant readings of the project.'
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      responses:
+        '200':
+          description: Significant readings can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/significant_reading"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/projects/{project_id}/tokens":
     get:
       summary: Retrieves tokens of the specified project

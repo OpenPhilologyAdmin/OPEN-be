@@ -13,6 +13,7 @@ class Token < ApplicationRecord
 
   default_scope { order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }
+  scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
 
   delegate :t, to: :current_variant, allow_nil: true
 
@@ -26,6 +27,10 @@ class Token < ApplicationRecord
 
   def selected_variant
     grouped_variants.find(&:selected?)
+  end
+
+  def secondary_variants
+    grouped_variants.select(&:secondary?)
   end
 
   def apparatus?

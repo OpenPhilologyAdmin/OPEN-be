@@ -7,7 +7,7 @@ FactoryBot.define do
       new(attributes)
     end
     siglum { Faker::Alphanumeric.unique.alpha(number: 3) }
-    name { Faker::Lorem.sentence }
+    name { Faker::Lorem.characters(number: 15) }
 
     trait :with_project do
       parent { build(:project) }

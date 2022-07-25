@@ -11,4 +11,8 @@ class TokenGroupedVariant
   def for_witness?(siglum)
     witnesses.include?(siglum)
   end
+
+  def secondary?
+    possible? && !selected?
+  end
 end
