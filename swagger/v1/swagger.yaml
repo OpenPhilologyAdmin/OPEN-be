@@ -214,7 +214,7 @@ components:
           description: Index of apparatus, available only if the token is listed there
           example: 1
           nullable: true
-    significant_reading:
+    significant_variant:
       type: object
       properties:
         token_id:
@@ -225,9 +225,9 @@ components:
           type: integer
           description: Index of apparatus, starting with 1
           example: 1
-        significant_readings:
+        value:
           type: string
-          description: Significant readings
+          description: Value
           example: raged] A B, continued C D
     login_required:
       type: object
@@ -704,14 +704,14 @@ paths:
       responses:
         '204':
           description: 'User has been signed out '
-  "/api/v1/projects/{project_id}/significant_readings":
+  "/api/v1/projects/{project_id}/significant_variants":
     get:
-      summary: Retrieves significant readings of the specified project
+      summary: Retrieves significant variants of the specified project
       tags:
       - Projects
       security:
       - bearer: []
-      description: 'Apparatus: Significant readings of the project.'
+      description: 'Apparatus: Significant variants of the project.'
       parameters:
       - name: project_id
         in: path
@@ -721,7 +721,7 @@ paths:
         description: ID of the project
       responses:
         '200':
-          description: Significant readings can be retrieved
+          description: Significant variants can be retrieved
           content:
             application/json:
               schema:
@@ -730,7 +730,7 @@ paths:
                   records:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/significant_reading"
+                      "$ref": "#/components/schemas/significant_variant"
                   count:
                     type: integer
                     description: Number of all records
