@@ -3,10 +3,10 @@
 require 'swagger_helper'
 
 RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
-  path '/api/v1/projects/{project_id}/tokens' do
-    let(:user) { create(:user, :admin, :approved) }
-    let(:project_id) { create(:project).id }
+  let(:user) { create(:user, :admin, :approved) }
+  let(:project_id) { create(:project).id }
 
+  path '/api/v1/projects/{project_id}/tokens' do
     get('Retrieves tokens of the specified project') do
       tags 'Projects'
       consumes 'application/json'
@@ -80,6 +80,57 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
         let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+  end
+  path '/api/v1/projects/{project_id}/tokens/{id}' do
+    let(:record) { create(:token, project_id:) }
+    let(:id) { record.id }
+
+    get('Retrieves token details') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Get the token details.'
+
+      parameter name: :project_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the project'
+
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of token'
+
+      response '200', 'Token found' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/token_verbose'
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project or token not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 

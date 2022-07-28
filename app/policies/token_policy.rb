@@ -5,6 +5,10 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def show?
+    approved_admin?
+  end
+
   def significant_variants?
     index?
   end

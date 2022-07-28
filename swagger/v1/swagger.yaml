@@ -227,6 +227,35 @@ components:
             evaluated yet (no reading selected),<br>*:evaluated_with_single* - only
             a single significant reading selected,<br>*:evaluated_with_multiple* -
             multiple significant readings selected
+    token_verbose:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        grouped_variants:
+          type: array
+          description: Available variants, grouped by the same t (value)
+          items:
+            type: object
+            properties:
+              witnesses:
+                type: array
+                items:
+                  type: string
+                  description: List of witnesses that use this variant
+                  example: A
+              t:
+                type: string
+                description: Variant value
+                example: Lorem ipsum
+                nullable: true
+              selected:
+                type: boolean
+                description: Whether is selected as a primary reading
+              possible:
+                type: boolean
+                description: Whether is selected as a secondary reading
     significant_variant:
       type: object
       properties:
@@ -866,6 +895,46 @@ paths:
                 "$ref": "#/components/schemas/login_required"
         '404':
           description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{project_id}/tokens/{id}":
+    get:
+      summary: Retrieves token details
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Get the token details.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Token found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/token_verbose"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project or token not found
           content:
             application/json:
               schema:

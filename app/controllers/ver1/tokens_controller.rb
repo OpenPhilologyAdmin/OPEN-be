@@ -8,14 +8,26 @@ module Ver1
 
     def index
       authorize Token, :index?
-      records = policy_scope(Token).for_project(@project).includes(:project)
 
       render(
         json: TokensSerializer.new(records, edit_mode:)
       )
     end
 
+    def show
+      record = records.find(params[:id])
+      authorize record, :show?
+
+      render(
+        json: TokenSerializer.new(record, verbose: true)
+      )
+    end
+
     private
+
+    def records
+      @records ||= policy_scope(Token).for_project(@project).includes(:project)
+    end
 
     def edit_mode
       ActiveModel::Type::Boolean.new.cast(params[:edit_mode])

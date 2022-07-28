@@ -238,6 +238,47 @@ RSpec.configure do |config|
               }
             }
           },
+          token_verbose:         {
+
+            type:       :object,
+            properties: {
+              id:               {
+                type:    :integer,
+                example: 1
+              },
+              grouped_variants: {
+                type:        :array,
+                description: 'Available variants, grouped by the same t (value)',
+                items:       {
+                  type:       :object,
+                  properties: {
+                    witnesses: {
+                      type:  :array,
+                      items: {
+                        type:        :string,
+                        description: 'List of witnesses that use this variant',
+                        example:     'A'
+                      }
+                    },
+                    t:         {
+                      type:        :string,
+                      description: 'Variant value',
+                      example:     'Lorem ipsum',
+                      nullable:    true
+                    },
+                    selected:  {
+                      type:        :boolean,
+                      description: 'Whether is selected as a primary reading'
+                    },
+                    possible:  {
+                      type:        :boolean,
+                      description: 'Whether is selected as a secondary reading'
+                    }
+                  }
+                }
+              }
+            }
+          },
           significant_variant:   {
             type:       :object,
             properties: {
