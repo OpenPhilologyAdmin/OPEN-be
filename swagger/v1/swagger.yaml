@@ -242,6 +242,21 @@ components:
           type: string
           description: Value
           example: raged] A B, continued C D
+    insignificant_variant:
+      type: object
+      properties:
+        token_id:
+          type: integer
+          description: The ID of token
+          example: 1
+        index:
+          type: integer
+          description: Index of apparatus, starting with 1
+          example: 1
+        value:
+          type: string
+          description: Value
+          example: continued C D
     login_required:
       type: object
       properties:
@@ -323,6 +338,49 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/invalid_record"
+  "/api/v1/projects/{project_id}/insignificant_variants":
+    get:
+      summary: Retrieves insignificant variants of the specified project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: 'Apparatus: Insignificant variants of the project.'
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      responses:
+        '200':
+          description: Insignificant variants can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/insignificant_variant"
+                  count:
+                    type: integer
+                    description: Number of all records
+                    example: 50
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users/password":
     post:
       summary: Sends the reset password email

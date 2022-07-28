@@ -15,6 +15,7 @@ class Token < ApplicationRecord
   default_scope { order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }
   scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
+  scope :with_insignificant_variants, -> { where('grouped_variants @> ?', '[{"selected": false, "possible": false}]') }
 
   def current_variant
     selected_variant || default_variant
@@ -30,6 +31,10 @@ class Token < ApplicationRecord
 
   def secondary_variants
     grouped_variants.select(&:secondary?)
+  end
+
+  def insignificant_variants
+    grouped_variants.select(&:insignificant?)
   end
 
   def evaluated?

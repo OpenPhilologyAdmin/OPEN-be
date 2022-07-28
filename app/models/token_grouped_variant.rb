@@ -15,4 +15,8 @@ class TokenGroupedVariant
   def secondary?
     possible? && !selected?
   end
+
+  def insignificant?
+    !(possible? || selected?)
+  end
 end

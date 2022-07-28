@@ -54,6 +54,12 @@ RSpec.describe Token, type: :model do
         end
       end
 
+      describe '#insignificant_variants' do
+        it 'returns all variants' do
+          expect(token.insignificant_variants).to match_array(token.grouped_variants)
+        end
+      end
+
       describe '#t' do
         it 'equals the :t of the default_variant' do
           expect(token.t).to eq(token.default_variant.t)
@@ -105,6 +111,12 @@ RSpec.describe Token, type: :model do
           it 'returns marching secondary variants' do
             expect(token.secondary_variants).to all(be_secondary)
           end
+        end
+      end
+
+      describe '#insignificant_variants' do
+        it 'returns all variants that are not selected' do
+          expect(token.insignificant_variants).to all(be_insignificant)
         end
       end
 

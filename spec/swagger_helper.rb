@@ -20,7 +20,7 @@ RSpec.configure do |config|
           }
         },
         schemas:         {
-          invalid_record:      {
+          invalid_record:        {
             type:       :object,
             properties: {
               '$field_name': {
@@ -33,7 +33,7 @@ RSpec.configure do |config|
               }
             }
           },
-          user:                {
+          user:                  {
             type:       :object,
             properties: {
               id:                { type: :integer },
@@ -51,7 +51,7 @@ RSpec.configure do |config|
             },
             required:   %w[email name]
           },
-          credentials:         {
+          credentials:           {
             type:       :object,
             properties: {
               user: {
@@ -64,7 +64,7 @@ RSpec.configure do |config|
               }
             }
           },
-          user_email:          {
+          user_email:            {
             type:       :object,
             properties: {
               user: {
@@ -76,7 +76,7 @@ RSpec.configure do |config|
               }
             }
           },
-          user_reset_password: {
+          user_reset_password:   {
             type:       :object,
             properties: {
               user: {
@@ -100,7 +100,7 @@ RSpec.configure do |config|
               }
             }
           },
-          project:             {
+          project:               {
             type:       :object,
             properties: {
               id:              { type: :integer },
@@ -159,7 +159,7 @@ RSpec.configure do |config|
             },
             required:   ['name']
           },
-          witness:             {
+          witness:               {
             type:       :object,
             properties: {
               id:      {
@@ -185,7 +185,7 @@ RSpec.configure do |config|
               }
             }
           },
-          witness_update:      {
+          witness_update:        {
             type:       :object,
             properties: {
               witness: {
@@ -207,7 +207,7 @@ RSpec.configure do |config|
               }
             }
           },
-          token:               {
+          token:                 {
             type:       :object,
             properties: {
               id:              {
@@ -238,7 +238,7 @@ RSpec.configure do |config|
               }
             }
           },
-          significant_variant: {
+          significant_variant:   {
             type:       :object,
             properties: {
               token_id: {
@@ -258,7 +258,27 @@ RSpec.configure do |config|
               }
             }
           },
-          login_required:      {
+          insignificant_variant: {
+            type:       :object,
+            properties: {
+              token_id: {
+                type:        :integer,
+                description: 'The ID of token',
+                example:     1
+              },
+              index:    {
+                type:        :integer,
+                description: 'Index of apparatus, starting with 1',
+                example:     1
+              },
+              value:    {
+                type:        :string,
+                description: 'Value',
+                example:     'continued C D'
+              }
+            }
+          },
+          login_required:        {
             type:       :object,
             properties: {
               error: {
@@ -267,7 +287,7 @@ RSpec.configure do |config|
               }
             }
           },
-          record_not_found:    {
+          record_not_found:      {
             type:       :object,
             properties: {
               error: {
@@ -276,7 +296,7 @@ RSpec.configure do |config|
               }
             }
           },
-          forbidden_request:   {
+          forbidden_request:     {
             type:       :object,
             properties: {
               error: {

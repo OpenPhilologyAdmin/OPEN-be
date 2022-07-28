@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/helpers/apparatus_serializer'
+
+RSpec.configure do |c|
+  c.include Helpers::ApparatusSerializer
+end
 
 describe Apparatus::EntriesSerializer do
   describe 'as_json' do
@@ -21,24 +26,40 @@ describe Apparatus::EntriesSerializer do
     context 'when there are some records' do
       let(:resource) { create(:token, :variant_selected) }
       let(:resource2) { create(:token, :variant_selected_and_secondary) }
-      let(:serializer) { described_class.new([resource, resource2]) }
-      let(:serialized_records) { serializer.as_json[:records] }
+      let(:serializer) { described_class.new([resource, resource2], significant:) }
       let(:expected_hash) do
         {
-          records: [
-            Apparatus::EntrySerializer.new(
-              Apparatus::Entry.new(token: resource, index: 1)
-            ).as_json,
-            Apparatus::EntrySerializer.new(
-              Apparatus::Entry.new(token: resource2, index: 2)
-            ).as_json
-          ],
+          records: serialized_entries(apparatus_entries),
           count:   2
         }
       end
 
-      it 'returns hash with correct keys' do
-        expect(serializer.as_json).to eq(expected_hash)
+      context 'when significant readings' do
+        let(:significant) { true }
+        let(:apparatus_entries) do
+          [
+            build(:apparatus_significant_entry, token: resource, index: 1),
+            build(:apparatus_significant_entry, token: resource2, index: 2)
+          ]
+        end
+
+        it 'returns hash with correct keys' do
+          expect(serializer.as_json).to eq(expected_hash)
+        end
+      end
+
+      context 'when insignificant readings' do
+        let(:significant) { false }
+        let(:apparatus_entries) do
+          [
+            build(:apparatus_insignificant_entry, token: resource, index: 1),
+            build(:apparatus_insignificant_entry, token: resource2, index: 2)
+          ]
+        end
+
+        it 'returns hash with correct keys' do
+          expect(serializer.as_json).to eq(expected_hash)
+        end
       end
     end
   end

@@ -8,7 +8,7 @@ module Apparatus
     attr_accessor :token, :index
 
     delegate :id, to: :token, prefix: true
-    delegate :apparatus?, :selected_variant, :secondary_variants, to: :token
+    delegate :apparatus?, to: :token
 
     def attributes
       {
@@ -18,22 +18,10 @@ module Apparatus
     end
 
     def value
-      return nil unless apparatus?
-
-      ([selected_reading] + secondary_readings).join(', ')
+      raise NotImplementedError
     end
 
     private
-
-    def selected_reading
-      reading_for(variant: selected_variant, separator: ']')
-    end
-
-    def secondary_readings
-      secondary_variants.map do |variant|
-        reading_for(variant:)
-      end
-    end
 
     def reading_for(variant:, separator: nil)
       "#{variant.t.strip}#{separator} #{variant.witnesses.join(' ')}"

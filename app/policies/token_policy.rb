@@ -9,6 +9,10 @@ class TokenPolicy < ApplicationPolicy
     index?
   end
 
+  def insignificant_variants?
+    index?
+  end
+
   class Scope < Scope
     def resolve
       scope
