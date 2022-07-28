@@ -10,12 +10,11 @@ class Token < ApplicationRecord
 
   belongs_to :project
   delegate :default_witness, to: :project, prefix: true
+  delegate :t, to: :current_variant, allow_nil: true
 
   default_scope { order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }
   scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
-
-  delegate :t, to: :current_variant, allow_nil: true
 
   def current_variant
     selected_variant || default_variant
@@ -33,7 +32,24 @@ class Token < ApplicationRecord
     grouped_variants.select(&:secondary?)
   end
 
-  def apparatus?
+  def evaluated?
     selected_variant.present?
+  end
+
+  alias apparatus? evaluated?
+
+  def one_grouped_variant?
+    grouped_variants.size == 1
+  end
+
+  def state
+    return :one_variant if one_grouped_variant?
+    return :not_evaluated unless evaluated?
+
+    if secondary_variants.any?
+      :evaluated_with_multiple
+    else
+      :evaluated_with_single
+    end
   end
 end

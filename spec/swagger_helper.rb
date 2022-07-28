@@ -225,6 +225,16 @@ RSpec.configure do |config|
                 description: 'Index of apparatus, available only if the token is listed there',
                 example:     1,
                 nullable:    true
+              },
+              state:           {
+                type:        :string,
+                enum:        %i[one_variant not_evaluated evaluated_with_single evaluated_with_multiple],
+                default:     :not_evaluated,
+                description: 'The state of token is returned only when edit_mode enabled.<br>' \
+                             '*:one_variant* - all witnesses have the same reading,<br>' \
+                             '*:not_evaluated* - has not been evaluated yet (no reading selected),<br>' \
+                             '*:evaluated_with_single* - only a single significant reading selected,<br>' \
+                             '*:evaluated_with_multiple* - multiple significant readings selected'
               }
             }
           },

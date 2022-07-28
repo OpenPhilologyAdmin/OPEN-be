@@ -11,8 +11,14 @@ module Ver1
       records = policy_scope(Token).for_project(@project).includes(:project)
 
       render(
-        json: TokensSerializer.new(records)
+        json: TokensSerializer.new(records, edit_mode:)
       )
+    end
+
+    private
+
+    def edit_mode
+      ActiveModel::Type::Boolean.new.cast(params[:edit_mode])
     end
   end
 end

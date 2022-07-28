@@ -214,6 +214,19 @@ components:
           description: Index of apparatus, available only if the token is listed there
           example: 1
           nullable: true
+        state:
+          type: string
+          enum:
+          - one_variant
+          - not_evaluated
+          - evaluated_with_single
+          - evaluated_with_multiple
+          default: not_evaluated
+          description: The state of token is returned only when edit_mode enabled.<br>*:one_variant*
+            - all witnesses have the same reading,<br>*:not_evaluated* - has not been
+            evaluated yet (no reading selected),<br>*:evaluated_with_single* - only
+            a single significant reading selected,<br>*:evaluated_with_multiple* -
+            multiple significant readings selected
     significant_variant:
       type: object
       properties:
@@ -754,7 +767,9 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Get tokens of the project.
+      description: Get tokens of the project. It returns tokens for the *Read mode*
+        by default. <br>When *edit_mode* flag is enabled, the tokens will include
+        additional details (token state).
       parameters:
       - name: project_id
         in: path
@@ -762,6 +777,13 @@ paths:
           type: integer
         required: true
         description: ID of the project
+      - name: edit_mode
+        in: query
+        schema:
+          type: boolean
+        required: false
+        description: When true, the returned tokens will include additional details
+          (token state)
       responses:
         '200':
           description: Tokens can be retrieved

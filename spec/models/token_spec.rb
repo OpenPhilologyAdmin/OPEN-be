@@ -24,7 +24,7 @@ RSpec.describe Token, type: :model do
     end
   end
 
-  context 'when variants & apparatus' do
+  context 'when variants & evaluated' do
     let(:default_witness) { 'A' }
     let(:project) { create(:project, default_witness:) }
     let(:token) { create(:token, project:) }
@@ -60,9 +60,9 @@ RSpec.describe Token, type: :model do
         end
       end
 
-      describe '#apparatus?' do
+      describe '#evaluated?' do
         it 'is false' do
-          expect(token).not_to be_apparatus
+          expect(token).not_to be_evaluated
         end
       end
     end
@@ -114,9 +114,75 @@ RSpec.describe Token, type: :model do
         end
       end
 
-      describe '#apparatus?' do
+      describe '#evaluated?' do
         it 'is true' do
-          expect(token).to be_apparatus
+          expect(token).to be_evaluated
+        end
+      end
+    end
+  end
+
+  describe '#one_grouped_variant?' do
+    context 'when there is just one grouped variant' do
+      let(:token) { create(:token, grouped_variants: build_list(:token_grouped_variant, 1)) }
+
+      it 'is truthy' do
+        expect(token).to be_one_grouped_variant
+      end
+    end
+
+    context 'when there are more grouped variant' do
+      let(:token) { create(:token, grouped_variants: build_list(:token_grouped_variant, 2)) }
+
+      it 'is falsey' do
+        expect(token).not_to be_one_grouped_variant
+      end
+    end
+  end
+
+  describe '#state' do
+    context 'when there is just one grouped variant' do
+      let(:token) { create(:token, grouped_variants: build_list(:token_grouped_variant, 1)) }
+
+      it 'returns :one_variant' do
+        expect(token.state).to eq(:one_variant)
+      end
+    end
+
+    context 'when there are more grouped variants' do
+      let(:token) { create(:token, grouped_variants:) }
+
+      context 'when there is no :selected variant yet' do
+        let(:grouped_variants) { build_list(:token_grouped_variant, 2, :insignificant) }
+
+        it 'returns :not_evaluated' do
+          expect(token.state).to eq(:not_evaluated)
+        end
+      end
+
+      context 'when there is only the :selected variant' do
+        let(:grouped_variants) do
+          [
+            build(:token_grouped_variant, :selected),
+            build(:token_grouped_variant, :insignificant)
+          ]
+        end
+
+        it 'returns :evaluated_with_single' do
+          expect(token.state).to eq(:evaluated_with_single)
+        end
+      end
+
+      context 'when there is the :selected variant and :secondary variant' do
+        let(:grouped_variants) do
+          [
+            build(:token_grouped_variant, :selected),
+            build(:token_grouped_variant, :secondary)
+          ]
+        end
+
+        it 'returns :evaluated_with_multiple' do
+          expect(token.state).to eq(:evaluated_with_multiple)
         end
       end
     end

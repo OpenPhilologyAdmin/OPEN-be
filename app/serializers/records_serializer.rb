@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RecordsSerializer
-  def initialize(records)
+  def initialize(records, _options = {})
     @records = records
   end
 
