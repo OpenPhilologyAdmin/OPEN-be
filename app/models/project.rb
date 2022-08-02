@@ -22,6 +22,7 @@ class Project < ApplicationRecord
   validates :witnesses, store_model: { merge_array_errors: true }
 
   scope :most_recently_updated_first, -> { order('updated_at desc') }
+  scope :older_than, ->(date) { where('created_at < ?', date) }
 
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy

@@ -10,14 +10,15 @@ RSpec.describe 'v1/projects', type: :request do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Allows retrieving all projects list. The projects are sorted by the ' \
+      description 'Allows retrieving list of correctly processed projects. The projects are sorted by the ' \
                   'updated_at date with the most recently updated records first.'
 
       response '200', 'Projects can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
 
         before do
-          create_list(:project, 3)
+          create_list(:project, 2, :status_processed)
+          create(:project, :status_invalid)
         end
 
         schema type:       :object,
@@ -35,6 +36,13 @@ RSpec.describe 'v1/projects', type: :request do
                            }
 
         run_test!
+
+        it 'returns only successfully processed projects' do
+          records = JSON.parse(response.body)['records']
+          records.each do |record|
+            expect(record['status']).to eq('processed')
+          end
+        end
       end
 
       response '401', 'Login required' do

@@ -160,6 +160,17 @@ components:
           format: date_time
           description: Date in ISO 8601 format
           example: '2022-07-01T00:00:00.000+02:00'
+        import_errors:
+          type: object
+          nullable: true
+          properties:
+            file_format:
+              type: array
+              nullable: true
+              items:
+                type: string
+                description: The list of errors that happened during data import
+                example: The file format is not supported.
       required:
       - name
     witness:
@@ -526,8 +537,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Allows retrieving all projects list. The projects are sorted by
-        the updated_at date with the most recently updated records first.
+      description: Allows retrieving list of correctly processed projects. The projects
+        are sorted by the updated_at date with the most recently updated records first.
       responses:
         '200':
           description: Projects can be retrieved

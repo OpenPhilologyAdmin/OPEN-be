@@ -155,6 +155,21 @@ RSpec.configure do |config|
                 format:      :date_time,
                 description: 'Date in ISO 8601 format',
                 example:     '2022-07-01T00:00:00.000+02:00'
+              },
+              import_errors:   {
+                type:       :object,
+                nullable:   true,
+                properties: {
+                  file_format: {
+                    type:     :array,
+                    nullable: true,
+                    items:    {
+                      type:        :string,
+                      description: 'The list of errors that happened during data import',
+                      example:     'The file format is not supported.'
+                    }
+                  }
+                }
               }
             },
             required:   ['name']

@@ -38,10 +38,10 @@ en:
       deleted: 'Record successfully deleted'
   importer:
     errors:
-      unsupported_file_format: 'File format is not supported'
-      missing_file: 'File is missing'
+      unsupported_file_format: The file format is not supported.
+      missing_file: The file is missing.
       json_files:
         invalid_json: The attached file is not a valid JSON.
-        missing_keys: The attached file is missing at least one of the required keys (witnesses, table).
+        missing_keys: The attached file is missing at least one required key (witnesses, table).
         missing_witnesses: The file must include at least one witness.
-        incorrect_number_of_tokens: The number of tokens does not match number of witnesses.
+        incorrect_number_of_tokens: The number of tokens does not a match the number of witnesses.

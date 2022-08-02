@@ -6,7 +6,9 @@ module Ver1
 
     def index
       authorize Project, :index?
-      records = policy_scope(Project).includes(:owners).most_recently_updated_first
+      records = policy_scope(Project).includes(:owners)
+                                     .most_recently_updated_first
+                                     .processed
 
       render(
         json: RecordsSerializer.new(records)

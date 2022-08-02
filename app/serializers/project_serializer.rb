@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProjectSerializer
-  RECORD_ATTRIBUTES = %i[id name default_witness witnesses status].freeze
+  RECORD_ATTRIBUTES = %i[id name default_witness witnesses status import_errors].freeze
   RECORD_METHODS = %i[created_by creator_id creation_date last_edit_by last_edit_date witnesses_count].freeze
 
   def initialize(record)

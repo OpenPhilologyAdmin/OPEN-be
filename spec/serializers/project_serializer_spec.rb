@@ -24,7 +24,8 @@ describe ProjectSerializer do
         creation_date:   resource.created_at,
         last_edit_by:    resource.last_edit_by,
         last_edit_date:  resource.updated_at,
-        witnesses_count: resource.witnesses_count
+        witnesses_count: resource.witnesses_count,
+        import_errors:   resource.import_errors
       }.as_json
     end
 
