@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class TokensSerializer < RecordsSerializer
-  def initialize(records, edit_mode: false)
+  def initialize(records, mode: nil)
     super
-    @edit_mode = edit_mode
+    @mode = mode
   end
 
   private
@@ -16,7 +16,7 @@ class TokensSerializer < RecordsSerializer
         record.apparatus_index = apparatus_index
       end
 
-      record_serializer.new(record, edit_mode: @edit_mode).as_json
+      record_serializer.new(record, mode: @mode).as_json
     end
   end
 end

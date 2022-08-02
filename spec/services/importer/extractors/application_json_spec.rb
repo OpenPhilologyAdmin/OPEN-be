@@ -55,18 +55,12 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
             project:,
             variants:         [
               build(:token_variant,
-                    witness:  'A',
-                    t:        'Lo rem',
-                    selected: false,
-                    possible: false,
-                    deleted:  false),
+                    witness: 'A',
+                    t:       'Lo rem'),
 
               build(:token_variant,
-                    witness:  'B',
-                    t:        'Lo rum',
-                    selected: false,
-                    possible: false,
-                    deleted:  false)
+                    witness: 'B',
+                    t:       'Lo rum')
             ],
             grouped_variants: [
               build(:token_grouped_variant,
@@ -87,18 +81,12 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
             project:,
             variants:         [
               build(:token_variant,
-                    witness:  'A',
-                    t:        'ipsum',
-                    selected: false,
-                    possible: false,
-                    deleted:  false),
+                    witness: 'A',
+                    t:       'ipsum'),
 
               build(:token_variant,
-                    witness:  'B',
-                    t:        'ipsum',
-                    selected: false,
-                    possible: false,
-                    deleted:  false)
+                    witness: 'B',
+                    t:       'ipsum')
             ],
             grouped_variants: [
               build(:token_grouped_variant,
@@ -114,18 +102,12 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
             project:,
             variants:         [
               build(:token_variant,
-                    witness:  'A',
-                    t:        'dolor',
-                    selected: false,
-                    possible: false,
-                    deleted:  false),
+                    witness: 'A',
+                    t:       'dolor'),
 
               build(:token_variant,
-                    witness:  'B',
-                    t:        described_class::EMPTY_VARIANT_VALUE,
-                    selected: false,
-                    possible: false,
-                    deleted:  false)
+                    witness: 'B',
+                    t:       described_class::EMPTY_VARIANT_VALUE)
             ],
             grouped_variants: [
               build(:token_grouped_variant,

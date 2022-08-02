@@ -5,9 +5,6 @@ class TokenVariant
 
   attribute :witness, :string
   attribute :t, :string
-  attribute :selected, :boolean, default: false
-  attribute :possible, :boolean, default: false
-  attribute :deleted, :boolean, default: false
 
   def for_witness?(siglum)
     witness == siglum

@@ -2,14 +2,16 @@
 
 class TokenSerializer
   RECORD_ATTRIBUTES = %i[id].freeze
-  RECORD_METHODS = %i[t apparatus_index].freeze
-  EDIT_MODE_RECORD_METHODS = (RECORD_METHODS + %i[state]).freeze
-  VERBOSE_RECORD_METHODS = %i[grouped_variants].freeze
+  DEFAULT_MODE      = :standard
+  RECORD_METHODS    = {
+    "#{DEFAULT_MODE}": %i[t apparatus_index],
+    edit_project:      %i[t apparatus_index state],
+    edit_token:        %i[grouped_variants]
+  }.freeze
 
-  def initialize(record, edit_mode: false, verbose: false)
+  def initialize(record, mode: DEFAULT_MODE)
     @record = record
-    @edit_mode = edit_mode
-    @verbose = verbose
+    @mode   = mode
   end
 
   def as_json(_options = {})
@@ -22,9 +24,8 @@ class TokenSerializer
   private
 
   def record_methods
-    return EDIT_MODE_RECORD_METHODS if @edit_mode
-    return VERBOSE_RECORD_METHODS if @verbose
+    return RECORD_METHODS[DEFAULT_MODE] unless RECORD_METHODS.key?(@mode)
 
-    RECORD_METHODS
+    RECORD_METHODS[@mode]
   end
 end

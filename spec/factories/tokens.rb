@@ -22,16 +22,14 @@ FactoryBot.define do
 
     trait :variant_selected do
       project { create(:project, witnesses_number: 3) }
-      # first variant is the selected one
       variants do
-        project.witnesses.map.with_index do |witness, index|
+        project.witnesses.map do |witness|
           build(:token_variant,
-                witness:  witness.siglum,
-                selected: index.zero?,
-                possible: index.zero?)
+                witness: witness.siglum)
         end
       end
 
+      # first variant is the selected one
       grouped_variants do
         project.witnesses.map.with_index do |witness, index|
           build(:token_grouped_variant,
@@ -44,16 +42,14 @@ FactoryBot.define do
 
     trait :variant_selected_and_secondary do
       project { create(:project, witnesses_number: 3) }
-      # first variant is the selected one, others are possible
       variants do
-        project.witnesses.map.with_index do |witness, index|
+        project.witnesses.map do |witness|
           build(:token_variant,
-                witness:  witness.siglum,
-                selected: index.zero?,
-                possible: true)
+                witness: witness.siglum)
         end
       end
 
+      # first variant is the selected one, others are possible
       grouped_variants do
         project.witnesses.map.with_index do |witness, index|
           build(:token_grouped_variant,

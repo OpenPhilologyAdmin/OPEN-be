@@ -8,6 +8,41 @@ RSpec.describe Token, type: :model do
 
     it { is_expected.to validate_presence_of(:index) }
     it { is_expected.to validate_presence_of(:variants) }
+    it { is_expected.to validate_presence_of(:grouped_variants) }
+
+    context 'when grouped variants validation' do
+      context 'when more than one variant was selected as a primary reading' do
+        let(:token) { build(:token, grouped_variants: build_list(:token_grouped_variant, 2, :selected)) }
+        let(:expected_error) do
+          I18n.t('activerecord.errors.models.token.attributes.grouped_variants.more_than_one_selected')
+        end
+
+        it 'is not valid' do
+          expect(token).not_to be_valid
+        end
+
+        it 'assigns correct error to :grouped_variants' do
+          token.valid?
+          expect(token.errors[:grouped_variants]).to include(expected_error)
+        end
+      end
+
+      context 'when just one variant selected' do
+        let(:token) { build(:token, grouped_variants: [build(:token_grouped_variant, :selected)]) }
+
+        it 'is valid' do
+          expect(token).to be_valid
+        end
+      end
+
+      context 'when there are no selected variants' do
+        let(:token) { build(:token, grouped_variants: [build(:token_grouped_variant, :secondary)]) }
+
+        it 'is valid' do
+          expect(token).to be_valid
+        end
+      end
+    end
   end
 
   describe 'factories' do

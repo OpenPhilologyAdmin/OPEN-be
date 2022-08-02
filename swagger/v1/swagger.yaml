@@ -227,7 +227,7 @@ components:
             evaluated yet (no reading selected),<br>*:evaluated_with_single* - only
             a single significant reading selected,<br>*:evaluated_with_multiple* -
             multiple significant readings selected
-    token_verbose:
+    token_edit:
       type: object
       properties:
         id:
@@ -256,6 +256,26 @@ components:
               possible:
                 type: boolean
                 description: Whether is selected as a secondary reading
+    grouped_variant:
+      type: object
+      properties:
+        witnesses:
+          type: array
+          items:
+            type: string
+            description: List of witnesses that use this variant
+            example: A
+        t:
+          type: string
+          description: Variant value
+          example: Lorem ipsum
+          nullable: true
+        selected:
+          type: boolean
+          description: Whether is selected as a primary reading
+        possible:
+          type: boolean
+          description: Whether is selected as a secondary reading
     significant_variant:
       type: object
       properties:
@@ -926,7 +946,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/token_verbose"
+                "$ref": "#/components/schemas/token_edit"
         '401':
           description: Login required
           content:
@@ -939,6 +959,66 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+    put:
+      summary: Updates token details
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Update selected tokken details.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Token updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/token_edit"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project or token not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Token data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: object
+                  properties:
+                    grouped_variants:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/grouped_variant"
+                  required:
+                  - grouped_variants
   "/api/v1/users":
     get:
       summary: Retrieves list of users

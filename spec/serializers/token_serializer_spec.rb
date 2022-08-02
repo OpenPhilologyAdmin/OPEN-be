@@ -5,7 +5,7 @@ require 'rails_helper'
 describe TokenSerializer do
   let(:resource) { create(:token, apparatus_index: 1) }
 
-  context 'when no additional flag enabled' do
+  context 'when no special mode enabled' do
     let(:serializer) { described_class.new(resource) }
 
     describe '#as_json' do
@@ -23,8 +23,26 @@ describe TokenSerializer do
     end
   end
 
-  context 'when :edit_mode enabled' do
-    let(:serializer) { described_class.new(resource, edit_mode: true) }
+  context 'when invalid mode given' do
+    let(:serializer) { described_class.new(resource, mode: :lorem_ipsum) }
+
+    describe '#as_json' do
+      let(:expected_hash) do
+        {
+          id:              resource.id,
+          t:               resource.t,
+          apparatus_index: resource.apparatus_index
+        }.as_json
+      end
+
+      it 'returns hash with :standard keys' do
+        expect(serializer.as_json).to eq(expected_hash)
+      end
+    end
+  end
+
+  context 'when :edit_project mode' do
+    let(:serializer) { described_class.new(resource, mode: :edit_project) }
     let(:expected_hash) do
       {
         id:              resource.id,
@@ -39,8 +57,8 @@ describe TokenSerializer do
     end
   end
 
-  context 'when :verbose enabled' do
-    let(:serializer) { described_class.new(resource, verbose: true) }
+  context 'when :edit_token mode' do
+    let(:serializer) { described_class.new(resource, mode: :edit_token) }
 
     describe '#as_json' do
       let(:expected_hash) do

@@ -10,7 +10,7 @@ module Ver1
       authorize Token, :index?
 
       render(
-        json: TokensSerializer.new(records, edit_mode:)
+        json: TokensSerializer.new(records, mode:)
       )
     end
 
@@ -19,8 +19,27 @@ module Ver1
       authorize record, :show?
 
       render(
-        json: TokenSerializer.new(record, verbose: true)
+        json: TokenSerializer.new(record, mode:)
       )
+    end
+
+    def update
+      record = records.find(params[:id])
+      authorize record, :update?
+
+      result = TokensManager::Updater.perform!(
+        token:  record,
+        user:   current_user,
+        params: permitted_attributes(Token)
+      )
+
+      if result.success?
+        render(
+          json: TokenSerializer.new(result.token, mode:)
+        )
+      else
+        respond_with_record_errors(result.token, :unprocessable_entity)
+      end
     end
 
     private
@@ -29,7 +48,14 @@ module Ver1
       @records ||= policy_scope(Token).for_project(@project).includes(:project)
     end
 
-    def edit_mode
+    def mode
+      return :edit_token if %w[show update].include?(action_name)
+      return :edit_project if edit_project_mode?
+
+      TokenSerializer::DEFAULT_MODE
+    end
+
+    def edit_project_mode?
       ActiveModel::Type::Boolean.new.cast(params[:edit_mode])
     end
   end

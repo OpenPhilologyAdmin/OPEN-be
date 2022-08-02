@@ -54,19 +54,20 @@ describe TokensSerializer do
         end
       end
 
-      context 'with options given and edit mode enabled' do
+      context 'with specific mode enabled' do
+        let(:mode) { :edit_project }
         let(:serializer) do
           described_class.new(
             [resource, resource2, resource3],
-            edit_mode: true
+            mode:
           )
         end
         let(:expected_hash) do
           {
             records: [
-              TokenSerializer.new(resource, edit_mode: true).as_json,
-              TokenSerializer.new(resource2, edit_mode: true).as_json,
-              TokenSerializer.new(resource3, edit_mode: true).as_json
+              TokenSerializer.new(resource, mode:).as_json,
+              TokenSerializer.new(resource2, mode:).as_json,
+              TokenSerializer.new(resource3, mode:).as_json
             ],
             count:   3
           }

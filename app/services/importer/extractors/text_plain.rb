@@ -30,11 +30,8 @@ module Importer
       def variants_for(content)
         [
           TokenVariant.new(
-            witness:  default_witness,
-            t:        content,
-            selected: false,
-            possible: false,
-            deleted:  false
+            witness: default_witness,
+            t:       content
           )
         ]
       end

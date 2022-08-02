@@ -21,7 +21,7 @@ Rails.application.routes.draw do
       end
       resources :projects, only: %i[index create update show destroy] do
         resources :witnesses, only: %i[index update destroy]
-        resources :tokens, only: %i[index show]
+        resources :tokens, only: %i[index show update]
         resources :insignificant_variants, only: %i[index]
         resources :significant_variants, only: %i[index]
       end

@@ -6,6 +6,10 @@ en:
           attributes:
             password:
               invalid: must contain at least one digit and one letter
+        token:
+          attributes:
+            grouped_variants:
+              more_than_one_selected: only one option can be selected as the correct reading
   mailers:
     notification_mailer:
       new_signup:

@@ -6,7 +6,8 @@ class Token < ApplicationRecord
   attribute :variants, TokenVariant.to_array_type
   attribute :grouped_variants, TokenGroupedVariant.to_array_type
 
-  validates :index, :variants, presence: true
+  validates :index, :variants, :grouped_variants, presence: true
+  validate :validate_selected_grouped_variant
 
   belongs_to :project
   delegate :default_witness, to: :project, prefix: true
@@ -16,6 +17,13 @@ class Token < ApplicationRecord
   scope :for_project, ->(project) { where(project:) }
   scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
   scope :with_insignificant_variants, -> { where('grouped_variants @> ?', '[{"selected": false, "possible": false}]') }
+
+  def validate_selected_grouped_variant
+    return if grouped_variants.blank?
+    return if grouped_variants.select(&:selected?).size <= 1
+
+    errors.add(:grouped_variants, :more_than_one_selected)
+  end
 
   def current_variant
     selected_variant || default_variant

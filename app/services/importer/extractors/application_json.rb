@@ -54,11 +54,8 @@ module Importer
         def variants
           @variants ||= @simplified_variants.map do |variant|
             TokenVariant.new(
-              witness:  variant[:witness],
-              t:        variant[:t],
-              selected: false,
-              possible: false,
-              deleted:  false
+              witness: variant[:witness],
+              t:       variant[:t]
             )
           end
         end

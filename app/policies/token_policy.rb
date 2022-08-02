@@ -9,12 +9,20 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def update?
+    approved_admin?
+  end
+
   def significant_variants?
     index?
   end
 
   def insignificant_variants?
     index?
+  end
+
+  def permitted_attributes_for_update
+    [grouped_variants: [:t, :selected, :possible, { witnesses: [] }]]
   end
 
   class Scope < Scope

@@ -8,8 +8,5 @@ FactoryBot.define do
     end
     witness { Faker::Alphanumeric.alpha(number: 2) }
     t { Faker::Lorem.sentence }
-    selected { false }
-    possible { false }
-    deleted { false }
   end
 end
