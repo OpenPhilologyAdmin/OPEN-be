@@ -121,12 +121,14 @@ RSpec.describe 'v1/projects', type: :request do
             data: "data:text/plain;base64,#{encoded_source_file}"
           }
         end
+        let(:default_witness_name) { 'Witness name' }
         let(:project) do
           {
             project:
                      {
-                       name:            Faker::Lorem.word,
-                       default_witness: 'A',
+                       name:                 Faker::Lorem.word,
+                       default_witness_name:,
+                       default_witness:      'A',
                        source_file:
                      }
           }
@@ -138,6 +140,7 @@ RSpec.describe 'v1/projects', type: :request do
 
         it 'queues importing project data' do
           expect(ImportProjectJob).to have_received(:perform_now)
+            .with(Project.last.id, user.id, default_witness_name)
         end
       end
 

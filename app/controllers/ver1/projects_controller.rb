@@ -20,7 +20,7 @@ module Ver1
       authorize record, :create?
 
       if record.save
-        ImportProjectJob.perform_now(record.id, current_user.id)
+        ImportProjectJob.perform_now(record.id, current_user.id, record.default_witness_name)
         render(
           json: ProjectSerializer.new(record)
         )
