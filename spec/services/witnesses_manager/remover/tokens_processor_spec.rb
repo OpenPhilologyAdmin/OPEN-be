@@ -7,7 +7,11 @@ RSpec.describe WitnessesManager::Remover::TokensProcessor, type: :service do
   let(:project) { create(:project, witnesses_number: 3) }
   let(:expected_witnesses_number) { 2 }
   let(:siglum) { project.default_witness }
-  let!(:tokens) { create_list(:token, 3, project:) }
+  let(:tokens) { project.tokens }
+
+  before do
+    create_list(:token, 3, project:)
+  end
 
   describe '#remove_witness!' do
     it 'does not change number of tokens in general' do

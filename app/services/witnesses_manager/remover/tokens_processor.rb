@@ -6,7 +6,7 @@ module WitnessesManager
       COLUMNS_TO_UPDATE = %i[variants grouped_variants].freeze
 
       def initialize(tokens:, siglum:)
-        @tokens = tokens
+        @tokens = tokens.to_a
         @siglum = siglum
       end
 
