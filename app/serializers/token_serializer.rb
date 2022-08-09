@@ -6,7 +6,7 @@ class TokenSerializer
   RECORD_METHODS    = {
     "#{DEFAULT_MODE}": %i[t apparatus_index],
     edit_project:      %i[t apparatus_index state],
-    edit_token:        %i[grouped_variants]
+    edit_token:        %i[grouped_variants variants]
   }.freeze
 
   def initialize(record, mode: DEFAULT_MODE)

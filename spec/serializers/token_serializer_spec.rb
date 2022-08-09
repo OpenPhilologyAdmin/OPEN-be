@@ -64,7 +64,8 @@ describe TokenSerializer do
       let(:expected_hash) do
         {
           id:               resource.id,
-          grouped_variants: resource.grouped_variants
+          grouped_variants: resource.grouped_variants,
+          variants:         resource.variants
         }.as_json
       end
 

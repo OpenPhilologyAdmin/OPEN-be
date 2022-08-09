@@ -22,7 +22,10 @@ class TokenPolicy < ApplicationPolicy
   end
 
   def permitted_attributes_for_update
-    [grouped_variants: [:t, :selected, :possible, { witnesses: [] }]]
+    [
+      grouped_variants: [:t, :selected, :possible, { witnesses: [] }],
+      variants:         %i[t witness]
+    ]
   end
 
   class Scope < Scope

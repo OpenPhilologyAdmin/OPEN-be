@@ -290,6 +290,26 @@ RSpec.configure do |config|
                     }
                   }
                 }
+              },
+              variants:         {
+                type:        :array,
+                description: 'Available variants with their values (t)',
+                items:       {
+                  type:       :object,
+                  properties: {
+                    witness: {
+                      type:        :string,
+                      example:     'A',
+                      description: 'ID of the witness that includes this variant'
+                    },
+                    t:       {
+                      type:        :string,
+                      description: 'Variant value',
+                      example:     'Lorem ipsum',
+                      nullable:    true
+                    }
+                  }
+                }
               }
             }
           },
@@ -317,6 +337,22 @@ RSpec.configure do |config|
               possible:  {
                 type:        :boolean,
                 description: 'Whether is selected as a secondary reading'
+              }
+            }
+          },
+          variant:               {
+            type:       :object,
+            properties: {
+              witness: {
+                type:        :string,
+                description: 'Witness ID',
+                example:     'A'
+              },
+              t:       {
+                type:        :string,
+                description: 'Variant value',
+                example:     'Lorem ipsum',
+                nullable:    true
               }
             }
           },

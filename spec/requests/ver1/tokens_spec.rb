@@ -156,7 +156,13 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update selected tokken details.'
+      description 'Update selected token details.<br>' \
+                  'Use **grouped_variants** when selecting the reading (*selected*: main reading, ' \
+                  '*possible*: secondary reading). <br>' \
+                  'Use **variants** when editing the content for specific witness. <br>' \
+                  'If **variants** are updated, the **grouped_variants** will be calculated once again, ' \
+                  'all previous selections will be cleared.<br>' \
+                  'The user who edits the token will be saved as last editor of the project.'
 
       parameter name:        :project_id, in: :path,
                 schema:      {
@@ -181,6 +187,10 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
               grouped_variants: {
                 type:  :array,
                 items: { '$ref' => '#/components/schemas/grouped_variant' }
+              },
+              variants:         {
+                type:  :array,
+                items: { '$ref' => '#/components/schemas/variant' }
               }
             },
             required:   %w[grouped_variants]
