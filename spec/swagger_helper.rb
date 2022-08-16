@@ -370,9 +370,19 @@ RSpec.configure do |config|
                 example:     1
               },
               value:    {
-                type:        :string,
-                description: 'Value',
-                example:     'raged] A B, continued C D'
+                type:       :object,
+                properties: {
+                  selected_reading: {
+                    type:        :string,
+                    description: 'Selected reading value',
+                    example:     'raged]'
+                  },
+                  details:          {
+                    type:        :string,
+                    description: 'Selected reading witnesses and possible readings with witnesses',
+                    example:     'A B, continued C D, group E F'
+                  }
+                }
               }
             }
           },
@@ -390,9 +400,14 @@ RSpec.configure do |config|
                 example:     1
               },
               value:    {
-                type:        :string,
-                description: 'Value',
-                example:     'continued C D'
+                type:       :object,
+                properties: {
+                  details: {
+                    type:        :string,
+                    description: 'Insignificant readings with their witnesses',
+                    example:     'continued C D, group E F'
+                  }
+                }
               }
             }
           },

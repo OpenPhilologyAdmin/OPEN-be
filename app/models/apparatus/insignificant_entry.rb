@@ -7,10 +7,16 @@ module Apparatus
     def value
       return nil unless apparatus?
 
-      insignificant_readings.join(', ')
+      {
+        details:
+      }
     end
 
     private
+
+    def details
+      insignificant_readings.join(', ')
+    end
 
     def insignificant_readings
       insignificant_variants.map do |variant|

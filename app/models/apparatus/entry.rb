@@ -23,8 +23,15 @@ module Apparatus
 
     private
 
-    def reading_for(variant:, separator: nil)
-      "#{variant.t.strip}#{separator} #{variant.witnesses.join(' ')}"
+    def reading_for(variant:, separator: nil, include_witnesses: true)
+      value = "#{variant.t.strip}#{separator}"
+      return value unless include_witnesses
+
+      "#{value} #{witnesses_for(variant)}"
+    end
+
+    def witnesses_for(variant)
+      variant.witnesses.join(' ')
     end
   end
 end

@@ -24,14 +24,20 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
 
     context 'when there there is a variant selected' do
       let(:record) { build(:apparatus_insignificant_entry, :variant_selected) }
-      let(:expected_reading) do
+      let(:details) do
         record.insignificant_variants.map do |v|
           "#{v.t.strip} #{v.witnesses.join(' ')}"
         end.join(', ')
       end
 
+      let(:expected_value) do
+        {
+          details:
+        }
+      end
+
       it 'includes the reading for all insignificant variants' do
-        expect(record.value).to eq(expected_reading)
+        expect(record.value).to eq(expected_value)
       end
     end
   end

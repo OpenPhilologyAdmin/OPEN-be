@@ -7,13 +7,20 @@ module Apparatus
     def value
       return nil unless apparatus?
 
-      secondary_readings.unshift(selected_reading).join(', ')
+      {
+        selected_reading:,
+        details:
+      }
     end
 
     private
 
     def selected_reading
-      reading_for(variant: selected_variant, separator: ']')
+      reading_for(variant: selected_variant, separator: ']', include_witnesses: false)
+    end
+
+    def details
+      secondary_readings.unshift(witnesses_for(selected_variant)).join(', ')
     end
 
     def secondary_readings
