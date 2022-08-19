@@ -10,6 +10,16 @@ en:
           attributes:
             grouped_variants:
               more_than_one_selected: only one option can be selected as the correct reading
+  activemodel:
+    errors:
+      models:
+        token_editorial_remark:
+          attributes:
+            type:
+              inclusion: is not a valid editorial remark type
+    attributes:
+      token_editorial_remark:
+        t: Content
   mailers:
     notification_mailer:
       new_signup:

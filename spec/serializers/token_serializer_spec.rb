@@ -65,7 +65,8 @@ describe TokenSerializer do
         {
           id:               resource.id,
           grouped_variants: resource.grouped_variants,
-          variants:         resource.variants
+          variants:         resource.variants,
+          editorial_remark: resource.editorial_remark
         }.as_json
       end
 

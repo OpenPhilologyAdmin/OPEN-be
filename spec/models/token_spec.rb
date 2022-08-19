@@ -59,6 +59,10 @@ RSpec.describe Token, type: :model do
     end
   end
 
+  it 'creates valid without_editorial_remark factory' do
+    expect(build(:token, :without_editorial_remark)).to be_valid
+  end
+
   context 'when variants & evaluated' do
     let(:default_witness) { 'A' }
     let(:project) { create(:project, default_witness:) }

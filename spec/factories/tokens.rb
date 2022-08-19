@@ -16,6 +16,8 @@ FactoryBot.define do
       end
     end
 
+    editorial_remark { build(:token_editorial_remark) }
+
     trait :without_project do
       project { nil }
     end
@@ -58,6 +60,10 @@ FactoryBot.define do
                 possible:  true)
         end
       end
+    end
+
+    trait :without_editorial_remark do
+      editorial_remark { nil }
     end
   end
 end

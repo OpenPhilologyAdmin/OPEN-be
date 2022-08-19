@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe TokensManager::Updater, type: :service do
   let(:user) { create(:user, :admin, :approved) }
-  let(:token) { create(:token) }
+  let(:token) { create(:token, :without_editorial_remark) }
   let(:grouped_variant) { build(:token_grouped_variant) }
   let(:variant) { build(:token_variant) }
   let(:params) do
@@ -15,8 +15,8 @@ RSpec.describe TokensManager::Updater, type: :service do
   end
   let(:service) { described_class.new(token:, user:, params:) }
 
-  describe '#perform!' do
-    let!(:result) { service.perform! }
+  describe '#perform' do
+    let!(:result) { service.perform }
 
     context 'when token data valid' do
       before { token.reload }
@@ -42,9 +42,9 @@ RSpec.describe TokensManager::Updater, type: :service do
         let(:variants) do
           [
             build(:token_variant, witness: 'A', t: 'lorim'),
-            build(:token_variant, witness:  'B', t: 'lorem'),
-            build(:token_variant, witness:  'C', t: 'lorim'),
-            build(:token_variant, witness:  'D', t: 'loren')
+            build(:token_variant, witness: 'B', t: 'lorem'),
+            build(:token_variant, witness: 'C', t: 'lorim'),
+            build(:token_variant, witness: 'D', t: 'loren')
           ]
         end
         let(:expected_grouped_variants) do
@@ -63,6 +63,65 @@ RSpec.describe TokensManager::Updater, type: :service do
 
         it 'recalculates grouped_variants and clears the previous selections' do
           expect(token.grouped_variants).to match_array(expected_grouped_variants)
+        end
+      end
+
+      context 'when updating editorial remark' do
+        let(:token) { create(:token, variants:) }
+        let(:editorial_remark) { build(:token_editorial_remark, t: 'lorim', type: 'st.') }
+        let(:params) do
+          {
+            editorial_remark: editorial_remark.as_json
+          }
+        end
+        let(:variants) do
+          [
+            build(:token_variant, witness: 'A', t: 'lorim'),
+            build(:token_variant, witness: 'B', t: 'lorem')
+          ]
+        end
+
+        let(:expected_grouped_variants) do
+          [
+            build(:token_grouped_variant, t: 'lorim', witnesses: ['A', editorial_remark.witness]),
+            build(:token_grouped_variant, t: 'lorem', witnesses: ['B'])
+          ]
+        end
+
+        before { token.reload }
+
+        it 'saves the editorial remark' do
+          expect(token.editorial_remark).to eq(editorial_remark)
+        end
+
+        it 'recalculates grouped_variants and includes editorial_remark' do
+          expect(token.grouped_variants).to match_array(expected_grouped_variants)
+        end
+
+        context 'when the remark should be auto-selected' do
+          let(:editorial_remark) do
+            build(:token_editorial_remark,
+                  t:    'lorim',
+                  type: described_class::AUTO_SELECTED_EDITORIAL_REMARKS.sample)
+          end
+          let(:expected_grouped_variants) do
+            [
+              build(:token_grouped_variant,
+                    t:         'lorim',
+                    witnesses: ['A', editorial_remark.witness],
+                    selected:  true,
+                    possible:  true),
+              build(:token_grouped_variant, t: 'lorem', witnesses: ['B'])
+            ]
+          end
+
+          it 'saves the editorial remark' do
+            expect(token.editorial_remark).to eq(editorial_remark)
+          end
+
+          it 'recalculates grouped_variants and includes editorial_remark' do
+            expect(token.grouped_variants).to match_array(expected_grouped_variants)
+          end
         end
       end
 

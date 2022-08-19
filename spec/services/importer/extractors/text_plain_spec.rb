@@ -53,6 +53,7 @@ RSpec.describe Importer::Extractors::TextPlain, type: :service do
     end
     let(:expected_token) do
       build(:token,
+            :without_editorial_remark,
             index:            expected_index,
             project:,
             variants:         expected_variants,

@@ -160,8 +160,11 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
                   'Use **grouped_variants** when selecting the reading (*selected*: main reading, ' \
                   '*possible*: secondary reading). <br>' \
                   'Use **variants** when editing the content for specific witness. <br>' \
-                  'If **variants** are updated, the **grouped_variants** will be calculated once again, ' \
-                  'all previous selections will be cleared.<br>' \
+                  'Use **editorial_remark** when adding or editing the editorial remark, only the following ' \
+                  "types are available: *'st.', 'corr.', 'em.', 'conj.'*. '\
+                  'The *'em.' and 'conj.'* will become automatically selected. <br>" \
+                  'If **variants** or **editorial_remark** are updated, the **grouped_variants** will  ' \
+                  'be calculated once again, all previous selections will be cleared.<br>' \
                   'The user who edits the token will be saved as last editor of the project.'
 
       parameter name:        :project_id, in: :path,
@@ -191,7 +194,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
               variants:         {
                 type:  :array,
                 items: { '$ref' => '#/components/schemas/variant' }
-              }
+              },
+              editorial_remark: { '$ref' => '#/components/schemas/editorial_remark' }
             },
             required:   %w[grouped_variants]
           }

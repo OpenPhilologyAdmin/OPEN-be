@@ -282,6 +282,23 @@ components:
                 description: Variant value
                 example: Lorem ipsum
                 nullable: true
+        editorial_remark:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - st.
+              - corr.
+              - em.
+              - conj.
+              description: Editorial remark type
+              example: st.
+            t:
+              type: string
+              description: Variant value
+              example: Lorem ipsum
+              nullable: true
     grouped_variant:
       type: object
       properties:
@@ -309,6 +326,23 @@ components:
           type: string
           description: Witness ID
           example: A
+        t:
+          type: string
+          description: Variant value
+          example: Lorem ipsum
+          nullable: true
+    editorial_remark:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - st.
+          - corr.
+          - em.
+          - conj.
+          description: Editorial remark type
+          example: st.
         t:
           type: string
           description: Variant value
@@ -1015,10 +1049,13 @@ paths:
       - bearer: []
       description: 'Update selected token details.<br>Use **grouped_variants** when
         selecting the reading (*selected*: main reading, *possible*: secondary reading).
-        <br>Use **variants** when editing the content for specific witness. <br>If
-        **variants** are updated, the **grouped_variants** will be calculated once
-        again, all previous selections will be cleared.<br>The user who edits the
-        token will be saved as last editor of the project.'
+        <br>Use **variants** when editing the content for specific witness. <br>Use
+        **editorial_remark** when adding or editing the editorial remark, only the
+        following types are available: *''st.'', ''corr.'', ''em.'', ''conj.''*. ''                  ''The
+        *''em.'' and ''conj.''* will become automatically selected. <br>If **variants**
+        or **editorial_remark** are updated, the **grouped_variants** will  be calculated
+        once again, all previous selections will be cleared.<br>The user who edits
+        the token will be saved as last editor of the project.'
       parameters:
       - name: project_id
         in: path
@@ -1074,6 +1111,8 @@ paths:
                       type: array
                       items:
                         "$ref": "#/components/schemas/variant"
+                    editorial_remark:
+                      "$ref": "#/components/schemas/editorial_remark"
                   required:
                   - grouped_variants
   "/api/v1/users":

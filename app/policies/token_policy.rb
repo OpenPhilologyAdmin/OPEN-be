@@ -24,7 +24,8 @@ class TokenPolicy < ApplicationPolicy
   def permitted_attributes_for_update
     [
       grouped_variants: [:t, :selected, :possible, { witnesses: [] }],
-      variants:         %i[t witness]
+      variants:         %i[t witness],
+      editorial_remark: %i[t type]
     ]
   end
 

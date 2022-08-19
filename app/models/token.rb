@@ -5,6 +5,7 @@ class Token < ApplicationRecord
 
   attribute :variants, TokenVariant.to_array_type
   attribute :grouped_variants, TokenGroupedVariant.to_array_type
+  attribute :editorial_remark, TokenEditorialRemark.to_type
 
   validates :index, :variants, :grouped_variants, presence: true
   validate :validate_selected_grouped_variant
@@ -12,6 +13,7 @@ class Token < ApplicationRecord
   belongs_to :project
   delegate :default_witness, to: :project, prefix: true
   delegate :t, to: :current_variant, allow_nil: true
+  delegate :witness, to: :editorial_remark, allow_nil: true, prefix: true
 
   default_scope { order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }

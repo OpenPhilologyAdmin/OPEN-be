@@ -310,6 +310,23 @@ RSpec.configure do |config|
                     }
                   }
                 }
+              },
+              editorial_remark: {
+                type:       :object,
+                properties: {
+                  type: {
+                    type:        :string,
+                    enum:        ['st.', 'corr.', 'em.', 'conj.'],
+                    description: 'Editorial remark type',
+                    example:     'st.'
+                  },
+                  t:    {
+                    type:        :string,
+                    description: 'Variant value',
+                    example:     'Lorem ipsum',
+                    nullable:    true
+                  }
+                }
               }
             }
           },
@@ -349,6 +366,23 @@ RSpec.configure do |config|
                 example:     'A'
               },
               t:       {
+                type:        :string,
+                description: 'Variant value',
+                example:     'Lorem ipsum',
+                nullable:    true
+              }
+            }
+          },
+          editorial_remark:      {
+            type:       :object,
+            properties: {
+              type: {
+                type:        :string,
+                enum:        ['st.', 'corr.', 'em.', 'conj.'],
+                description: 'Editorial remark type',
+                example:     'st.'
+              },
+              t:    {
                 type:        :string,
                 description: 'Variant value',
                 example:     'Lorem ipsum',

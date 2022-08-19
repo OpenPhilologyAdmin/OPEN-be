@@ -27,7 +27,7 @@ module Ver1
       record = records.find(params[:id])
       authorize record, :update?
 
-      result = TokensManager::Updater.perform!(
+      result = TokensManager::Updater.perform(
         token:  record,
         user:   current_user,
         params: permitted_attributes(Token)

@@ -51,6 +51,7 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
     end
     let(:expected_token) do
       build(:token,
+            :without_editorial_remark,
             index:            0,
             project:,
             variants:         [
@@ -77,6 +78,7 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
     end
     let(:expected_token_grouped_variants) do
       build(:token,
+            :without_editorial_remark,
             index:            1,
             project:,
             variants:         [
@@ -98,6 +100,7 @@ RSpec.describe Importer::Extractors::ApplicationJson, type: :service do
     end
     let(:expected_token_empty_variant) do
       build(:token,
+            :without_editorial_remark,
             index:            2,
             project:,
             variants:         [
