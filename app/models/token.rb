@@ -12,7 +12,6 @@ class Token < ApplicationRecord
 
   belongs_to :project
   delegate :default_witness, to: :project, prefix: true
-  delegate :t, to: :current_variant, allow_nil: true
   delegate :witness, to: :editorial_remark, allow_nil: true, prefix: true
 
   default_scope { order(index: :asc) }
@@ -25,6 +24,11 @@ class Token < ApplicationRecord
     return if grouped_variants.select(&:selected?).size <= 1
 
     errors.add(:grouped_variants, :more_than_one_selected)
+  end
+
+  # use the :formatted_t value, so the token is correctly displayed in the editor
+  def t
+    current_variant.formatted_t
   end
 
   def current_variant

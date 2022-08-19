@@ -2,6 +2,7 @@
 
 class TokenVariant
   include StoreModel::Model
+  include FormattableT
 
   attribute :witness, :string
   attribute :t, :string

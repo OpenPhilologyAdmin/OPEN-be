@@ -2,6 +2,7 @@
 
 class TokenGroupedVariant
   include StoreModel::Model
+  include FormattableT
 
   attribute :witnesses, :array_of_strings, default: -> { [] }
   attribute :t, :string

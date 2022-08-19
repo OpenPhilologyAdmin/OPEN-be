@@ -24,10 +24,15 @@ module Apparatus
     private
 
     def reading_for(variant:, separator: nil, include_witnesses: true)
-      value = "#{variant.t.strip}#{separator}"
+      value = "#{value_for(variant)}#{separator}"
       return value unless include_witnesses
 
       "#{value} #{witnesses_for(variant)}"
+    end
+
+    # use the :formatted_t, so the entry is correctly displayed in the apparatus
+    def value_for(variant)
+      variant.formatted_t.strip
     end
 
     def witnesses_for(variant)

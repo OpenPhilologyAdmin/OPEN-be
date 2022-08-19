@@ -217,9 +217,9 @@ components:
           example: 1
         t:
           type: string
-          description: Token value
+          description: Token value. The *Ø* means that the value is empty.
           example: Lorem ipsum
-          nullable: true
+          nullable: false
         apparatus_index:
           type: integer
           description: Index of apparatus, available only if the token is listed there
@@ -364,11 +364,14 @@ components:
           properties:
             selected_reading:
               type: string
-              description: Selected reading value
+              description: Selected reading value. The *Ø* means that the reading
+                value is empty.
               example: raged]
             details:
               type: string
-              description: Selected reading witnesses and possible readings with witnesses
+              description: The witnesses of the selected variant and then possible
+                readings with their witnesses. The *Ø* means that the reading value
+                is empty.
               example: A B, continued C D, group E F
     insignificant_variant:
       type: object
@@ -386,7 +389,8 @@ components:
           properties:
             details:
               type: string
-              description: Insignificant readings with their witnesses
+              description: Insignificant readings with their witnesses. The *Ø* means
+                that the reading value is empty.
               example: continued C D, group E F
     login_required:
       type: object

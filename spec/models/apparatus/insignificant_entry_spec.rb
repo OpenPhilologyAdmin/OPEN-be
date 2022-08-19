@@ -24,9 +24,10 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
 
     context 'when there there is a variant selected' do
       let(:record) { build(:apparatus_insignificant_entry, :variant_selected) }
+
       let(:details) do
         record.insignificant_variants.map do |v|
-          "#{v.t.strip} #{v.witnesses.join(' ')}"
+          "#{v.formatted_t.strip} #{v.witnesses.join(' ')}"
         end.join(', ')
       end
 
@@ -36,8 +37,18 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
         }
       end
 
-      it 'includes the reading for all insignificant variants' do
-        expect(record.value).to eq(expected_value)
+      context 'when :t is present' do
+        it 'contains the readings for all of the insignificant variants' do
+          expect(record.value).to eq(expected_value)
+        end
+      end
+
+      context 'when :t is empty' do
+        let(:record) { build(:apparatus_insignificant_entry, :variant_selected, with_empty_values: true) }
+
+        it 'contains the readings for all of the insignificant variants' do
+          expect(record.value).to eq(expected_value)
+        end
       end
     end
   end

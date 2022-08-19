@@ -100,8 +100,8 @@ RSpec.describe Token, type: :model do
       end
 
       describe '#t' do
-        it 'equals the :t of the default_variant' do
-          expect(token.t).to eq(token.default_variant.t)
+        it 'equals the :formatted_t of the default_variant' do
+          expect(token.t).to eq(token.default_variant.formatted_t)
         end
       end
 
@@ -117,6 +117,7 @@ RSpec.describe Token, type: :model do
 
       before do
         selected_variant.selected = true
+        selected_variant.t = nil
       end
 
       describe '#default_variant' do
@@ -160,8 +161,8 @@ RSpec.describe Token, type: :model do
       end
 
       describe '#t' do
-        it 'equals the :t of the selected_variant' do
-          expect(token.t).to eq(selected_variant.t)
+        it 'equals the :formatted_t of the selected_variant' do
+          expect(token.t).to eq(selected_variant.formatted_t)
         end
       end
 

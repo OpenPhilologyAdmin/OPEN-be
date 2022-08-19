@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_examples/formattable_t'
 
 RSpec.describe TokenVariant, type: :model do
   describe 'factories' do
@@ -27,5 +28,9 @@ RSpec.describe TokenVariant, type: :model do
         expect(token_variant).not_to be_for_witness(siglum)
       end
     end
+  end
+
+  it_behaves_like 'formattable t' do
+    let(:resource) { build(:token_variant) }
   end
 end

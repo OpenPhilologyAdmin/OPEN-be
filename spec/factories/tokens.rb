@@ -2,6 +2,10 @@
 
 FactoryBot.define do
   factory :token do
+    transient do
+      with_empty_values { false }
+    end
+
     project { create(:project) }
     index { Faker::Number.positive }
     variants do
@@ -62,8 +66,16 @@ FactoryBot.define do
       end
     end
 
+
     trait :without_editorial_remark do
       editorial_remark { nil }
+    end
+
+    after(:build) do |token, evaluator|
+      if evaluator.with_empty_values
+        token.variants.each { |variant| variant.t = nil }
+        token.grouped_variants.each { |variant| variant.t = nil }
+      end
     end
   end
 end

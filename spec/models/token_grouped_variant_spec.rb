@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_examples/formattable_t'
 
 RSpec.describe TokenGroupedVariant, type: :model do
   describe 'factories' do
@@ -91,5 +92,9 @@ RSpec.describe TokenGroupedVariant, type: :model do
         expect(token_grouped_variant).to be_insignificant
       end
     end
+  end
+
+  it_behaves_like 'formattable t' do
+    let(:resource) { build(:token_grouped_variant) }
   end
 end

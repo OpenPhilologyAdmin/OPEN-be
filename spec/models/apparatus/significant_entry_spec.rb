@@ -29,7 +29,7 @@ RSpec.describe Apparatus::SignificantEntry, type: :model do
     context 'when there is a variant selected' do
       let(:record) { build(:apparatus_significant_entry, :variant_selected) }
       let(:selected_witnesses) { record.selected_variant.witnesses.join(' ') }
-      let(:selected_reading) { "#{record.selected_variant.t.strip}]" }
+      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip}]" }
       let(:expected_value) do
         {
           selected_reading:,
@@ -40,8 +40,18 @@ RSpec.describe Apparatus::SignificantEntry, type: :model do
       context 'when there are no secondary variants' do
         let(:details) { selected_witnesses }
 
-        it 'includes the selected reading, its witnesses are in :details' do
-          expect(record.value).to eq(expected_value)
+        context 'when :t is present' do
+          it 'contains the selected reading and its witnesses in :details' do
+            expect(record.value).to eq(expected_value)
+          end
+        end
+
+        context 'when :t is empty' do
+          let(:record) { build(:apparatus_significant_entry, :variant_selected, with_empty_values: true) }
+
+          it 'contains the formatted selected reading and its witnesses in :details' do
+            expect(record.value).to eq(expected_value)
+          end
         end
       end
 
@@ -49,13 +59,23 @@ RSpec.describe Apparatus::SignificantEntry, type: :model do
         let(:record) { build(:apparatus_significant_entry, :variant_selected_and_secondary) }
         let(:secondary_variants_readings) do
           record.secondary_variants.map do |v|
-            "#{v.t.strip} #{v.witnesses.join(' ')}"
+            "#{v.formatted_t.strip} #{v.witnesses.join(' ')}"
           end.join(', ')
         end
         let(:details) { "#{selected_witnesses}, #{secondary_variants_readings}" }
 
-        it 'includes the selected reading, its witnesses and full secondary readings are in :details' do
-          expect(record.value).to eq(expected_value)
+        context 'when :t is present' do
+          it 'contains the selected reading, its witnesses & secondary readings are in :details' do
+            expect(record.value).to eq(expected_value)
+          end
+        end
+
+        context 'when :t is empty' do
+          let(:record) { build(:apparatus_significant_entry, :variant_selected_and_secondary, with_empty_values: true) }
+
+          it 'contains the formatted selected reading, its witnesses & formatted secondary readings are in :details' do
+            expect(record.value).to eq(expected_value)
+          end
         end
       end
     end

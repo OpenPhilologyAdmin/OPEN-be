@@ -231,9 +231,10 @@ RSpec.configure do |config|
               },
               t:               {
                 type:        :string,
-                description: 'Token value',
+                description: "Token value. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that " \
+                             'the value is empty.',
                 example:     'Lorem ipsum',
-                nullable:    true
+                nullable:    false
               },
               apparatus_index: {
                 type:        :integer,
@@ -408,12 +409,15 @@ RSpec.configure do |config|
                 properties: {
                   selected_reading: {
                     type:        :string,
-                    description: 'Selected reading value',
+                    description: "Selected reading value. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* " \
+                                 'means that the reading value is empty.',
                     example:     'raged]'
                   },
                   details:          {
                     type:        :string,
-                    description: 'Selected reading witnesses and possible readings with witnesses',
+                    description: 'The witnesses of the selected variant and then possible readings with their ' \
+                                 "witnesses. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that the " \
+                                 'reading value is empty.',
                     example:     'A B, continued C D, group E F'
                   }
                 }
@@ -438,7 +442,9 @@ RSpec.configure do |config|
                 properties: {
                   details: {
                     type:        :string,
-                    description: 'Insignificant readings with their witnesses',
+                    description: 'Insignificant readings with their witnesses. The ' \
+                                 "*#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that " \
+                                 'the reading value is empty.',
                     example:     'continued C D, group E F'
                   }
                 }
