@@ -10,6 +10,6 @@ RSpec.describe TokenEditorialRemark, type: :model do
   end
 
   describe 'validations' do
-    it { is_expected.to validate_inclusion_of(:type).in_array(described_class::EDITORIAL_REMARK_TYPES) }
+    it { is_expected.to validate_inclusion_of(:type).in_array(described_class::EDITORIAL_REMARK_TYPES.values) }
   end
 end
