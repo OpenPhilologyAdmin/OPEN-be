@@ -456,7 +456,7 @@ RSpec.configure do |config|
             properties: {
               error: {
                 type:    :string,
-                example: I18n.t('general.errors.login_required')
+                example: I18n.t('devise.failure.unauthenticated')
               }
             }
           },

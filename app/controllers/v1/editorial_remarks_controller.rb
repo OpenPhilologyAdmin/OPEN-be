@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Ver1
-  class EditorialRemarksController < ApiApplicationController
+module V1
+  class EditorialRemarksController < CommonController
     include WithProject
 
     before_action :require_login

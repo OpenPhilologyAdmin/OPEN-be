@@ -397,7 +397,7 @@ components:
       properties:
         error:
           type: string
-          example: Login required.
+          example: You need to sign in or sign up before continuing.
     record_not_found:
       type: object
       properties:

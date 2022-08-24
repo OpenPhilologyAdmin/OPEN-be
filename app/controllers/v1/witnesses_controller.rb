@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
-  class WitnessesController < ApiApplicationController
+module V1
+  class WitnessesController < CommonController
     include WithProject
-
-    before_action :require_login
 
     def index
       authorize @project, :index_witnesses?

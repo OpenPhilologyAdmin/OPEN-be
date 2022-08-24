@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
-  class UsersController < ApiApplicationController
-    before_action :require_login, except: [:create]
+module V1
+  class UsersController < CommonController
+    skip_before_action :authenticate_user!, only: [:create]
 
     def index
       authorize User, :index?

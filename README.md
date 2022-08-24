@@ -51,7 +51,7 @@ Useful links:
 
 Documentation is generated in [OpenAPI 3.0.1 interface](https://swagger.io/specification/) based on integration specs built for controllers.
 
-Please use `rails generate rspec:swagger Ver1::ControllerName` to generate a plain spec file for the controller.
+Please use `rails generate rspec:swagger V1::ControllerName` to generate a plain spec file for the controller.
 Please enclose specs used to define documentation files in a context with `swagger: true` tag, eg: `context 'swagger docs generation', swagger: true do ... end`.
 These will be automatically excluded from "normal" specs. Only tests tagged as `swagger: true` will be used to generate docs.
 
