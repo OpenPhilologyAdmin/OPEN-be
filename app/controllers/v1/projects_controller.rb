@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-module Ver1
-  class ProjectsController < ApiApplicationController
-    before_action :require_login
-
+module V1
+  class ProjectsController < CommonController
     def index
       authorize Project, :index?
       records = policy_scope(Project).includes(:owners)

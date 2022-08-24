@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-module Ver1
-  class SessionTokensController < ApiApplicationController
-    before_action :require_login
-
+module V1
+  class SessionTokensController < CommonController
     # the new token will be available in response headers
     # for more details see: config/initializers/devise.rb
     def create

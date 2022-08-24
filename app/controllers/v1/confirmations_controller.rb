@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
+module V1
   class ConfirmationsController < ::Devise::ConfirmationsController
+    skip_before_action :authenticate_user!
     skip_after_action :verify_authorized
 
     def create

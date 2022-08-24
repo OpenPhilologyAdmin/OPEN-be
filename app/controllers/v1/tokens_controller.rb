@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
-  class TokensController < ApiApplicationController
+module V1
+  class TokensController < CommonController
     include WithProject
-
-    before_action :require_login
 
     def index
       authorize Token, :index?

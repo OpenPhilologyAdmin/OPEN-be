@@ -45,8 +45,8 @@ RSpec.describe 'v1/sessions', type: :request do
 
         header 'Authorization',
                schema:      { type: :string },
-               description: 'The JWT token for user with the following format:'\
-                            ' Bearer {token}'
+               description: 'The JWT token for user with the following format: ' \
+                            'Bearer {token}'
 
         schema '$ref' => '#/components/schemas/user'
 
@@ -57,9 +57,9 @@ RSpec.describe 'v1/sessions', type: :request do
         schema type: :object, properties: {
           error: {
             type:        :string,
-            description: 'Specifies why the user cannot be logged in: '\
-                         "\"#{I18n.t('devise.failure.invalid', authentication_keys: 'email')}\", "\
-                         "\"#{I18n.t('devise.failure.unconfirmed')}\", "\
+            description: 'Specifies why the user cannot be logged in: ' \
+                         "\"#{I18n.t('devise.failure.invalid', authentication_keys: 'email')}\", " \
+                         "\"#{I18n.t('devise.failure.unconfirmed')}\", " \
                          "\"#{I18n.t('devise.failure.not_approved')}\"",
             example:     I18n.t('devise.failure.invalid', authentication_keys: 'email')
           }

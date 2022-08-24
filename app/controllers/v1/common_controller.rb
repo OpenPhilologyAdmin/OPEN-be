@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-module Ver1
-  class ApiApplicationController < ::ApplicationController
+module V1
+  class CommonController < ::ApplicationController
     include ApiResponders
 
     respond_to :json
 
+    before_action :authenticate_user!
     after_action :verify_authorized
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden_request
@@ -17,14 +18,6 @@ module Ver1
           error: I18n.t('general.errors.forbidden_request')
         }, status: :forbidden
       )
-    end
-
-    def require_login
-      return if current_user
-
-      render json:   {
-        error: I18n.t('general.errors.login_required')
-      }, status: :unauthorized
     end
 
     def record_not_found

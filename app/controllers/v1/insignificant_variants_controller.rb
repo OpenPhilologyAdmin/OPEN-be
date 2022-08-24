@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
-  class InsignificantVariantsController < ApiApplicationController
+module V1
+  class InsignificantVariantsController < CommonController
     include WithProject
-
-    before_action :require_login
 
     def index
       authorize Token, :insignificant_variants?

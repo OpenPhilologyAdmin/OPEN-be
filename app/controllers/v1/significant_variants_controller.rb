@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-module Ver1
-  class SignificantVariantsController < ApiApplicationController
+module V1
+  class SignificantVariantsController < CommonController
     include WithProject
-
-    before_action :require_login
 
     def index
       authorize Token, :significant_variants?

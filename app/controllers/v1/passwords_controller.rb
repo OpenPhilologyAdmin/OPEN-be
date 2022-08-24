@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Ver1
+module V1
   class PasswordsController < ::Devise::PasswordsController
     include ::RackSessionFix
 
