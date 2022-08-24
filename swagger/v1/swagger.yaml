@@ -510,12 +510,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
-        '404':
-          description: Project not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/projects/{project_id}/insignificant_variants":
     get:
       summary: Retrieves insignificant variants of the specified project

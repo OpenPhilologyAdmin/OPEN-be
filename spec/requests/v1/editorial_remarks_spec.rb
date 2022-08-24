@@ -40,15 +40,6 @@ RSpec.describe 'v1/editorial_remarks', type: :request do
 
         run_test!
       end
-
-      response '404', 'Project not found' do
-        let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
-
-        schema '$ref' => '#/components/schemas/record_not_found'
-
-        run_test!
-      end
     end
   end
 end
