@@ -473,6 +473,29 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/invalid_record"
+  "/api/v1/editorial_remarks":
+    get:
+      summary: Returns editorial remark types
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: 'Apparatus: Editorial Remark Types'
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
   "/api/v1/projects/{project_id}/insignificant_variants":
     get:
       summary: Retrieves insignificant variants of the specified project

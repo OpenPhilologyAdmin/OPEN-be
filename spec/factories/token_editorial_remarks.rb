@@ -6,7 +6,7 @@ FactoryBot.define do
     initialize_with do
       new(attributes)
     end
-    type { TokenEditorialRemark::EDITORIAL_REMARK_TYPES.sample }
+    type { TokenEditorialRemark::EDITORIAL_REMARK_TYPES.values.sample }
     t { Faker::Lorem.sentence }
   end
 end

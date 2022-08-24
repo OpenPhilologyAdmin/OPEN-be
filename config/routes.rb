@@ -19,6 +19,9 @@ Rails.application.routes.draw do
         patch 'approve', on: :member
         get 'me', on: :collection
       end
+
+      resources :editorial_remarks, only: %i[index]
+
       resources :projects, only: %i[index create update show destroy] do
         resources :witnesses, only: %i[index update destroy]
         resources :tokens, only: %i[index show update]
