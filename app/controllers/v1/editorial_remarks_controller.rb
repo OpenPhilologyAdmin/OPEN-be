@@ -2,12 +2,8 @@
 
 module V1
   class EditorialRemarksController < CommonController
-    include WithProject
-
-    before_action :require_login
-
     def index
-      authorize @project, :editorial_remark_types?
+      authorize TokenEditorialRemark, :index?
 
       render(
         json: TokenEditorialRemark::EDITORIAL_REMARK_TYPES.to_json
