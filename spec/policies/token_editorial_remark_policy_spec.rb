@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe TokenEditorialRemarkPolicy do
-  subject(:record_policy) { described_class }
+  subject(:token_editorial_remark_policy) { described_class }
 
   permissions :index? do
     context 'when logged in as admin' do
@@ -11,7 +11,7 @@ describe TokenEditorialRemarkPolicy do
         let(:current_user) { build(:user, :admin, :approved) }
 
         it 'grants access' do
-          expect(record_policy).to permit(current_user, build(:project))
+          expect(token_editorial_remark_policy).to permit(current_user, build(:token_editorial_remark))
         end
       end
     end
@@ -20,7 +20,7 @@ describe TokenEditorialRemarkPolicy do
       let(:current_user) { build(:user, :admin, :not_approved) }
 
       it 'denies access' do
-        expect(record_policy).not_to permit(current_user, build(:project))
+        expect(token_editorial_remark_policy).not_to permit(current_user, build(:token_editorial_remark))
       end
     end
 
@@ -28,7 +28,7 @@ describe TokenEditorialRemarkPolicy do
       let(:current_user) { nil }
 
       it 'denies access' do
-        expect(record_policy).not_to permit(current_user, build(:project))
+        expect(token_editorial_remark_policy).not_to permit(current_user, build(:token_editorial_remark))
       end
     end
   end

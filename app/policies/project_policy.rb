@@ -37,10 +37,6 @@ class ProjectPolicy < ApplicationPolicy
     manage_witnesses? && record.witnesses_count > 1
   end
 
-  def editorial_remark_types?
-    index?
-  end
-
   def permitted_attributes_for_create
     [
       :name,

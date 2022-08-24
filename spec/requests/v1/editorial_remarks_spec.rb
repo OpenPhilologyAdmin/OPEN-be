@@ -6,7 +6,6 @@ RSpec.describe 'v1/editorial_remarks', type: :request do
   path '/api/v1/editorial_remarks' do
     parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
     let(:user) { create(:user, :admin, :approved) }
-    let(:project_id) { create(:project).id }
 
     get('Returns editorial remark types for given project') do
       tags 'Projects'
@@ -14,13 +13,6 @@ RSpec.describe 'v1/editorial_remarks', type: :request do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Apparatus: Editorial Remark Types of the project.'
-
-      parameter name: :project_id, in: :path,
-                schema: {
-                  type: :integer
-                },
-                required: true,
-                description: 'ID of the project'
 
       response(200, 'successful') do
         let(:Authorization) { authorization_header_for(user) }

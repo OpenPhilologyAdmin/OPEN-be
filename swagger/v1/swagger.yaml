@@ -488,13 +488,6 @@ paths:
       security:
       - bearer: []
       description: 'Apparatus: Editorial Remark Types of the project.'
-      parameters:
-      - name: project_id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of the project
       responses:
         '200':
           description: successful
