@@ -6,12 +6,12 @@ RSpec.describe 'v1/editorial_remarks', type: :request do
   path '/api/v1/editorial_remarks' do
     let(:user) { create(:user, :admin, :approved) }
 
-    get('Returns editorial remark types for given project') do
+    get('Returns editorial remark types') do
       tags 'Projects'
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Apparatus: Editorial Remark Types of the project.'
+      description 'Apparatus: Editorial Remark Types'
 
       response(200, 'successful') do
         let(:Authorization) { authorization_header_for(user) }
