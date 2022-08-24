@@ -473,7 +473,7 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/invalid_record"
-  "/api/v1/projects/{project_id}/editorial_remarks":
+  "/api/v1/editorial_remarks":
     parameters:
     - name: project_id
       in: path

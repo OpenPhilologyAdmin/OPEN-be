@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'v1/editorial_remarks', type: :request do
-  path '/api/v1/projects/{project_id}/editorial_remarks' do
+  path '/api/v1/editorial_remarks' do
     parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
     let(:user) { create(:user, :admin, :approved) }
     let(:project_id) { create(:project).id }
