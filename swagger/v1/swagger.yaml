@@ -474,20 +474,13 @@ paths:
               schema:
                 "$ref": "#/components/schemas/invalid_record"
   "/api/v1/editorial_remarks":
-    parameters:
-    - name: project_id
-      in: path
-      description: project_id
-      required: true
-      schema:
-        type: string
     get:
-      summary: Returns editorial remark types for given project
+      summary: Returns editorial remark types
       tags:
       - Projects
       security:
       - bearer: []
-      description: 'Apparatus: Editorial Remark Types of the project.'
+      description: 'Apparatus: Editorial Remark Types'
       responses:
         '200':
           description: successful
