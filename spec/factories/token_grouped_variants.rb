@@ -10,7 +10,7 @@ FactoryBot.define do
     initialize_with do
       new(attributes)
     end
-    witnesses { Array.new(witnesses_number) { Faker::Alphanumeric.alpha(number: 2) } }
+    witnesses { Array.new(witnesses_number) { Faker::Alphanumeric.alpha(number: 2).capitalize } }
     t { Faker::Lorem.sentence }
     selected { false }
     possible { false }

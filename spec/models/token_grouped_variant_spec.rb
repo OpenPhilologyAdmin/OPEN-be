@@ -94,6 +94,26 @@ RSpec.describe TokenGroupedVariant, type: :model do
     end
   end
 
+  describe '#id' do
+    context 'when there is just one witness' do
+      let(:token_grouped_variant) { build(:token_grouped_variant, witnesses_number: 1) }
+      let(:expected_value) { token_grouped_variant.witnesses.first }
+
+      it 'equals the witness' do
+        expect(token_grouped_variant.id).to eq(expected_value)
+      end
+    end
+
+    context 'when there are multiple witness' do
+      let(:token_grouped_variant) { build(:token_grouped_variant, witnesses_number: 3) }
+      let(:expected_value) { token_grouped_variant.witnesses.sort.join }
+
+      it 'equals joined values of alpha ordered witnesses' do
+        expect(token_grouped_variant.id).to eq(expected_value)
+      end
+    end
+  end
+
   it_behaves_like 'formattable t' do
     let(:resource) { build(:token_grouped_variant) }
   end

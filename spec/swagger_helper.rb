@@ -261,12 +261,38 @@ RSpec.configure do |config|
                 type:    :integer,
                 example: 1
               },
+              apparatus:        {
+                type:        :object,
+                description: 'Significant readings for token. Can be blank if there was no selection.',
+                nullable:    true,
+                properties:  {
+                  selected_reading: {
+                    type:        :string,
+                    description: "Selected reading value. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* " \
+                                 'means that the reading value is empty.',
+                    example:     'Lorem ipsum]'
+                  },
+                  details:          {
+                    type:        :string,
+                    description: 'The witnesses of the selected variant and then possible readings with their ' \
+                                 "witnesses. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that the " \
+                                 'reading value is empty.',
+                    example:     'A B, Lorem ipsam st., Lorem ipsem E F'
+                  }
+                }
+              },
               grouped_variants: {
                 type:        :array,
                 description: 'Available variants, grouped by the same t (value)',
                 items:       {
                   type:       :object,
                   properties: {
+                    id:        {
+                      type:        :string,
+                      example:     'AB',
+                      description: 'The ID is auto-generated from the witnesses. ' \
+                                   "For example, for witnesses: ['A', 'B', 'E'] it would be 'ABE'."
+                    },
                     witnesses: {
                       type:  :array,
                       items: {
@@ -324,7 +350,7 @@ RSpec.configure do |config|
                   t:    {
                     type:        :string,
                     description: 'Variant value',
-                    example:     'Lorem ipsum',
+                    example:     'Lorem ipsam',
                     nullable:    true
                   }
                 }

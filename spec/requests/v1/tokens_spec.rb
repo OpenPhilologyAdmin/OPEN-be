@@ -96,7 +96,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
   end
 
   path '/api/v1/projects/{project_id}/tokens/{id}' do
-    let(:record) { create(:token, project_id:) }
+    let(:record) { create(:token, :variant_selected_and_secondary, project_id:) }
     let(:id) { record.id }
     let(:mode) { :edit_token }
 

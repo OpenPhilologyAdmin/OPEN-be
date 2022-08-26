@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe TokenSerializer do
-  let(:resource) { create(:token, apparatus_index: 1) }
+  let(:resource) { create(:token, :variant_selected, apparatus_index: 1) }
 
   context 'when no special mode enabled' do
     let(:serializer) { described_class.new(resource) }
@@ -64,6 +64,7 @@ describe TokenSerializer do
       let(:expected_hash) do
         {
           id:               resource.id,
+          apparatus:        resource.apparatus,
           grouped_variants: resource.grouped_variants,
           variants:         resource.variants,
           editorial_remark: resource.editorial_remark

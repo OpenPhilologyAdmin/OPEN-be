@@ -239,4 +239,13 @@ RSpec.describe Token, type: :model do
       end
     end
   end
+
+  describe '#apparatus' do
+    let(:token) { build(:token) }
+    let(:expected_value) { Apparatus::SignificantEntry.new(token:).value }
+
+    it 'equals the value of Apparatus::SignificantEntry' do
+      expect(token.apparatus).to eq(expected_value)
+    end
+  end
 end

@@ -71,4 +71,8 @@ class Token < ApplicationRecord
       :evaluated_with_single
     end
   end
+
+  def apparatus
+    Apparatus::SignificantEntry.new(token: self).value
+  end
 end
