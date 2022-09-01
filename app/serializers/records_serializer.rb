@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
 class RecordsSerializer
-  def initialize(records, _options = {})
+  def initialize(records:, **_options)
     @records = records
   end
 
   def as_json(_options = {})
     {
       records: serialized_records,
-      count:   @records.size
+      count:   records.size
     }
   end
 
   private
 
+  attr_reader :records
+
   def records_class
-    @records_class ||= @records.first.class.name
+    @records_class ||= records.first.class.name
   end
 
   def record_serializer
@@ -23,7 +25,7 @@ class RecordsSerializer
   end
 
   def serialized_records
-    @records.map do |record|
+    records.map do |record|
       record_serializer.new(record).as_json
     end
   end

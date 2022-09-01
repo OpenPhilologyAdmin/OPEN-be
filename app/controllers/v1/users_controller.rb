@@ -9,7 +9,7 @@ module V1
       records = policy_scope(User).most_recent_first
 
       render(
-        json: RecordsSerializer.new(records)
+        json: RecordsSerializer.new(records:)
       )
     end
 

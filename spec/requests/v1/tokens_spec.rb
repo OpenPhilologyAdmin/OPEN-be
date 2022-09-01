@@ -32,6 +32,9 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
 
       response '200', 'Tokens can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
+        let(:expected_records) do
+          TokensSerializer.new(records: project.tokens, edit_mode:).as_json[:records]
+        end
 
         schema type:       :object,
                properties:
@@ -53,25 +56,19 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
 
         context 'when edit_mode enabled' do
           let(:edit_mode) { true }
-          let(:mode) { :edit_project }
 
-          it 'passes the correct mode to TokenSerializer' do
+          it 'passes the correct edit_mode value to the records serializer' do
             records = JSON.parse(response.body)['records']
-            project.tokens.each do |token|
-              expect(records).to include(TokenSerializer.new(token, mode:).as_json)
-            end
+            expect(records).to match_array(expected_records)
           end
         end
 
         context 'when edit_mode disabled/not given' do
           let(:edit_mode) { [false, nil].sample }
-          let(:mode) { TokenSerializer::DEFAULT_MODE }
 
-          it 'passes the correct mode to TokenSerializer' do
+          it 'passes the correct edit_mode value to the records serializer' do
             records = JSON.parse(response.body)['records']
-            project.tokens.each do |token|
-              expect(records).to include(TokenSerializer.new(token, mode:).as_json)
-            end
+            expect(records).to match_array(expected_records)
           end
         end
       end
@@ -98,7 +95,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
   path '/api/v1/projects/{project_id}/tokens/{id}' do
     let(:record) { create(:token, :variant_selected_and_secondary, project:) }
     let(:id) { record.id }
-    let(:mode) { :edit_token }
 
     get('Retrieves token details') do
       tags 'Projects'
@@ -127,10 +123,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
         schema '$ref' => '#/components/schemas/token_edit'
 
         run_test!
-
-        it 'passes the correct mode to TokenSerializer' do
-          expect(response.body).to eq(TokenSerializer.new(record, mode:).to_json)
-        end
       end
 
       response '401', 'Login required' do
@@ -157,7 +149,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
     let(:grouped_variant) { build(:token_grouped_variant, :insignificant) }
     let(:grouped_variant2) { build(:token_grouped_variant, :insignificant) }
     let(:id) { record.id }
-    let(:mode) { :edit_token }
 
     patch('Updates token grouped variants') do
       tags 'Projects'
@@ -220,7 +211,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
 
       response '200', 'Token updated' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:mode) { :edit_token }
 
         schema '$ref' => '#/components/schemas/token_edit'
 
@@ -242,10 +232,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           updated_grouped_variant = record.grouped_variants.find { |variant| variant.id == grouped_variant2.id }
           expect(updated_grouped_variant).not_to be_selected
           expect(updated_grouped_variant).to be_possible
-        end
-
-        it 'passes the correct mode to TokenSerializer' do
-          expect(response.body).to eq(TokenSerializer.new(record, mode:).to_json)
         end
       end
 
@@ -286,7 +272,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
   path '/api/v1/projects/{project_id}/tokens/{id}/variants' do
     let(:record) { create(:token, project:) }
     let(:id) { record.id }
-    let(:mode) { :edit_token }
 
     patch('Updates token variants and editorial remark') do
       tags 'Projects'
@@ -357,7 +342,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
 
       response '200', 'Token updated' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:mode) { :edit_token }
 
         schema '$ref' => '#/components/schemas/token_edit'
 
@@ -380,10 +364,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           token[:token][:editorial_remark].each do |key, value|
             expect(record.editorial_remark.send(key)).to eq(value)
           end
-        end
-
-        it 'passes the correct mode to TokenSerializer' do
-          expect(response.body).to eq(TokenSerializer.new(record, mode:).to_json)
         end
       end
 

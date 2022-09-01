@@ -8,7 +8,7 @@ module V1
       authorize Token, :index?
 
       render(
-        json: TokensSerializer.new(records, mode:)
+        json: TokensSerializer.new(records:, edit_mode:)
       )
     end
 
@@ -16,7 +16,7 @@ module V1
       authorize record, :show?
 
       render(
-        json: TokenSerializer.new(record, mode:)
+        json: TokenSerializer.new(record:)
       )
     end
 
@@ -52,21 +52,14 @@ module V1
       @record ||= records.find(params[:id])
     end
 
-    def mode
-      return :edit_token if %w[show update_variants update_grouped_variants].include?(action_name)
-      return :edit_project if edit_project_mode?
-
-      TokenSerializer::DEFAULT_MODE
-    end
-
-    def edit_project_mode?
+    def edit_mode
       ActiveModel::Type::Boolean.new.cast(params[:edit_mode])
     end
 
     def handle_token_update(result)
       if result.success?
         render(
-          json: TokenSerializer.new(result.token, mode:)
+          json: TokenSerializer.new(record: result.token)
         )
       else
         respond_with_record_errors(result.token, :unprocessable_entity)

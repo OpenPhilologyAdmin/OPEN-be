@@ -9,7 +9,7 @@ module V1
                                      .processed
 
       render(
-        json: RecordsSerializer.new(records)
+        json: RecordsSerializer.new(records:)
       )
     end
 

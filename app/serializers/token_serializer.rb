@@ -2,30 +2,27 @@
 
 class TokenSerializer
   RECORD_ATTRIBUTES = %i[id].freeze
-  DEFAULT_MODE      = :standard
-  RECORD_METHODS    = {
-    "#{DEFAULT_MODE}": %i[t apparatus_index],
-    edit_project:      %i[t apparatus_index state],
-    edit_token:        %i[apparatus grouped_variants variants editorial_remark]
-  }.freeze
+  RECORD_METHODS    = %i[apparatus variants editorial_remark grouped_variants].freeze
 
-  def initialize(record, mode: DEFAULT_MODE)
+  def initialize(record:)
     @record = record
-    @mode   = mode
+    process_grouped_variants
   end
 
   def as_json(_options = {})
-    @record.as_json(
+    record.as_json(
       only:    RECORD_ATTRIBUTES,
-      methods: record_methods
+      methods: RECORD_METHODS
     )
   end
 
   private
 
-  def record_methods
-    return RECORD_METHODS[DEFAULT_MODE] unless RECORD_METHODS.key?(@mode)
+  attr_reader :record
 
-    RECORD_METHODS[@mode]
+  def process_grouped_variants
+    record.grouped_variants.each do |grouped_variant|
+      grouped_variant.t = grouped_variant.formatted_t
+    end
   end
 end

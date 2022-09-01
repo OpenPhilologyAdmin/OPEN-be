@@ -10,7 +10,7 @@ end
 describe Apparatus::EntriesSerializer do
   describe 'as_json' do
     context 'when there are no records' do
-      let(:serializer) { described_class.new([]) }
+      let(:serializer) { described_class.new(records: []) }
       let(:expected_hash) do
         {
           records: [],
@@ -26,7 +26,7 @@ describe Apparatus::EntriesSerializer do
     context 'when there are some records' do
       let(:resource) { create(:token, :variant_selected) }
       let(:resource2) { create(:token, :variant_selected_and_secondary) }
-      let(:serializer) { described_class.new([resource, resource2], significant:) }
+      let(:serializer) { described_class.new(records: [resource, resource2], significant:) }
       let(:expected_hash) do
         {
           records: serialized_entries(apparatus_entries),

@@ -5,7 +5,7 @@ require 'rails_helper'
 describe TokensSerializer do
   describe 'as_json' do
     context 'when there are no records' do
-      let(:serializer) { described_class.new([]) }
+      let(:serializer) { described_class.new(records: []) }
       let(:expected_hash) do
         {
           records: [],
@@ -19,19 +19,29 @@ describe TokensSerializer do
     end
 
     context 'when there are some records' do
-      let(:resource) { create(:token, :variant_selected) }
-      let(:resource2) { create(:token) }
-      let(:resource3) { create(:token, :variant_selected) }
-      let(:serialized_records) { serializer.as_json[:records] }
+      let(:resource) { create(:token, :variant_selected, apparatus_index: 1) }
+      let(:resource2) { create(:token, apparatus_index: nil) }
+      let(:resource3) { create(:token, :variant_selected, apparatus_index: 2) }
+      let(:expected_record_attributes) { described_class::RecordSerializer::RECORD_ATTRIBUTES }
 
       context 'without options given' do
-        let(:serializer) { described_class.new([resource, resource2, resource3]) }
-        let(:expected_hash) do
+        let(:serializer) { described_class.new(records: [resource, resource2, resource3]) }
+        let(:expected_record_methods) { described_class::RecordSerializer::RECORD_METHODS }
+        let!(:expected_hash) do
           {
             records: [
-              TokenSerializer.new(resource).as_json,
-              TokenSerializer.new(resource2).as_json,
-              TokenSerializer.new(resource3).as_json
+              resource.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              ),
+              resource2.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              ),
+              resource3.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              )
             ],
             count:   3
           }
@@ -39,35 +49,27 @@ describe TokensSerializer do
 
         it 'returns hash with correct keys' do
           expect(serializer.as_json).to eq(expected_hash)
-        end
-
-        it 'assigns correct :apparatus_index when available' do
-          serialized_record = serialized_records.find { |r| r['id'] == resource.id }
-          expect(serialized_record['apparatus_index']).to eq(1)
-          serialized_record = serialized_records.find { |r| r['id'] == resource3.id }
-          expect(serialized_record['apparatus_index']).to eq(2)
-        end
-
-        it 'leaves :apparatus_index nil when not available' do
-          serialized_record = serialized_records.find { |r| r['id'] == resource2.id }
-          expect(serialized_record['apparatus_index']).to be_nil
         end
       end
 
-      context 'with specific mode enabled' do
-        let(:mode) { :edit_project }
-        let(:serializer) do
-          described_class.new(
-            [resource, resource2, resource3],
-            mode:
-          )
-        end
-        let(:expected_hash) do
+      context 'when edit_mode enabled' do
+        let(:serializer) { described_class.new(records: [resource, resource2, resource3], edit_mode: true) }
+        let(:expected_record_methods) { described_class::RecordSerializer::EDIT_MODE_RECORD_METHODS }
+        let!(:expected_hash) do
           {
             records: [
-              TokenSerializer.new(resource, mode:).as_json,
-              TokenSerializer.new(resource2, mode:).as_json,
-              TokenSerializer.new(resource3, mode:).as_json
+              resource.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              ),
+              resource2.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              ),
+              resource3.as_json(
+                only:    expected_record_attributes,
+                methods: expected_record_methods
+              )
             ],
             count:   3
           }
@@ -75,22 +77,6 @@ describe TokensSerializer do
 
         it 'returns hash with correct keys' do
           expect(serializer.as_json).to eq(expected_hash)
-        end
-
-        it 'assigns correct :apparatus_index when available' do
-          serialized_record = serialized_records.find { |r| r['id'] == resource.id }
-          expect(serialized_record['apparatus_index']).to eq(1)
-          serialized_record = serialized_records.find { |r| r['id'] == resource3.id }
-          expect(serialized_record['apparatus_index']).to eq(2)
-        end
-
-        it 'leaves :apparatus_index nil when not available' do
-          serialized_record = serialized_records.find { |r| r['id'] == resource2.id }
-          expect(serialized_record['apparatus_index']).to be_nil
-        end
-
-        it 'includes :state' do
-          expect(serialized_records).to all(have_key('state'))
         end
       end
     end

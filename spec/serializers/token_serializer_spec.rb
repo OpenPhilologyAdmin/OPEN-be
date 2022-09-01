@@ -3,17 +3,18 @@
 require 'rails_helper'
 
 describe TokenSerializer do
-  let(:resource) { create(:token, :variant_selected, apparatus_index: 1) }
+  let(:serializer) { described_class.new(record:) }
 
-  context 'when no special mode enabled' do
-    let(:serializer) { described_class.new(resource) }
-
-    describe '#as_json' do
+  describe '#as_json' do
+    context 'when all grouped_variants have values' do
+      let(:record) { create(:token, :variant_selected, apparatus_index: 1) }
       let(:expected_hash) do
         {
-          id:              resource.id,
-          t:               resource.t,
-          apparatus_index: resource.apparatus_index
+          id:               record.id,
+          apparatus:        record.apparatus,
+          grouped_variants: record.grouped_variants,
+          variants:         record.variants,
+          editorial_remark: record.editorial_remark
         }.as_json
       end
 
@@ -21,58 +22,32 @@ describe TokenSerializer do
         expect(serializer.as_json).to eq(expected_hash)
       end
     end
-  end
 
-  context 'when invalid mode given' do
-    let(:serializer) { described_class.new(resource, mode: :lorem_ipsum) }
-
-    describe '#as_json' do
+    context 'when the grouped_variants have empty values' do
+      let(:record) { create(:token, :variant_selected, apparatus_index: 1, with_empty_values: true) }
+      let(:processed_grouped_variants) do
+        record.grouped_variants.each do |grouped_variant|
+          grouped_variant.t = grouped_variant.formatted_t
+        end
+      end
       let(:expected_hash) do
         {
-          id:              resource.id,
-          t:               resource.t,
-          apparatus_index: resource.apparatus_index
-        }.as_json
-      end
-
-      it 'returns hash with :standard keys' do
-        expect(serializer.as_json).to eq(expected_hash)
-      end
-    end
-  end
-
-  context 'when :edit_project mode' do
-    let(:serializer) { described_class.new(resource, mode: :edit_project) }
-    let(:expected_hash) do
-      {
-        id:              resource.id,
-        t:               resource.t,
-        apparatus_index: resource.apparatus_index,
-        state:           resource.state
-      }.as_json
-    end
-
-    it 'returns hash with specified keys' do
-      expect(serializer.as_json).to eq(expected_hash)
-    end
-  end
-
-  context 'when :edit_token mode' do
-    let(:serializer) { described_class.new(resource, mode: :edit_token) }
-
-    describe '#as_json' do
-      let(:expected_hash) do
-        {
-          id:               resource.id,
-          apparatus:        resource.apparatus,
-          grouped_variants: resource.grouped_variants,
-          variants:         resource.variants,
-          editorial_remark: resource.editorial_remark
+          id:               record.id,
+          apparatus:        record.apparatus,
+          grouped_variants: processed_grouped_variants,
+          variants:         record.variants,
+          editorial_remark: record.editorial_remark
         }.as_json
       end
 
       it 'returns hash with specified keys' do
         expect(serializer.as_json).to eq(expected_hash)
+      end
+
+      it 'replaces empty values for the grouped variants' do
+        serializer.as_json['grouped_variants'].each do |grouped_variant|
+          expect(grouped_variant['t']).not_to be_blank
+        end
       end
     end
   end

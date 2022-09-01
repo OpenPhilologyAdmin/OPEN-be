@@ -8,7 +8,7 @@ module V1
       authorize @project, :index_witnesses?
 
       render(
-        json: RecordsSerializer.new(@project.witnesses)
+        json: RecordsSerializer.new(records: @project.witnesses)
       )
     end
 

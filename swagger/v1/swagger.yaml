@@ -512,69 +512,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
-  "/api/v1/projects/{project_id}/tokens/{id}/grouped_variants":
-    patch:
-      summary: Updates token grouped variants
-      tags:
-      - Projects
-      security:
-      - bearer: []
-      description: Update the token selections by updating the **grouped_variants**.<br>Use
-        *selected* when setting the main reading and *possible* for secondary readings.
-        <br>The user who edits the token will be saved as the last editor of the project.
-      parameters:
-      - name: project_id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of the project
-      - name: id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of token
-      responses:
-        '200':
-          description: Token updated
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/token_edit"
-        '401':
-          description: Login required
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/login_required"
-        '404':
-          description: Project or token not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/record_not_found"
-        '422':
-          description: Token data invalid
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/invalid_record"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: object
-                  properties:
-                    grouped_variants:
-                      type: array
-                      items:
-                        "$ref": "#/components/schemas/grouped_variant"
-                  required:
-                  - grouped_variants
   "/api/v1/projects/{project_id}/insignificant_variants":
     get:
       summary: Retrieves insignificant variants of the specified project
@@ -1147,6 +1084,139 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{project_id}/tokens/{id}/grouped_variants":
+    patch:
+      summary: Updates token grouped variants
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Update the token selections by updating the **grouped_variants**.<br>Use
+        *selected* when setting the main reading and *possible* for secondary readings.
+        <br>The user who edits the token will be saved as the last editor of the project.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Token updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/token_edit"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project or token not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Token data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: object
+                  properties:
+                    grouped_variants:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/grouped_variant"
+                  required:
+                  - grouped_variants
+  "/api/v1/projects/{project_id}/tokens/{id}/variants":
+    patch:
+      summary: Updates token variants and editorial remark
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: 'Update the selected token details.<br>Use **variants** when editing
+        the content for the specific witness. <br>Use **editorial_remark** when adding
+        or editing the editorial remark, only the following types are available: *''st.'',
+        ''corr.'', ''em.'', ''conj.''*. ''                  ''The *''em.'' and ''conj.''*
+        will become automatically selected. <br>If **variants** or **editorial_remark**
+        are updated, the **grouped_variants** will  be calculated once again, all
+        previous selections will be cleared.<br>The user who edits the token will
+        be saved as the last editor of the project.'
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Token updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/token_edit"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project or token not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Token data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: object
+                  properties:
+                    variants:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/variant"
+                    editorial_remark:
+                      "$ref": "#/components/schemas/editorial_remark"
+                  required:
+                  - variants
   "/api/v1/users":
     get:
       summary: Retrieves list of users
@@ -1283,76 +1353,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
-  "/api/v1/projects/{project_id}/tokens/{id}/variants":
-    patch:
-      summary: Updates token variants and editorial remark
-      tags:
-      - Projects
-      security:
-      - bearer: []
-      description: 'Update the selected token details.<br>Use **variants** when editing
-        the content for the specific witness. <br>Use **editorial_remark** when adding
-        or editing the editorial remark, only the following types are available: *''st.'',
-        ''corr.'', ''em.'', ''conj.''*. ''                  ''The *''em.'' and ''conj.''*
-        will become automatically selected. <br>If **variants** or **editorial_remark**
-        are updated, the **grouped_variants** will  be calculated once again, all
-        previous selections will be cleared.<br>The user who edits the token will
-        be saved as the last editor of the project.'
-      parameters:
-      - name: project_id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of the project
-      - name: id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of token
-      responses:
-        '200':
-          description: Token updated
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/token_edit"
-        '401':
-          description: Login required
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/login_required"
-        '404':
-          description: Project or token not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/record_not_found"
-        '422':
-          description: Token data invalid
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/invalid_record"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token:
-                  type: object
-                  properties:
-                    variants:
-                      type: array
-                      items:
-                        "$ref": "#/components/schemas/variant"
-                    editorial_remark:
-                      "$ref": "#/components/schemas/editorial_remark"
-                  required:
-                  - variants
   "/api/v1/projects/{project_id}/witnesses":
     get:
       summary: Retrieves witnesses of the specified project

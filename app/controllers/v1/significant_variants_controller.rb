@@ -11,7 +11,7 @@ module V1
                                    .includes(:project)
 
       render(
-        json: Apparatus::EntriesSerializer.new(records, significant: true)
+        json: Apparatus::EntriesSerializer.new(records:, significant: true)
       )
     end
   end
