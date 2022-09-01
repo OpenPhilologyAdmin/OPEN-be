@@ -1,18 +1,33 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-
-RSpec.describe TokensManager::Updater, type: :service do
-  let(:user) { create(:user, :admin, :approved) }
-  let(:token) { create(:token, :without_editorial_remark) }
-  let(:grouped_variant) { build(:token_grouped_variant) }
-  let(:variant) { build(:token_variant) }
-  let(:params) do
-    {
-      grouped_variants: [grouped_variant],
-      variants:         [variant]
-    }
+RSpec.shared_examples 'token successfully updated' do
+  it 'sets the current user as last_editor of project' do
+    expect(token.project.last_editor).to eq(user)
   end
+
+  it 'returns success result' do
+    expect(result).to be_success
+  end
+
+  it 'includes token in the result' do
+    expect(result.token).to eq(token)
+  end
+end
+
+RSpec.describe TokensManager::VariantsUpdater, type: :service do
+  let(:user) { create(:user, :admin, :approved) }
+  let(:project) do
+    create(:project,
+           witnesses: [
+             build(:witness, siglum: 'A'),
+             build(:witness, siglum: 'B'),
+             build(:witness, siglum: 'C'),
+             build(:witness, siglum: 'D')
+           ])
+  end
+  let(:token) { create(:token, :without_editorial_remark, project:) }
+  let(:variant) { build(:token_variant) }
   let(:service) { described_class.new(token:, user:, params:) }
 
   describe '#perform' do
@@ -20,18 +35,6 @@ RSpec.describe TokensManager::Updater, type: :service do
 
     context 'when token data valid' do
       before { token.reload }
-
-      context 'when updating grouped variants' do
-        let(:params) do
-          {
-            grouped_variants: [grouped_variant].as_json
-          }
-        end
-
-        it 'updates the token with grouped variants' do
-          expect(token.grouped_variants).to match_array([grouped_variant])
-        end
-      end
 
       context 'when updating variants' do
         let(:params) do
@@ -64,15 +67,18 @@ RSpec.describe TokensManager::Updater, type: :service do
         it 'recalculates grouped_variants and clears the previous selections' do
           expect(token.grouped_variants).to match_array(expected_grouped_variants)
         end
+
+        include_examples 'token successfully updated'
       end
 
       context 'when updating editorial remark' do
-        let(:token) { create(:token, variants:) }
+        let(:token) { create(:token, project:) }
         let(:editorial_remark) { build(:token_editorial_remark, t: 'lorim', type: 'st.') }
         let(:params) do
           {
-            editorial_remark: editorial_remark.as_json
-          }
+            variants:,
+            editorial_remark:
+          }.as_json
         end
         let(:variants) do
           [
@@ -97,6 +103,8 @@ RSpec.describe TokensManager::Updater, type: :service do
         it 'recalculates grouped_variants and includes editorial_remark' do
           expect(token.grouped_variants).to match_array(expected_grouped_variants)
         end
+
+        include_examples 'token successfully updated'
 
         context 'when the remark should be auto-selected' do
           let(:editorial_remark) do
@@ -124,27 +132,22 @@ RSpec.describe TokensManager::Updater, type: :service do
           end
         end
       end
-
-      it 'sets the current user as last_editor of project' do
-        expect(token.project.last_editor).to eq(user)
-      end
-
-      it 'returns success result' do
-        expect(result).to be_success
-      end
-
-      it 'includes token in the result' do
-        expect(result.token).to eq(token)
-      end
     end
 
     context 'when token data is not valid' do
-      let(:params) { { variants: nil } }
+      let(:params) do
+        {
+          editorial_remark: {
+            type: 'invalid-type',
+            t:    'lorem'
+          }
+        }
+      end
 
       before { token.reload }
 
       it 'does not update the token with new details' do
-        expect(token.variants).not_to be_empty
+        expect(token.editorial_remark).to be_nil
       end
 
       it 'does not set the current user as last_editor of project' do

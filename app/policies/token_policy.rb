@@ -9,7 +9,11 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
-  def update?
+  def update_variants?
+    approved_admin?
+  end
+
+  def update_grouped_variants?
     approved_admin?
   end
 
@@ -21,11 +25,16 @@ class TokenPolicy < ApplicationPolicy
     index?
   end
 
-  def permitted_attributes_for_update
+  def permitted_attributes_for_update_variants
     [
-      grouped_variants: [:t, :selected, :possible, { witnesses: [] }],
       variants:         %i[t witness],
       editorial_remark: %i[t type]
+    ]
+  end
+
+  def permitted_attributes_for_update_grouped_variants
+    [
+      grouped_variants: %i[id selected possible]
     ]
   end
 

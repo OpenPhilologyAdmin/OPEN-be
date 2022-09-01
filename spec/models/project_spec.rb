@@ -112,7 +112,7 @@ RSpec.describe Project, type: :model do
     end
   end
 
-  describe 'witnesses_count' do
+  describe '#witnesses_count' do
     context 'when there are no witnesses at all' do
       it 'is 0' do
         expect(build(:project, witnesses: []).witnesses_count).to eq(0)
@@ -123,6 +123,15 @@ RSpec.describe Project, type: :model do
       it 'returns number of witnesses' do
         expect(build(:project, witnesses: build_list(:witness, 2)).witnesses_count).to eq(2)
       end
+    end
+  end
+
+  describe '#witnesses_ids' do
+    let(:project) { build(:project, witnesses: build_list(:witness, 2)) }
+    let(:expected_result) { project.witnesses.map(&:id) }
+
+    it 'returns ids of witnesses' do
+      expect(project.witnesses_ids).to match_array(expected_result)
     end
   end
 

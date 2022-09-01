@@ -5,7 +5,8 @@ require 'rails_helper'
 describe TokenPolicy do
   subject(:record_policy) { described_class }
 
-  permissions :index?, :show?, :update?, :significant_variants?, :insignificant_variants? do
+  permissions :index?, :show?, :update_variants?, :update_grouped_variants?,
+              :significant_variants?, :insignificant_variants? do
     context 'when logged in admin' do
       context 'when admin is approved' do
         let(:current_user) { build(:user, :admin, :approved) }

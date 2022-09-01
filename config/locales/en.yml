@@ -17,6 +17,10 @@ en:
           attributes:
             type:
               inclusion: is not a valid editorial remark type
+        token_variant:
+          attributes:
+            witness:
+              inclusion: is not on the project witnesses list
     attributes:
       token_editorial_remark:
         t: Content

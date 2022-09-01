@@ -10,6 +10,26 @@ RSpec.describe TokenVariant, type: :model do
     end
   end
 
+  describe '#validations' do
+    subject(:token_variant) { build(:token_variant) }
+
+    context 'when parent(token) is present' do
+      let(:token) { create(:token) }
+
+      before { token_variant.parent = token }
+
+      it { is_expected.to validate_inclusion_of(:witness).in_array(token.project_witnesses_ids) }
+    end
+
+    context 'when parent(token) is not present' do
+      before { token_variant.parent = nil }
+
+      it 'is valid' do
+        expect(token_variant).to be_valid
+      end
+    end
+  end
+
   describe '#for_witness?' do
     let(:siglum) { 'A' }
 

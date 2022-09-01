@@ -5,7 +5,8 @@ require 'swagger_helper'
 RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request do
   path '/api/v1/projects/{project_id}/insignificant_variants' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:project_id) { create(:project).id }
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
 
     get('Retrieves insignificant variants of the specified project') do
       tags 'Projects'
@@ -25,9 +26,9 @@ RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request
         let(:Authorization) { authorization_header_for(user) }
 
         before do
-          create_list(:token, 3, :variant_selected, project_id:)
-          create(:token, :variant_selected_and_secondary, project_id:)
-          create(:token, project_id:)
+          create_list(:token, 3, :variant_selected, project:)
+          create(:token, :variant_selected_and_secondary, project:)
+          create(:token, project:)
         end
 
         schema type:       :object,

@@ -360,25 +360,17 @@ RSpec.configure do |config|
           grouped_variant:       {
             type:       :object,
             properties: {
-              witnesses: {
-                type:  :array,
-                items: {
-                  type:        :string,
-                  description: 'List of witnesses that use this variant',
-                  example:     'A'
-                }
-              },
-              t:         {
+              id:       {
                 type:        :string,
-                description: 'Variant value',
-                example:     'Lorem ipsum',
-                nullable:    true
+                example:     'AB',
+                description: 'The ID is auto-generated from the witnesses. ' \
+                             "For example, for witnesses: ['A', 'B', 'E'] it would be 'ABE'."
               },
-              selected:  {
+              selected: {
                 type:        :boolean,
                 description: 'Whether is selected as a primary reading'
               },
-              possible:  {
+              possible: {
                 type:        :boolean,
                 description: 'Whether is selected as a secondary reading'
               }

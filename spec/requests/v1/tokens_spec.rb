@@ -96,7 +96,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
   end
 
   path '/api/v1/projects/{project_id}/tokens/{id}' do
-    let(:record) { create(:token, :variant_selected_and_secondary, project_id:) }
+    let(:record) { create(:token, :variant_selected_and_secondary, project:) }
     let(:id) { record.id }
     let(:mode) { :edit_token }
 
@@ -150,22 +150,23 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
         run_test!
       end
     end
+  end
 
-    put('Updates token details') do
+  path '/api/v1/projects/{project_id}/tokens/{id}/grouped_variants' do
+    let(:record) { create(:token, project:, grouped_variants: [grouped_variant, grouped_variant2]) }
+    let(:grouped_variant) { build(:token_grouped_variant, :insignificant) }
+    let(:grouped_variant2) { build(:token_grouped_variant, :insignificant) }
+    let(:id) { record.id }
+    let(:mode) { :edit_token }
+
+    patch('Updates token grouped variants') do
       tags 'Projects'
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update selected token details.<br>' \
-                  'Use **grouped_variants** when selecting the reading (*selected*: main reading, ' \
-                  '*possible*: secondary reading). <br>' \
-                  'Use **variants** when editing the content for specific witness. <br>' \
-                  'Use **editorial_remark** when adding or editing the editorial remark, only the following ' \
-                  "types are available: *'st.', 'corr.', 'em.', 'conj.'*. '\
-                  'The *'em.' and 'conj.'* will become automatically selected. <br>" \
-                  'If **variants** or **editorial_remark** are updated, the **grouped_variants** will  ' \
-                  'be calculated once again, all previous selections will be cleared.<br>' \
-                  'The user who edits the token will be saved as last editor of the project.'
+      description 'Update the token selections by updating the **grouped_variants**.<br>' \
+                  'Use *selected* when setting the main reading and *possible* for secondary readings. <br>' \
+                  'The user who edits the token will be saved as the last editor of the project.'
 
       parameter name:        :project_id, in: :path,
                 schema:      {
@@ -190,12 +191,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
               grouped_variants: {
                 type:  :array,
                 items: { '$ref' => '#/components/schemas/grouped_variant' }
-              },
-              variants:         {
-                type:  :array,
-                items: { '$ref' => '#/components/schemas/variant' }
-              },
-              editorial_remark: { '$ref' => '#/components/schemas/editorial_remark' }
+              }
             },
             required:   %w[grouped_variants]
           }
@@ -208,16 +204,14 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
             grouped_variants:
                               [
                                 {
-                                  'witnesses' => ['A'],
-                                  't'         => 'lorem',
-                                  'selected'  => true,
-                                  'possible'  => true
+                                  'id'       => grouped_variant.id,
+                                  'selected' => true,
+                                  'possible' => true
                                 },
                                 {
-                                  'witnesses' => ['B'],
-                                  't'         => 'ipsum ',
-                                  'selected'  => false,
-                                  'possible'  => true
+                                  'id'       => grouped_variant2.id,
+                                  'selected' => false,
+                                  'possible' => true
                                 }
                               ]
           }
@@ -238,12 +232,16 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           expect(record.project.last_editor).to eq(user)
         end
 
-        it 'updates the token' do
-          token[:token][:grouped_variants].each_with_index do |variant, index|
-            variant.each do |key, value|
-              expect(record.grouped_variants[index].send(key)).to eq(value)
-            end
-          end
+        it 'selects the correct grouped variant' do
+          updated_grouped_variant = record.grouped_variants.find { |variant| variant.id == grouped_variant.id }
+          expect(updated_grouped_variant).to be_selected
+          expect(updated_grouped_variant).to be_possible
+        end
+
+        it 'saves the possible grouped variant' do
+          updated_grouped_variant = record.grouped_variants.find { |variant| variant.id == grouped_variant2.id }
+          expect(updated_grouped_variant).not_to be_selected
+          expect(updated_grouped_variant).to be_possible
         end
 
         it 'passes the correct mode to TokenSerializer' do
@@ -274,6 +272,144 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           {
             token: {
               grouped_variants: []
+            }
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/projects/{project_id}/tokens/{id}/variants' do
+    let(:record) { create(:token, project:) }
+    let(:id) { record.id }
+    let(:mode) { :edit_token }
+
+    patch('Updates token variants and editorial remark') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Update the selected token details.<br>' \
+                  'Use **variants** when editing the content for the specific witness. <br>' \
+                  'Use **editorial_remark** when adding or editing the editorial remark, only the following ' \
+                  "types are available: *'st.', 'corr.', 'em.', 'conj.'*. '\
+                  'The *'em.' and 'conj.'* will become automatically selected. <br>" \
+                  'If **variants** or **editorial_remark** are updated, the **grouped_variants** will  ' \
+                  'be calculated once again, all previous selections will be cleared.<br>' \
+                  'The user who edits the token will be saved as the last editor of the project.'
+
+      parameter name:        :project_id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of the project'
+
+      parameter name:        :id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of token'
+
+      parameter name: :token, in: :body, schema: {
+        type:       :object,
+        properties: {
+          token: {
+            type:       :object,
+            properties: {
+              variants:         {
+                type:  :array,
+                items: { '$ref' => '#/components/schemas/variant' }
+              },
+              editorial_remark: { '$ref' => '#/components/schemas/editorial_remark' }
+            },
+            required:   %w[variants]
+          }
+        }
+      }
+
+      let(:token) do
+        {
+          token: {
+            variants:
+                              [
+                                {
+                                  'witness' => project.witnesses_ids.first,
+                                  't'       => 'lorem'
+                                },
+                                {
+                                  'witness' => project.witnesses_ids.last,
+                                  't'       => 'ipsum '
+                                }
+                              ],
+            editorial_remark: {
+              type: 'st.',
+              t:    'Lorem ipsum'
+            }
+          }
+        }
+      end
+
+      response '200', 'Token updated' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:mode) { :edit_token }
+
+        schema '$ref' => '#/components/schemas/token_edit'
+
+        run_test!
+
+        before { record.reload }
+
+        it 'saves the current user as last_editor of project' do
+          expect(record.project.last_editor).to eq(user)
+        end
+
+        it 'updates the token variants' do
+          token[:token][:variants].each do |variant_to_update|
+            updated_variant = record.variants.find { |resource| resource.witness == variant_to_update['witness'] }
+            expect(updated_variant.t).to eq(variant_to_update['t'])
+          end
+        end
+
+        it 'updates the editorial_remark' do
+          token[:token][:editorial_remark].each do |key, value|
+            expect(record.editorial_remark.send(key)).to eq(value)
+          end
+        end
+
+        it 'passes the correct mode to TokenSerializer' do
+          expect(response.body).to eq(TokenSerializer.new(record, mode:).to_json)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project or token not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+
+      response '422', 'Token data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:token) do
+          {
+            token: {
+              variants: []
             }
           }
         end

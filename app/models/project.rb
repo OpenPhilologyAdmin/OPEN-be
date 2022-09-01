@@ -52,6 +52,10 @@ class Project < ApplicationRecord
     witnesses.size
   end
 
+  def witnesses_ids
+    witnesses.map(&:id)
+  end
+
   def creator
     owners.first
   end

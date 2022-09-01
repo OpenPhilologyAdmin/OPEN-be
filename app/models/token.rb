@@ -10,7 +10,11 @@ class Token < ApplicationRecord
   validates :index, :variants, :grouped_variants, presence: true
   validate :validate_selected_grouped_variant
 
+  validates :editorial_remark, store_model: { merge_errors: true }, allow_nil: true
+  validates :variants, store_model: { merge_array_errors: true }
+
   belongs_to :project
+  delegate :witnesses_ids, to: :project, prefix: true
   delegate :default_witness, to: :project, prefix: true
   delegate :witness, to: :editorial_remark, allow_nil: true, prefix: true
 
