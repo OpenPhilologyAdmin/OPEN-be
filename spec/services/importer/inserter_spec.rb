@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Importer::Inserter, type: :service do
-  let(:project) { create(:project) }
-  let(:tokens) {  build_list(:token, 3, project:) }
-  let(:extracted_data) { build(:extracted_data, tokens:) }
+  let(:project) { create(:project, :status_processing) }
+  let(:extracted_data) { build(:extracted_data, project:) }
   let(:service) { described_class.new(project:, extracted_data:) }
 
   describe '#process' do

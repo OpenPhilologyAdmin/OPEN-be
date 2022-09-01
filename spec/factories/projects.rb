@@ -20,6 +20,7 @@ FactoryBot.define do
     end
 
     trait :status_processing do
+      witnesses { [] }
       status { :processing }
     end
 

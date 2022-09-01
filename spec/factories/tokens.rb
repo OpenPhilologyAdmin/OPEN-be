@@ -4,18 +4,19 @@ FactoryBot.define do
   factory :token do
     transient do
       with_empty_values { false }
+      witnesses { project.witnesses }
     end
 
     project { create(:project) }
     index { Faker::Number.positive }
     variants do
-      project.witnesses.map do |witness|
+      witnesses.map do |witness|
         build(:token_variant, witness: witness.siglum)
       end
     end
 
     grouped_variants do
-      project.witnesses.map do |witness|
+      witnesses.map do |witness|
         build(:token_grouped_variant, witnesses: [witness.siglum])
       end
     end
@@ -29,7 +30,7 @@ FactoryBot.define do
     trait :variant_selected do
       project { create(:project, witnesses_number: 3) }
       variants do
-        project.witnesses.map do |witness|
+        witnesses.map do |witness|
           build(:token_variant,
                 witness: witness.siglum)
         end
@@ -37,7 +38,7 @@ FactoryBot.define do
 
       # first variant is the selected one
       grouped_variants do
-        project.witnesses.map.with_index do |witness, index|
+        witnesses.map.with_index do |witness, index|
           build(:token_grouped_variant,
                 witnesses: [witness.siglum],
                 selected:  index.zero?,
@@ -49,7 +50,7 @@ FactoryBot.define do
     trait :variant_selected_and_secondary do
       project { create(:project, witnesses_number: 3) }
       variants do
-        project.witnesses.map do |witness|
+        witnesses.map do |witness|
           build(:token_variant,
                 witness: witness.siglum)
         end
@@ -57,7 +58,7 @@ FactoryBot.define do
 
       # first variant is the selected one, others are possible
       grouped_variants do
-        project.witnesses.map.with_index do |witness, index|
+        witnesses.map.with_index do |witness, index|
           build(:token_grouped_variant,
                 witnesses: [witness.siglum],
                 selected:  index.zero?,
@@ -65,7 +66,6 @@ FactoryBot.define do
         end
       end
     end
-
 
     trait :without_editorial_remark do
       editorial_remark { nil }

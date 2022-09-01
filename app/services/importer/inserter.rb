@@ -10,23 +10,25 @@ module Importer
     end
 
     def process
+      prepare_project
       save_tokens
-      update_project
+      project.save
     end
 
     private
 
-    def update_project
-      @project.assign_attributes(
-        witnesses: @extracted_data.witnesses,
+    attr_reader :extracted_data
+
+    def prepare_project
+      project.assign_attributes(
+        witnesses: extracted_data.witnesses,
         status:    :processed
       )
-      @project.witnesses.first.default!
-      @project.save
+      project.witnesses.first.default!
     end
 
     def save_tokens
-      Token.import(@extracted_data.tokens)
+      Token.import(extracted_data.tokens)
     end
   end
 end
