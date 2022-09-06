@@ -25,7 +25,7 @@ RSpec.describe WitnessesManager::Remover, type: :service do
     end
   end
 
-  describe '#perform!' do
+  describe '#perform' do
     let(:tokens_processor_mock) { instance_double(WitnessesManager::Remover::TokensProcessor) }
     let(:project_processor_mock) { instance_double(WitnessesManager::Remover::ProjectWitnessesProcessor) }
 
@@ -36,7 +36,7 @@ RSpec.describe WitnessesManager::Remover, type: :service do
       allow(WitnessesManager::Remover::ProjectWitnessesProcessor).to receive(:new).and_return(project_processor_mock)
       allow(project_processor_mock).to receive(:remove_witness!)
 
-      described_class.perform!(project:, siglum:, user:)
+      described_class.perform(project:, siglum:, user:)
     end
 
     it 'runs TokensProcessor' do

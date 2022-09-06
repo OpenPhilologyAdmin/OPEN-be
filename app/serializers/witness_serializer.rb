@@ -3,7 +3,7 @@
 class WitnessSerializer
   RECORD_ATTRIBUTES = %i[id default name siglum].freeze
 
-  def initialize(record)
+  def initialize(record:)
     @record = record
   end
 

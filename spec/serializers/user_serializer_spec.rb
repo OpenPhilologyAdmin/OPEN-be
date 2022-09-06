@@ -3,18 +3,18 @@
 require 'rails_helper'
 
 describe UserSerializer do
-  let(:resource) { create(:user) }
-  let(:serializer) { described_class.new(resource) }
+  let(:record) { create(:user) }
+  let(:serializer) { described_class.new(record:) }
 
   describe '#as_json' do
     let(:expected_hash) do
       {
-        id:                resource.id,
-        email:             resource.email,
-        name:              resource.name,
-        role:              resource.role,
-        account_approved:  resource.account_approved?,
-        registration_date: resource.registration_date
+        id:                record.id,
+        email:             record.email,
+        name:              record.name,
+        role:              record.role,
+        account_approved:  record.account_approved?,
+        registration_date: record.registration_date
       }.as_json
     end
 

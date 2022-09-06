@@ -7,7 +7,7 @@ module WitnessesManager
       super
     end
 
-    def perform!
+    def perform
       update_witness
       handle_default_witness_change
       Result.new(

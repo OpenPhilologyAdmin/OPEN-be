@@ -4,10 +4,46 @@ require 'rails_helper'
 
 RSpec.describe Witness, type: :model do
   describe '#validations' do
-    subject(:token) { described_class.new }
+    subject(:witness) { described_class.new }
 
     it { is_expected.to validate_presence_of(:siglum) }
     it { is_expected.to validate_length_of(:name).is_at_most(50).allow_blank }
+
+    context 'with parent(project)' do
+      let(:parent) { build(:project, witnesses_number: 3) }
+      let(:witness) { parent.witnesses.last }
+
+      context 'when siglum is unique within the project scope' do
+        it 'is valid' do
+          witness.siglum = 'new-uniq-siglum'
+          expect(witness).to be_valid
+        end
+      end
+
+      context 'when siglum is not unique within the project scope' do
+        let(:expected_error) { I18n.t('errors.messages.taken') }
+        let(:existing_witness_siglum) { parent.witnesses.first.siglum }
+
+        before { witness.siglum = existing_witness_siglum.swapcase }
+
+        it 'is not valid' do
+          expect(witness).not_to be_valid
+        end
+
+        it 'assigns correct error to the :siglum' do
+          witness.valid?
+          expect(witness.errors[:siglum]).to include(expected_error)
+        end
+      end
+    end
+
+    context 'without parent' do
+      let(:witness) { build(:witness, parent: nil) }
+
+      it 'is valid' do
+        expect(witness).to be_valid
+      end
+    end
   end
 
   describe 'factories' do

@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       resources :editorial_remarks, only: %i[index]
 
       resources :projects, only: %i[index create update show destroy] do
-        resources :witnesses, only: %i[index update destroy]
+        resources :witnesses, only: %i[index create update destroy]
         resources :tokens, only: %i[index show] do
           patch 'variants', to: 'tokens#update_variants', on: :member
           patch 'grouped_variants', to: 'tokens#update_grouped_variants', on: :member

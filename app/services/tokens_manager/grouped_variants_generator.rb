@@ -2,14 +2,13 @@
 
 module TokensManager
   class GroupedVariantsGenerator
-    attr_reader :variants_hash
-
-    def initialize(variants)
-      @variants_hash = process_variants(variants)
+    def initialize(token:)
+      @token = token
+      @variants_hash = process_variants
     end
 
-    def self.perform(variants)
-      new(variants).perform
+    def self.perform(token:)
+      new(token:).perform
     end
 
     def perform
@@ -25,9 +24,15 @@ module TokensManager
 
     private
 
-    def process_variants(variants)
+    attr_reader :token, :variants_hash
+
+    def variants_and_remarks
+      @variants_and_remarks ||= [token.variants, token.editorial_remark].flatten.compact
+    end
+
+    def process_variants
       processed_variants = Hash.new { |hash, key| hash[key] = [] }
-      variants.each do |variant|
+      variants_and_remarks.each do |variant|
         processed_variants[variant.t] << variant.witness
       end
       processed_variants

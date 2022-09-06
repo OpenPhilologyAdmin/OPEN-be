@@ -12,10 +12,6 @@ module TokensManager
       @editorial_remark_witness ||= token.editorial_remark_witness
     end
 
-    def variants_and_remarks
-      @variants_and_remarks ||= [token.variants, token.editorial_remark].flatten.compact
-    end
-
     def update_token
       token.assign_attributes(params)
       generate_grouped_variants
@@ -24,7 +20,7 @@ module TokensManager
     end
 
     def generate_grouped_variants
-      token.grouped_variants = GroupedVariantsGenerator.perform(variants_and_remarks)
+      token.grouped_variants = GroupedVariantsGenerator.perform(token:)
     end
 
     def auto_select_editorial_remark

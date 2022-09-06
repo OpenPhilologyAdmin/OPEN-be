@@ -3,29 +3,29 @@
 require 'rails_helper'
 
 describe ProjectSerializer do
-  let(:resource) do
+  let(:record) do
     create(:project,
            :with_creator,
            created_at: Time.zone.yesterday.beginning_of_day,
            updated_at: Time.zone.now.beginning_of_day)
   end
-  let(:serializer) { described_class.new(resource) }
+  let(:serializer) { described_class.new(record:) }
 
   describe '#as_json' do
     let(:expected_hash) do
       {
-        id:              resource.id,
-        name:            resource.name,
-        default_witness: resource.default_witness,
-        witnesses:       resource.witnesses,
-        status:          resource.status,
-        created_by:      resource.created_by,
-        creator_id:      resource.creator_id,
-        creation_date:   resource.created_at,
-        last_edit_by:    resource.last_edit_by,
-        last_edit_date:  resource.updated_at,
-        witnesses_count: resource.witnesses_count,
-        import_errors:   resource.import_errors
+        id:              record.id,
+        name:            record.name,
+        default_witness: record.default_witness,
+        witnesses:       record.witnesses,
+        status:          record.status,
+        created_by:      record.created_by,
+        creator_id:      record.creator_id,
+        creation_date:   record.created_at,
+        last_edit_by:    record.last_edit_by,
+        last_edit_date:  record.updated_at,
+        witnesses_count: record.witnesses_count,
+        import_errors:   record.import_errors
       }.as_json
     end
 

@@ -193,6 +193,24 @@ components:
         default:
           type: boolean
           example: false
+    witness_create:
+      type: object
+      properties:
+        witness:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Full name of witness
+              example: Lorem ipsum
+              maximum: 50
+              nullable: true
+            siglum:
+              type: string
+              description: Siglum
+              example: A
+          required:
+          - siglum
     witness_update:
       type: object
       properties:
@@ -1396,6 +1414,50 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+    post:
+      summary: Adds a new witness to the specified project
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Adds a new witness to the project.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      responses:
+        '200':
+          description: Witnesses created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/witness"
+        '422':
+          description: Witness data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/witness_create"
   "/api/v1/projects/{project_id}/witnesses/{id}":
     put:
       summary: Updates the specified witness

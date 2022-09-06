@@ -12,9 +12,26 @@ module V1
       )
     end
 
+    def create
+      authorize @project, :create_witnesses?
+      result = WitnessesManager::Creator.perform(
+        project: @project,
+        user:    current_user,
+        params:  permitted_attributes(Witness)
+      )
+
+      if result.success?
+        render(
+          json: WitnessSerializer.new(record: result.witness)
+        )
+      else
+        respond_with_record_errors(result.witness, :unprocessable_entity)
+      end
+    end
+
     def update
       authorize @project, :update_witnesses?
-      result = WitnessesManager::Updater.perform!(
+      result = WitnessesManager::Updater.perform(
         project: @project,
         siglum:  witness_siglum,
         user:    current_user,
@@ -23,7 +40,7 @@ module V1
 
       if result.success?
         render(
-          json: WitnessSerializer.new(result.witness)
+          json: WitnessSerializer.new(record: result.witness)
         )
       else
         respond_with_record_errors(result.witness, :unprocessable_entity)
@@ -32,7 +49,7 @@ module V1
 
     def destroy
       authorize @project, :destroy_witnesses?
-      WitnessesManager::Remover.perform!(
+      WitnessesManager::Remover.perform(
         project: @project,
         user:    current_user,
         siglum:  witness_siglum

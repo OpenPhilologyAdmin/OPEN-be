@@ -10,11 +10,11 @@ module WitnessesManager
       assign_last_editor(user)
     end
 
-    def self.perform!(project:, siglum:, user:, params: {})
-      new(project:, siglum:, user:, params:).perform!
+    def self.perform(project:, siglum:, user:, params: {})
+      new(project:, siglum:, user:, params:).perform
     end
 
-    def perform!
+    def perform
       raise NotImplementedError
     end
 

@@ -2,7 +2,7 @@
 
 module WitnessesManager
   class Remover < Base
-    def perform!
+    def perform
       remove_witness_from_project
       remove_witness_from_tokens
     end

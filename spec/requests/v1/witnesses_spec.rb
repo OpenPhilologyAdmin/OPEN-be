@@ -58,6 +58,71 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         run_test!
       end
     end
+
+    post('Adds a new witness to the specified project') do
+      let(:witness) do
+        { witness:
+                   {
+                     name:   Faker::Name.name,
+                     siglum: 'Siglum'
+                   } }
+      end
+
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Adds a new witness to the project.'
+
+      parameter name: :project_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the project'
+      parameter name: :witness, in: :body,
+                schema: { '$ref' => '#/components/schemas/witness_create' }
+
+      response '200', 'Witnesses created' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/witness'
+
+        run_test!
+      end
+
+      response '422', 'Witness data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:witness) do
+          { witness:
+                     {
+                       name:   Faker::Name.name,
+                       siglum: ''
+                     } }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
   end
 
   # rubocop:disable RSpec/ScatteredSetup
@@ -100,7 +165,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
                 schema: { '$ref' => '#/components/schemas/witness_update' }
 
       before do
-        allow(WitnessesManager::Updater).to receive(:perform!).and_call_original
+        allow(WitnessesManager::Updater).to receive(:perform).and_call_original
       end
 
       response '200', 'Witnesses updated' do
@@ -121,7 +186,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         end
 
         it 'runs the WitnessesManager::Updater' do
-          expect(WitnessesManager::Updater).to have_received(:perform!)
+          expect(WitnessesManager::Updater).to have_received(:perform)
         end
       end
 
@@ -158,7 +223,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         run_test!
 
         it 'runs the WitnessesManager::Updater' do
-          expect(WitnessesManager::Updater).to have_received(:perform!)
+          expect(WitnessesManager::Updater).to have_received(:perform)
         end
       end
     end
@@ -188,7 +253,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
                 description: 'ID of the removed witness'
 
       before do
-        allow(WitnessesManager::Remover).to receive(:perform!).and_call_original
+        allow(WitnessesManager::Remover).to receive(:perform).and_call_original
       end
 
       response '200', 'Witness removed' do
@@ -205,7 +270,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         run_test!
 
         it 'runs the WitnessesManager::Remover' do
-          expect(WitnessesManager::Remover).to have_received(:perform!).with(
+          expect(WitnessesManager::Remover).to have_received(:perform).with(
             project:, siglum: id, user:
           )
         end
@@ -232,7 +297,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         run_test!
 
         it 'does not run the WitnessesManager::Remover' do
-          expect(WitnessesManager::Remover).not_to have_received(:perform!)
+          expect(WitnessesManager::Remover).not_to have_received(:perform)
         end
       end
 

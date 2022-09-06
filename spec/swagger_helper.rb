@@ -200,6 +200,29 @@ RSpec.configure do |config|
               }
             }
           },
+          witness_create:        {
+            type:       :object,
+            properties: {
+              witness: {
+                type:       :object,
+                properties: {
+                  name:   {
+                    type:        :string,
+                    description: 'Full name of witness',
+                    example:     'Lorem ipsum',
+                    maximum:     50,
+                    nullable:    true
+                  },
+                  siglum: {
+                    type:        :string,
+                    description: 'Siglum',
+                    example:     'A'
+                  }
+                },
+                required:   [:siglum]
+              }
+            }
+          },
           witness_update:        {
             type:       :object,
             properties: {

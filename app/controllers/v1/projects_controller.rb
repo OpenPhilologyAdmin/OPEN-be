@@ -20,7 +20,7 @@ module V1
       if record.save
         ImportProjectJob.perform_now(record.id, current_user.id, record.default_witness_name)
         render(
-          json: ProjectSerializer.new(record)
+          json: ProjectSerializer.new(record:)
         )
       else
         respond_with_record_errors(record, :unprocessable_entity)
@@ -33,7 +33,7 @@ module V1
 
       if record.update(record_params.with_defaults(last_editor: current_user))
         render(
-          json: ProjectSerializer.new(record)
+          json: ProjectSerializer.new(record:)
         )
       else
         respond_with_record_errors(record, :unprocessable_entity)
@@ -45,7 +45,7 @@ module V1
       authorize record, :show?
 
       render(
-        json: ProjectSerializer.new(record)
+        json: ProjectSerializer.new(record:)
       )
     end
 

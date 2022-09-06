@@ -26,7 +26,7 @@ class RecordsSerializer
 
   def serialized_records
     records.map do |record|
-      record_serializer.new(record).as_json
+      record_serializer.new(record:).as_json
     end
   end
 end

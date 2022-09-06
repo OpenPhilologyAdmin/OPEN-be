@@ -29,6 +29,10 @@ class ProjectPolicy < ApplicationPolicy
     manage_witnesses?
   end
 
+  def create_witnesses?
+    manage_witnesses?
+  end
+
   def update_witnesses?
     manage_witnesses?
   end

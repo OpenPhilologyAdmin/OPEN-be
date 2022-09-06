@@ -43,8 +43,8 @@ RSpec.describe WitnessesManager::Updater, type: :service do
     end
   end
 
-  describe '#perform!' do
-    let!(:result) { described_class.perform!(project:, siglum:, user:, params:) }
+  describe '#perform' do
+    let!(:result) { described_class.perform(project:, siglum:, user:, params:) }
 
     context 'when the edited witness is the new default one' do
       before { project.reload }

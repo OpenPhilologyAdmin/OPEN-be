@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 describe RecordsSerializer do
-  let(:resource) { create(:user) }
-  let(:resource2) { create(:user) }
-  let(:serializer) { described_class.new(records: [resource, resource2]) }
+  let(:record) { create(:user) }
+  let(:record2) { create(:user) }
+  let(:serializer) { described_class.new(records: [record, record2]) }
   let(:record_serializer) { UserSerializer }
 
   describe 'as_json' do
@@ -26,7 +26,7 @@ describe RecordsSerializer do
     context 'when there are some records' do
       let(:expected_hash) do
         {
-          records: [record_serializer.new(resource).as_json, record_serializer.new(resource2).as_json],
+          records: [record_serializer.new(record:).as_json, record_serializer.new(record: record2).as_json],
           count:   2
         }
       end
