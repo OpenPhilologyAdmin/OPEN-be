@@ -21,7 +21,6 @@ class Token < ApplicationRecord
   default_scope { order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }
   scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
-  scope :with_insignificant_variants, -> { where('grouped_variants @> ?', '[{"selected": false, "possible": false}]') }
 
   def validate_selected_grouped_variant
     return if grouped_variants.blank?

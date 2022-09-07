@@ -8,11 +8,10 @@ module V1
       authorize Token, :insignificant_variants?
       records = policy_scope(Token).for_project(@project)
                                    .for_apparatus
-                                   .with_insignificant_variants
                                    .includes(:project)
 
       render(
-        json: Apparatus::EntriesSerializer.new(records:, significant: false)
+        json: Apparatus::InsignificantEntriesSerializer.new(records:)
       )
     end
   end
