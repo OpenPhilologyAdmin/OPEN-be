@@ -71,6 +71,22 @@ FactoryBot.define do
       editorial_remark { nil }
     end
 
+    trait :one_grouped_variant do
+      value = Faker::Lorem.sentence
+
+      variants do
+        witnesses.map do |witness|
+          build(:token_variant, witness: witness.siglum, t: value)
+        end
+      end
+
+      grouped_variants do
+        [build(:token_grouped_variant, witnesses: project.witnesses_ids, t: value)]
+      end
+
+      editorial_remark { nil }
+    end
+
     after(:build) do |token, evaluator|
       if evaluator.with_empty_values
         token.variants.each { |variant| variant.t = nil }
