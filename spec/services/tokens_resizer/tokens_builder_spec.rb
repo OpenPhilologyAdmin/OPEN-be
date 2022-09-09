@@ -93,6 +93,12 @@ RSpec.describe TokensResizer::TokensBuilder, type: :service do
         end
       end
 
+      it 'preserves editorial_remark from the source token' do
+        source_editorial_remark = prev_token.editorial_remark
+        expect(selected_text_token.editorial_remark.t).to eq("#{source_editorial_remark.t}#{expected_suffix}")
+        expect(selected_text_token.editorial_remark.type).to eq(source_editorial_remark.type)
+      end
+
       it 'calculates the correct grouped variants of the second token' do
         expect(suffix_token.grouped_variants).to eq(generate_grouped_variants(token: suffix_token))
       end

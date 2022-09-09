@@ -33,7 +33,10 @@ module TokensResizer
     # rubocop:disable Naming/MethodParameterName
     def build_token(t:, for_selected_text: false)
       t                      = remove_empty_value_placeholders(value: t)
-      token                  = Token.new(project:, variants: variants(t:, for_selected_text:))
+      token                  = Token.new(project:,
+                                         variants:         variants(t:, for_selected_text:),
+                                         editorial_remark: editorial_remark(for_selected_text:))
+
       token.grouped_variants = TokensManager::GroupedVariantsGenerator.perform(token:)
       preserve_selections(token:) if for_selected_text
       token
@@ -58,6 +61,17 @@ module TokensResizer
           TokenVariant.new(t:, witness: witness.siglum)
         end
       end
+    end
+
+    def editorial_remark(for_selected_text: false)
+      return unless for_selected_text
+      return if source_token.blank? || source_token.editorial_remark.blank?
+
+      prefix, suffix = suffixes
+      TokenEditorialRemark.new(
+        t:    remove_empty_value_placeholders(value: "#{prefix}#{source_token.editorial_remark.t}#{suffix}"),
+        type: source_token.editorial_remark.type
+      )
     end
 
     # rubocop:enable Naming/MethodParameterName

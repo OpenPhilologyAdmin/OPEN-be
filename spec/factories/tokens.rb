@@ -58,14 +58,15 @@ FactoryBot.define do
       end
 
       # first variant is the selected one, others are possible
-      grouped_variants do
-        variants.map.with_index do |variant, index|
-          build(:token_grouped_variant,
-                t:         variant.t,
-                witnesses: [variant.witness],
-                selected:  index.zero?,
-                possible:  true)
+      grouped_variants do |_token|
+        records = TokensManager::GroupedVariantsGenerator.perform(token: self)
+
+        records.each_with_index do |variant, index|
+          variant.selected = index.zero?
+          variant.possible = true
         end
+
+        records
       end
     end
 
