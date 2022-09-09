@@ -2,6 +2,8 @@
 
 module TokensResizer
   class TokensBuilder
+    EMPTY_VALUE_PLACEHOLDER = FormattableT::EMPTY_VALUE_PLACEHOLDER
+
     def initialize(selected_text:, selected_tokens:, project:)
       @selected_text   = selected_text
       @selected_tokens = selected_tokens
@@ -30,10 +32,16 @@ module TokensResizer
 
     # rubocop:disable Naming/MethodParameterName
     def build_token(t:, for_selected_text: false)
+      t                      = remove_empty_value_placeholders(value: t)
       token                  = Token.new(project:, variants: variants(t:, for_selected_text:))
       token.grouped_variants = TokensManager::GroupedVariantsGenerator.perform(token:)
       preserve_selections(token:) if for_selected_text
       token
+    end
+
+    def remove_empty_value_placeholders(value:)
+      value = value.tr(EMPTY_VALUE_PLACEHOLDER, '')
+      value.empty? ? nil : value
     end
 
     def preserve_selections(token:)
@@ -57,7 +65,8 @@ module TokensResizer
     def variants_for_source_token
       prefix, suffix = suffixes
       source_token.variants.map do |variant|
-        TokenVariant.new(t: "#{prefix}#{variant.t}#{suffix}", witness: variant.witness)
+        TokenVariant.new(t:       remove_empty_value_placeholders(value: "#{prefix}#{variant.t}#{suffix}"),
+                         witness: variant.witness)
       end
     end
 

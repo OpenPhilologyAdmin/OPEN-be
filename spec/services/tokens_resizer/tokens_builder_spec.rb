@@ -188,5 +188,51 @@ RSpec.describe TokensResizer::TokensBuilder, type: :service do
         expect(prefix_token.grouped_variants).to eq(generate_grouped_variants(token: prefix_token))
       end
     end
+
+    context 'when the text includes EMPTY_VALUE_PLACEHOLDER' do
+      let(:prev_token) { create(:token, project:) }
+      let(:prev_token2) { create(:token, :one_grouped_variant, project:, with_empty_values: true) }
+      let(:prev_token3) { create(:token, :one_grouped_variant, project:) }
+
+      let(:service) do
+        described_class.new(
+          selected_text:,
+          selected_tokens: [prev_token, prev_token2, prev_token3],
+          project:
+        )
+      end
+
+      let(:selected_text) { "#{prev_token.t}#{prev_token2.t}#{prev_token3.t[0...2]}" }
+      let(:expected_suffix) { prev_token3.t[0...2].to_s }
+      let(:selected_text_token) { result.first }
+      let(:suffix_token) { result.second }
+
+      it 'creates two tokens' do
+        expect(result.size).to eq(2)
+      end
+
+      it 'uses the selected_text without EMPTY_VALUE_PLACEHOLDER for the first token\'s :t' do
+        expect(selected_text_token.t).to eq(selected_text.tr(described_class::EMPTY_VALUE_PLACEHOLDER, ''))
+      end
+
+      it 'uses the part after the selected_text for the second token\'s :t' do
+        expect(suffix_token.t).to eq(prev_token3.t[2...])
+      end
+
+      it 'preserves the variants of the multiple grouped variants token' do
+        selected_text_token.variants.each do |variant|
+          matching_prev_variant = find_variant(variants: prev_token.variants, witness: variant.witness)
+          expect(variant.t).to eq("#{matching_prev_variant.t}#{expected_suffix}")
+        end
+      end
+
+      it 'calculates the correct grouped variants of the first token' do
+        expect(selected_text_token.grouped_variants).to eq(generate_grouped_variants(token: selected_text_token))
+      end
+
+      it 'calculates the correct grouped variants of the second token' do
+        expect(suffix_token.grouped_variants).to eq(generate_grouped_variants(token: suffix_token))
+      end
+    end
   end
 end
