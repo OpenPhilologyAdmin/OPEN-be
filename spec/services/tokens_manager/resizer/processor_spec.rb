@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TokensResizer::TokensUpdater, type: :service do
+RSpec.describe TokensManager::Resizer::Processor, type: :service do
   let(:project) { create(:project) }
   let(:prev_starting_index) { 3 }
   let(:prev_token) { create(:token, project:, index: prev_starting_index) }

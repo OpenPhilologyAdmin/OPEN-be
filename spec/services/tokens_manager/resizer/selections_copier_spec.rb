@@ -7,7 +7,7 @@ RSpec.configure do |c|
   c.include Helpers::TokenVariants
 end
 
-RSpec.describe TokensResizer::SelectionsCopier, type: :service do
+RSpec.describe TokensManager::Resizer::SelectionsCopier, type: :service do
   let(:service) { described_class.new(target_token:, source_token:) }
 
   describe '#perform' do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TokensResizer::Processor, type: :service do
+RSpec.describe TokensManager::Resizer, type: :service do
   let(:project) { create(:project) }
   let(:user) { create(:user, :approved, :admin) }
   let(:service) do
