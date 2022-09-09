@@ -33,66 +33,68 @@ RSpec.describe TokensResizer::TokensBuilder, type: :service do
       let(:selected_text) { "#{prev_token.t}#{prev_token2.t}#{prev_token3.t}" }
       let(:expected_prefix) { prev_token.t }
       let(:expected_suffix) { prev_token3.t }
+      let(:selected_text_token) { result.first }
 
       it 'merges tokens into one' do
         expect(result.size).to eq(1)
       end
 
       it 'uses the whole text as token\'s :t' do
-        token = result.first
-        expect(token.t).to eq(selected_text)
+        expect(selected_text_token.t).to eq(selected_text)
       end
 
       it 'preserves the variants of the multiple grouped variants token' do
-        token = result.first
-        token.variants.each do |variant|
+        selected_text_token.variants.each do |variant|
           matching_prev_variant = find_variant(variants: prev_token2.variants, witness: variant.witness)
           expect(variant.t).to eq("#{expected_prefix}#{matching_prev_variant.t}#{expected_suffix}")
         end
       end
 
       it 'calculates the grouped variants using the GroupedVariantsGenerator' do
-        token = result.first
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+        expect(selected_text_token.grouped_variants).to eq(generate_grouped_variants(token: selected_text_token))
       end
     end
 
     context 'when the text was selected from the beginning' do
-      let(:prev_token) { create(:token, project:) }
+      let(:prev_token) { create(:token, :variant_selected_and_secondary, project:) }
       let(:prev_token2) { create(:token, :one_grouped_variant, project:) }
       let(:selected_text) { "#{prev_token.t}#{prev_token2.t[0...1]}" }
       let(:expected_suffix) { prev_token2.t[0...1].to_s }
+      let(:selected_text_token) { result.first }
+      let(:suffix_token) { result.second }
 
       it 'creates two tokens' do
         expect(result.size).to eq(2)
       end
 
       it 'uses the selected_text for the first token\'s :t' do
-        token = result.first
-        expect(token.t).to eq(selected_text)
+        expect(selected_text_token.t).to eq(selected_text)
       end
 
       it 'uses the part after the selected_text for the second token\'s :t' do
-        token = result.second
-        expect(token.t).to eq(prev_token2.t[1...])
+        expect(suffix_token.t).to eq(prev_token2.t[1...])
       end
 
       it 'preserves the variants of the multiple grouped variants token' do
-        token = result.first
-        token.variants.each do |variant|
+        selected_text_token.variants.each do |variant|
           matching_prev_variant = find_variant(variants: prev_token.variants, witness: variant.witness)
           expect(variant.t).to eq("#{matching_prev_variant.t}#{expected_suffix}")
         end
       end
 
-      it 'calculates the grouped variants of the first token with GroupedVariantsGenerator' do
-        token = result.first
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the grouped variants and preserves selections from the source token' do
+        selected_text_token.grouped_variants.each do |target_grouped_variant|
+          source_grouped_variant = find_grouped_variant(
+            grouped_variants: prev_token.grouped_variants,
+            witnesses:        target_grouped_variant.witnesses
+          )
+          expect(target_grouped_variant.possible).to eq(source_grouped_variant.possible)
+          expect(target_grouped_variant.selected).to eq(source_grouped_variant.selected)
+        end
       end
 
-      it 'calculates the grouped variants of the second token with GroupedVariantsGenerator' do
-        token = result.last
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of the second token' do
+        expect(suffix_token.grouped_variants).to eq(generate_grouped_variants(token: suffix_token))
       end
     end
 
@@ -100,60 +102,54 @@ RSpec.describe TokensResizer::TokensBuilder, type: :service do
       let(:prev_token) { create(:token, :one_grouped_variant, project:) }
       let(:prev_token2) { create(:token, :one_grouped_variant, project:) }
       let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t[0...1]}" }
+      let(:prefix_token) { result.first }
+      let(:selected_text_token) { result.second }
+      let(:suffix_token) { result.last }
 
       it 'creates three tokens' do
         expect(result.size).to eq(3)
       end
 
       it 'uses the part before the selected_text for the first token\'s :t' do
-        token = result.first
-        expect(token.t).to eq(prev_token.t[0...1])
+        expect(prefix_token.t).to eq(prev_token.t[0...1])
       end
 
       it 'uses the part before the selected_text for all variants of the first token\'s :t' do
-        token = result.first
-        token.variants.each do |variant|
+        prefix_token.variants.each do |variant|
           expect(variant.t).to eq(prev_token.t[0...1])
         end
       end
 
-      it 'uses the selected_text for the seconds token\'s :t' do
-        token = result.second
-        expect(token.t).to eq(selected_text)
+      it 'uses the selected_text for the second token\'s :t' do
+        expect(selected_text_token.t).to eq(selected_text)
       end
 
       it 'uses the selected_text for all variants of the first token\'s :t' do
-        token = result.second
-        token.variants.each do |variant|
+        selected_text_token.variants.each do |variant|
           expect(variant.t).to eq(selected_text)
         end
       end
 
       it 'uses the part after the selected_text for the third token\'s :t' do
-        token = result.last
-        expect(token.t).to eq(prev_token2.t[1...])
+        expect(suffix_token.t).to eq(prev_token2.t[1...])
       end
 
       it 'uses the part after the selected_text for all variants of the last token\'s :t' do
-        token = result.last
-        token.variants.each do |variant|
+        suffix_token.variants.each do |variant|
           expect(variant.t).to eq(prev_token2.t[1...])
         end
       end
 
-      it 'calculates the grouped variants of the first token with GroupedVariantsGenerator' do
-        token = result.first
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of the first token' do
+        expect(prefix_token.grouped_variants).to eq(generate_grouped_variants(token: prefix_token))
       end
 
-      it 'calculates the grouped variants of the second token with GroupedVariantsGenerator' do
-        token = result.second
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of the second token' do
+        expect(selected_text_token.grouped_variants).to eq(generate_grouped_variants(token: selected_text_token))
       end
 
-      it 'calculates the grouped variants of third token with GroupedVariantsGenerator' do
-        token = result.last
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of third token' do
+        expect(suffix_token.grouped_variants).to eq(generate_grouped_variants(token: suffix_token))
       end
     end
 
@@ -162,37 +158,34 @@ RSpec.describe TokensResizer::TokensBuilder, type: :service do
       let(:prev_token2) { create(:token, project:) }
       let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t}" }
       let(:expected_prefix) { prev_token.t[1...] }
+      let(:prefix_token) { result.first }
+      let(:selected_text_token) { result.second }
 
       it 'creates two tokens' do
         expect(result.size).to eq(2)
       end
 
       it 'uses the part before the selected_text for the first token' do
-        token = result.first
-        expect(token.t).to eq(prev_token.t[0...1])
+        expect(prefix_token.t).to eq(prev_token.t[0...1])
       end
 
       it 'uses the selected_text for the second token\'s :t' do
-        token = result.second
-        expect(token.t).to eq(selected_text)
+        expect(selected_text_token.t).to eq(selected_text)
       end
 
-      it 'preserves the variants of the multiple grouped variants token token' do
-        token = result.second
-        token.variants.each do |variant|
+      it 'preserves the variants of the source token' do
+        selected_text_token.variants.each do |variant|
           matching_prev_variant = find_variant(variants: prev_token2.variants, witness: variant.witness)
           expect(variant.t).to eq("#{expected_prefix}#{matching_prev_variant.t}")
         end
       end
 
-      it 'calculates the grouped variants of the first token with GroupedVariantsGenerator' do
-        token = result.first
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of the first token' do
+        expect(selected_text_token.grouped_variants).to eq(generate_grouped_variants(token: selected_text_token))
       end
 
-      it 'calculates the grouped variants of the second token with GroupedVariantsGenerator' do
-        token = result.last
-        expect(token.grouped_variants).to eq(TokensManager::GroupedVariantsGenerator.perform(token:))
+      it 'calculates the correct grouped variants of the second token' do
+        expect(prefix_token.grouped_variants).to eq(generate_grouped_variants(token: prefix_token))
       end
     end
   end

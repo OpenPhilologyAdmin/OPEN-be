@@ -3,9 +3,9 @@
 module TokensResizer
   class TokensBuilder
     def initialize(selected_text:, selected_tokens:, project:)
-      @selected_text                   = selected_text
-      @selected_tokens                 = selected_tokens
-      @project                         = project
+      @selected_text   = selected_text
+      @selected_tokens = selected_tokens
+      @project         = project
     end
 
     def self.perform(selected_text:, selected_tokens:, project:)
@@ -24,21 +24,27 @@ module TokensResizer
 
     private
 
-    def multiple_grouped_variants_token
-      @multiple_grouped_variants_token ||= selected_tokens.detect { |token| !token.one_grouped_variant? }
+    def source_token
+      @source_token ||= selected_tokens.detect { |token| !token.one_grouped_variant? }
     end
 
     # rubocop:disable Naming/MethodParameterName
     def build_token(t:, for_selected_text: false)
       token                  = Token.new(project:, variants: variants(t:, for_selected_text:))
       token.grouped_variants = TokensManager::GroupedVariantsGenerator.perform(token:)
-      # TODO: preserve selections
+      preserve_selections(token:) if for_selected_text
       token
     end
 
+    def preserve_selections(token:)
+      return if source_token.blank?
+
+      TokensResizer::SelectionsCopier.perform(target_token: token, source_token:)
+    end
+
     def variants(t:, for_selected_text: false)
-      if for_selected_text && multiple_grouped_variants_token.present?
-        variants_for_multiple_grouped_variants_token
+      if for_selected_text && source_token.present?
+        variants_for_source_token
       else
         project.witnesses.map do |witness|
           TokenVariant.new(t:, witness: witness.siglum)
@@ -48,9 +54,9 @@ module TokensResizer
 
     # rubocop:enable Naming/MethodParameterName
 
-    def variants_for_multiple_grouped_variants_token
+    def variants_for_source_token
       prefix, suffix = suffixes
-      multiple_grouped_variants_token.variants.map do |variant|
+      source_token.variants.map do |variant|
         TokenVariant.new(t: "#{prefix}#{variant.t}#{suffix}", witness: variant.witness)
       end
     end
@@ -68,7 +74,7 @@ module TokensResizer
 
     # [prefix, suffix] that should be added to all variants of the multiple grouped variants token
     def suffixes
-      token_t       = multiple_grouped_variants_token.t
+      token_t       = source_token.t
       token_t_index = selected_text.index(token_t)
 
       [
