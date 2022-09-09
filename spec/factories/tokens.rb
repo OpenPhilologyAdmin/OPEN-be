@@ -16,8 +16,8 @@ FactoryBot.define do
     end
 
     grouped_variants do
-      witnesses.map do |witness|
-        build(:token_grouped_variant, witnesses: [witness.siglum])
+      variants.map do |variant|
+        build(:token_grouped_variant, t: variant.t, witnesses: [variant.witness])
       end
     end
 
@@ -38,9 +38,10 @@ FactoryBot.define do
 
       # first variant is the selected one
       grouped_variants do
-        witnesses.map.with_index do |witness, index|
+        variants.map.with_index do |variant, index|
           build(:token_grouped_variant,
-                witnesses: [witness.siglum],
+                t:         variant.t,
+                witnesses: [variant.witness],
                 selected:  index.zero?,
                 possible:  index.zero?)
         end
@@ -58,9 +59,10 @@ FactoryBot.define do
 
       # first variant is the selected one, others are possible
       grouped_variants do
-        witnesses.map.with_index do |witness, index|
+        variants.map.with_index do |variant, index|
           build(:token_grouped_variant,
-                witnesses: [witness.siglum],
+                t:         variant.t,
+                witnesses: [variant.witness],
                 selected:  index.zero?,
                 possible:  true)
         end
