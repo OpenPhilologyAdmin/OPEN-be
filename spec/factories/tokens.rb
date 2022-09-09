@@ -16,9 +16,7 @@ FactoryBot.define do
     end
 
     grouped_variants do
-      variants.map do |variant|
-        build(:token_grouped_variant, t: variant.t, witnesses: [variant.witness])
-      end
+      TokensManager::GroupedVariantsGenerator.perform(token: self)
     end
 
     editorial_remark { build(:token_editorial_remark) }
@@ -38,13 +36,14 @@ FactoryBot.define do
 
       # first variant is the selected one
       grouped_variants do
-        variants.map.with_index do |variant, index|
-          build(:token_grouped_variant,
-                t:         variant.t,
-                witnesses: [variant.witness],
-                selected:  index.zero?,
-                possible:  index.zero?)
+        records = TokensManager::GroupedVariantsGenerator.perform(token: self)
+
+        records.each_with_index do |variant, index|
+          variant.selected = index.zero?
+          variant.possible = index.zero?
         end
+
+        records
       end
     end
 
@@ -58,7 +57,7 @@ FactoryBot.define do
       end
 
       # first variant is the selected one, others are possible
-      grouped_variants do |_token|
+      grouped_variants do
         records = TokensManager::GroupedVariantsGenerator.perform(token: self)
 
         records.each_with_index do |variant, index|
@@ -81,10 +80,6 @@ FactoryBot.define do
         witnesses.map do |witness|
           build(:token_variant, witness: witness.siglum, t: value)
         end
-      end
-
-      grouped_variants do
-        [build(:token_grouped_variant, witnesses: project.witnesses_ids, t: value)]
       end
 
       editorial_remark { nil }
