@@ -7,6 +7,8 @@ module TokensManager
         @project         = project
         @selected_tokens = selected_tokens
         @new_tokens      = new_tokens
+        @starting_token_index = @selected_tokens.first.index
+        @previous_last_token_index = @selected_tokens.last.index
       end
 
       def self.perform(project:, selected_tokens:, new_tokens:)
@@ -14,22 +16,21 @@ module TokensManager
       end
 
       def perform
-        starting_token_index  = selected_tokens.first.index
-        prev_last_token_index = selected_tokens.last.index
-
         remove_selected_tokens
-        index_new_tokens(index: starting_token_index)
-        reindex_old_tokens(prev_index: prev_last_token_index)
+        index_new_tokens
+        reindex_old_tokens
         save_new_tokens
       end
 
       private
 
-      attr_reader :selected_tokens, :new_tokens, :project
+      attr_reader :selected_tokens, :new_tokens, :project,
+                  :starting_token_index, :previous_last_token_index
 
       delegate :tokens, to: :project, prefix: true
 
-      def index_new_tokens(index:)
+      def index_new_tokens
+        index = starting_token_index
         new_tokens.each do |token|
           token.index = index
           index += 1
@@ -40,27 +41,25 @@ module TokensManager
         project_tokens.where(id: selected_tokens.pluck(:id)).destroy_all
       end
 
-      def index_assigment_and_value(prev_index:, new_index:)
-        if prev_index > new_index
-          value     = prev_index - new_index
+      def index_assigment_formula(new_index:)
+        if previous_last_token_index > new_index
+          value     = previous_last_token_index - new_index
           operation = '-'
         else
-          value     = new_index - prev_index
+          value     = new_index - previous_last_token_index
           operation = '+'
         end
         ["index = index #{operation} ?", value]
       end
 
-      def reindex_old_tokens(prev_index:)
+      def reindex_old_tokens
         new_index = new_tokens.last.index
 
-        return if prev_index == new_index
+        return if previous_last_token_index == new_index
 
         # rubocop:disable Rails/SkipsModelValidations
-        project_tokens.where('index > ?', prev_index)
-                      .update_all(
-                        index_assigment_and_value(prev_index:, new_index:)
-                      )
+        project_tokens.where('index > ?', previous_last_token_index)
+                      .update_all(index_assigment_formula(new_index:))
         # rubocop:enable Rails/SkipsModelValidations
       end
 
