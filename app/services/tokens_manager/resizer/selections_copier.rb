@@ -3,13 +3,13 @@
 module TokensManager
   class Resizer
     class SelectionsCopier
-      def initialize(target_token:, source_token:)
-        @target_token = target_token
-        @source_token = source_token
+      def initialize(target_grouped_variants:, source_grouped_variants:)
+        @target_grouped_variants = target_grouped_variants
+        @source_grouped_variants = source_grouped_variants
       end
 
-      def self.perform(target_token:, source_token:)
-        new(target_token:, source_token:).perform
+      def self.perform(target_grouped_variants:, source_grouped_variants:)
+        new(target_grouped_variants:, source_grouped_variants:).perform
       end
 
       def perform
@@ -22,15 +22,7 @@ module TokensManager
 
       private
 
-      attr_reader :target_token, :source_token
-
-      def source_grouped_variants
-        @source_grouped_variants ||= source_token.grouped_variants.select(&:significant?)
-      end
-
-      def target_grouped_variants
-        @target_grouped_variants ||= target_token.grouped_variants
-      end
+      attr_reader :target_grouped_variants, :source_grouped_variants
 
       def find_target_grouped_variant_for(witnesses:)
         target_grouped_variants.find { |grouped_variant| grouped_variant.witnesses.sort == witnesses.sort }

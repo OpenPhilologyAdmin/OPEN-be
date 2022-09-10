@@ -3,8 +3,6 @@
 module TokensManager
   class Resizer
     class Builder
-      EMPTY_VALUE_PLACEHOLDER = FormattableT::EMPTY_VALUE_PLACEHOLDER
-
       def initialize(selected_text:, selected_tokens:, project:)
         @selected_text   = selected_text
         @selected_tokens = selected_tokens
@@ -16,98 +14,55 @@ module TokensManager
       end
 
       def perform
-        before_section, after_section = sections
+        split_string = Models::SplitString.new(
+          base_string: selected_tokens_text,
+          substring:   selected_text
+        )
 
-        tokens = []
-        tokens << build_token(t: before_section) if before_section.present?
-        tokens << build_token(t: selected_text, for_selected_text: true)
-        tokens << build_token(t: after_section) if after_section.present?
-        tokens
+        [
+          substring_token(value: split_string.substring_before),
+          core_token,
+          substring_token(value: split_string.substring_after)
+        ].compact
       end
 
       private
 
+      attr_reader :selected_text, :selected_tokens, :project
+
+      delegate :witnesses_ids, to: :project, prefix: true
+
+      # selected token that has multiple grouped variants
       def source_token
         @source_token ||= selected_tokens.detect { |token| !token.one_grouped_variant? }
       end
 
-      # rubocop:disable Naming/MethodParameterName
-      def build_token(t:, for_selected_text: false)
-        t     = remove_empty_value_placeholders(value: t)
-        token = Token.new(project:,
-                          variants:         variants(t:, for_selected_text:),
-                          editorial_remark: editorial_remark(for_selected_text:))
-
-        token.grouped_variants = TokensManager::GroupedVariantsGenerator.perform(token:)
-        preserve_selections(token:) if for_selected_text
-        token
+      def selected_tokens_text
+        @selected_tokens_text ||= selected_tokens.map(&:t).join
       end
 
-      def remove_empty_value_placeholders(value:)
-        value = value.tr(EMPTY_VALUE_PLACEHOLDER, '')
-        value.empty? ? nil : value
+      def substring_token(value:)
+        return if value.blank?
+
+        record = Models::BasicTokenDetails.new(value:, witnesses_ids: project_witnesses_ids)
+        build_token(record)
       end
 
-      def preserve_selections(token:)
-        return if source_token.blank?
+      def core_token
+        return substring_token(value: selected_text) if source_token.blank?
 
-        TokensManager::Resizer::SelectionsCopier.perform(target_token: token, source_token:)
+        record = Models::TokenWithSourceDetails.new(base_string: selected_text, source_token:)
+        build_token(record)
       end
 
-      def variants(t:, for_selected_text: false)
-        if for_selected_text && source_token.present?
-          variants_for_source_token
-        else
-          project.witnesses.map do |witness|
-            TokenVariant.new(t:, witness: witness.siglum)
-          end
-        end
-      end
-
-      def editorial_remark(for_selected_text: false)
-        return unless for_selected_text
-        return if source_token.blank? || source_token.editorial_remark.blank?
-
-        prefix, suffix = suffixes
-        TokenEditorialRemark.new(
-          t:    remove_empty_value_placeholders(value: "#{prefix}#{source_token.editorial_remark.t}#{suffix}"),
-          type: source_token.editorial_remark.type
+      def build_token(record)
+        Token.new(
+          project:,
+          variants:         record.variants,
+          grouped_variants: record.grouped_variants,
+          editorial_remark: record.editorial_remark
         )
       end
-
-      # rubocop:enable Naming/MethodParameterName
-
-      def variants_for_source_token
-        prefix, suffix = suffixes
-        source_token.variants.map do |variant|
-          TokenVariant.new(t:       remove_empty_value_placeholders(value: "#{prefix}#{variant.t}#{suffix}"),
-                           witness: variant.witness)
-        end
-      end
-
-      # [before_section, after_section] for new tokens that surround the selected_text token
-      def sections
-        full_text           = selected_tokens.map(&:t).join
-        selected_text_index = full_text.index(selected_text)
-
-        [
-          full_text[0...selected_text_index],
-          full_text[(selected_text_index + selected_text.length)...]
-        ]
-      end
-
-      # [prefix, suffix] that should be added to all variants of the multiple grouped variants token
-      def suffixes
-        token_t       = source_token.t
-        token_t_index = selected_text.index(token_t)
-
-        [
-          selected_text[0...token_t_index],
-          selected_text[(token_t_index + token_t.length)...]
-        ]
-      end
-
-      attr_reader :selected_text, :selected_tokens, :project
     end
   end
 end

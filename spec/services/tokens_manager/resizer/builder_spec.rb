@@ -218,7 +218,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
       end
 
       it 'uses the selected_text without EMPTY_VALUE_PLACEHOLDER for the first token\'s :t' do
-        expect(selected_text_token.t).to eq(selected_text.tr(described_class::EMPTY_VALUE_PLACEHOLDER, ''))
+        expect(selected_text_token.t).to eq(selected_text.tr(FormattableT::EMPTY_VALUE_PLACEHOLDER, ''))
       end
 
       it 'uses the part after the selected_text for the second token\'s :t' do
