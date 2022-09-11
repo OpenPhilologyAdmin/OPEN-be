@@ -4,9 +4,10 @@ module TokensManager
   class Resizer
     class Builder
       def initialize(selected_text:, selected_tokens:, project:)
-        @selected_text   = selected_text
-        @selected_tokens = selected_tokens
-        @project         = project
+        @selected_text                      = selected_text
+        @selected_tokens                    = selected_tokens
+        @project                            = project
+        @substring_before, @substring_after = substrings_surrounding_selected_text
       end
 
       def self.perform(selected_text:, selected_tokens:, project:)
@@ -14,23 +15,24 @@ module TokensManager
       end
 
       def perform
-        split_string = Models::SplitString.new(
-          base_string: selected_tokens_text,
-          substring:   selected_text
-        )
-
         [
-          substring_token(value: split_string.substring_before),
-          core_token,
-          substring_token(value: split_string.substring_after)
+          token_from_value(substring_before),
+          token_from_source_token,
+          token_from_value(substring_after)
         ].compact
       end
 
       private
 
-      attr_reader :selected_text, :selected_tokens, :project
+      attr_reader :selected_text, :selected_tokens, :project,
+                  :substring_before, :substring_after
 
-      delegate :witnesses_ids, to: :project, prefix: true
+      def substrings_surrounding_selected_text
+        TokensManager::Resizer::Builders::SubstringsSurroundingValue.perform(
+          base_string: selected_tokens_text,
+          value:       selected_text
+        )
+      end
 
       # selected token that has multiple grouped variants
       def source_token
@@ -41,27 +43,16 @@ module TokensManager
         @selected_tokens_text ||= selected_tokens.map(&:t).join
       end
 
-      def substring_token(value:)
+      def token_from_value(value)
         return if value.blank?
 
-        record = Models::BasicTokenDetails.new(value:, witnesses_ids: project_witnesses_ids)
-        build_token(record)
+        Builders::TokenFromValue.perform(value:, project:)
       end
 
-      def core_token
-        return substring_token(value: selected_text) if source_token.blank?
+      def token_from_source_token
+        return token_from_value(selected_text) if source_token.blank?
 
-        record = Models::TokenWithSourceDetails.new(base_string: selected_text, source_token:)
-        build_token(record)
-      end
-
-      def build_token(record)
-        Token.new(
-          project:,
-          variants:         record.variants,
-          grouped_variants: record.grouped_variants,
-          editorial_remark: record.editorial_remark
-        )
+        Builders::TokenSurroundedBySubstrings.perform(token: source_token, selected_text:)
       end
     end
   end

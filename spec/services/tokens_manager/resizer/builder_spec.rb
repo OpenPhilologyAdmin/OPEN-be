@@ -43,10 +43,10 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
-      it 'preserves the variants of the multiple grouped variants token' do
+      it 'applies substrings on the variants of the multiple grouped variants token' do
         selected_text_token.variants.each do |variant|
-          matching_prev_variant = find_variant(variants: prev_token2.variants, witness: variant.witness)
-          expect(variant.t).to eq("#{expected_prefix}#{matching_prev_variant.t}#{expected_suffix}")
+          expect(variant.t).to start_with(expected_prefix)
+          expect(variant.t).to end_with(expected_suffix)
         end
       end
 
@@ -75,10 +75,9 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(suffix_token.t).to eq(prev_token2.t[1...])
       end
 
-      it 'preserves the variants of the multiple grouped variants token' do
+      it 'applies substring_after on the variants of the multiple grouped variants token' do
         selected_text_token.variants.each do |variant|
-          matching_prev_variant = find_variant(variants: prev_token.variants, witness: variant.witness)
-          expect(variant.t).to eq("#{matching_prev_variant.t}#{expected_suffix}")
+          expect(variant.t).to end_with(expected_suffix)
         end
       end
 
@@ -93,10 +92,8 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         end
       end
 
-      it 'preserves editorial_remark from the source token' do
-        source_editorial_remark = prev_token.editorial_remark
-        expect(selected_text_token.editorial_remark.t).to eq("#{source_editorial_remark.t}#{expected_suffix}")
-        expect(selected_text_token.editorial_remark.type).to eq(source_editorial_remark.type)
+      it 'applies substring_after on the editorial_remark of the multiple grouped variants token' do
+        expect(selected_text_token.editorial_remark.t).to end_with(expected_suffix)
       end
 
       it 'calculates the correct grouped variants of the second token' do
@@ -179,10 +176,9 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
-      it 'preserves the variants of the source token' do
+      it 'applies substring_before on the variants of the multiple grouped variants token' do
         selected_text_token.variants.each do |variant|
-          matching_prev_variant = find_variant(variants: prev_token2.variants, witness: variant.witness)
-          expect(variant.t).to eq("#{expected_prefix}#{matching_prev_variant.t}")
+          expect(variant.t).to start_with(expected_prefix)
         end
       end
 
@@ -225,10 +221,9 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(suffix_token.t).to eq(prev_token3.t[2...])
       end
 
-      it 'preserves the variants of the multiple grouped variants token' do
+      it 'applies substring+_after on the variants of the multiple grouped variants token' do
         selected_text_token.variants.each do |variant|
-          matching_prev_variant = find_variant(variants: prev_token.variants, witness: variant.witness)
-          expect(variant.t).to eq("#{matching_prev_variant.t}#{expected_suffix}")
+          expect(variant.t).to end_with(expected_suffix)
         end
       end
 
