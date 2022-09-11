@@ -29,7 +29,7 @@ RSpec.describe TokensManager::Resizer::Models::BasicTokenDetails, type: :model d
     end
 
     context 'when the given value does include placeholders' do
-      let(:placeholder) { TokensManager::Resizer::Models::Concerns::Placeholderable::PLACEHOLDER }
+      let(:placeholder) { TokensManager::Resizer::Models::ProcessedString::PLACEHOLDER }
       let(:value) { "Lorem #{placeholder} ipsum#{placeholder}" }
       let(:expected_t) { 'Lorem  ipsum' }
 

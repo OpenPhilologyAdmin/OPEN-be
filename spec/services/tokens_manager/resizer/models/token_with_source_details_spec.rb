@@ -13,7 +13,7 @@ RSpec.describe TokensManager::Resizer::Models::TokenWithSourceDetails, type: :mo
   let(:substring_after) { Faker::Lorem.word }
   let(:base_string) { "#{substring_before}#{source_token.t}#{substring_after}" }
   let(:record) { described_class.new(base_string:, source_token:) }
-  let(:placeholder) { TokensManager::Resizer::Models::Concerns::Placeholderable::PLACEHOLDER }
+  let(:placeholder) { TokensManager::Resizer::Models::ProcessedString::PLACEHOLDER }
 
   describe '#variants' do
     context 'when the value does not include placeholders' do
@@ -60,11 +60,11 @@ RSpec.describe TokensManager::Resizer::Models::TokenWithSourceDetails, type: :mo
       let(:source_token) { build(:token) }
 
       it 'calculates the grouped variants and preserve selections' do
-        expected_grouped_variants = generate_grouped_variants(token: record)
-        TokensManager::Resizer::SelectionsCopier.perform(
-          target_grouped_variants: expected_grouped_variants,
-          source_grouped_variants: source_token.grouped_variants
-        )
+        expected_grouped_variants = source_token.grouped_variants.deep_dup
+        expected_grouped_variants.each do |resource|
+          resource.t = TokensManager::Resizer::Models::ProcessedString.new(string: resource.t, substring_before:,
+                                                                           substring_after:).string
+        end
         expect(record.grouped_variants).to eq(expected_grouped_variants)
       end
     end
