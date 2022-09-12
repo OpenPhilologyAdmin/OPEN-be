@@ -462,7 +462,7 @@ components:
         created_at:
           type: date_time
           description: Creation date
-          example: '2022-09-12T23:52:53+02:00'
+          example: '2022-09-13T01:31:09+02:00'
         created_by:
           type: string
           description: Name of the user who created given comment
@@ -470,7 +470,7 @@ components:
         last_edit_at:
           type: date_time
           description: Last edit date if exists
-          example: '2022-09-12T23:52:53+02:00'
+          example: '2022-09-13T01:31:09+02:00'
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -514,6 +514,69 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+    post:
+      summary: Creates a new comment for given token
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Creates a new comment
+      parameters:
+      - name: project_id
+        in: path
+        description: ID of the project
+        required: true
+        schema:
+          type: integer
+      - name: token_id
+        in: path
+        description: ID of the token
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/comment"
+        '422':
+          description: Comment data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  maximum: 250
+                  description: Body of the comment
+                  example: This is a really nice comment.
+                user_id:
+                  type: integer
+                  description: ID of the user creating a comment
+                  example: 1
+              required:
+              - body
+              - user_id
   "/api/v1/users/confirmation":
     post:
       summary: Re-sends the confirmation email

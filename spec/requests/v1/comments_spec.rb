@@ -51,5 +51,78 @@ RSpec.describe 'v1/comments', type: :request do
         run_test!
       end
     end
+
+    post('Creates a new comment for given token') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Creates a new comment'
+
+      parameter name: 'project_id', in: :path, type: :integer, description: 'ID of the project', required: true
+      parameter name: 'token_id', in: :path, type: :integer, description: 'ID of the token', required: true
+
+      parameter name: :comment, in: :body, schema: {
+        type:       :object,
+        properties: {
+          body:    {
+            type:        :string,
+            maximum:     250,
+            description: 'Body of the comment',
+            example:     'This is a really nice comment.'
+          },
+          user_id: {
+            type:        :integer,
+            description: 'ID of the user creating a comment',
+            example:     1
+          }
+        }, required: %w[body user_id]
+      }
+
+      response(200, 'OK') do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, token:, user:) }
+
+        schema '$ref' => '#/components/schemas/comment'
+
+        run_test!
+      end
+
+      response '422', 'Comment data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:comment) do
+          {
+            comment:
+                     {
+                       body:    '',
+                       user_id: nil
+                     }
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+        let(:comment) { create(:comment, token:, user:) }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, body: 'Not so nice.', token:, user:) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
   end
 end
