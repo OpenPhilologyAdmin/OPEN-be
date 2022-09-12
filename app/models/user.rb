@@ -24,6 +24,7 @@ class User < ApplicationRecord
   scope :most_recent_first, -> { order('created_at desc') }
 
   has_many :project_roles, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   def account_approved?
     approved_at.present?
