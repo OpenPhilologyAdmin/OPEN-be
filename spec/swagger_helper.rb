@@ -518,6 +518,41 @@ RSpec.configure do |config|
                 example: I18n.t('general.errors.forbidden_request')
               }
             }
+          },
+          comment:               {
+            type:       :object,
+            properties: {
+              id:           {
+                type:        :integer,
+                description: 'ID of the comment',
+                example:     1
+              },
+              body:         {
+                type:        :string,
+                description: 'Body of the comment',
+                example:     'I like to comment on things and pancakes are nice!'
+              },
+              token_id:     {
+                type:        :integer,
+                description: 'ID of the token',
+                example:     1
+              },
+              created_at:   {
+                type:        :date_time,
+                description: 'Creation date',
+                example:     DateTime.now
+              },
+              created_by:   {
+                type:        :string,
+                description: 'Name of the user who created given comment',
+                example:     'Jonny Bravo'
+              },
+              last_edit_at: {
+                type:        :date_time,
+                description: 'Last edit date if exists',
+                example:     DateTime.now
+              }
+            }
           }
         }
       },

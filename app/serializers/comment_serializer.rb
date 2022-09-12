@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CommentSerializer
-  RECORD_ATTRIBUTES = %i[id body created_at].freeze
+  RECORD_ATTRIBUTES = %i[id body token_id created_at].freeze
   RECORD_METHODS = %i[created_by last_edit_at].freeze
 
   def initialize(record:)

@@ -444,7 +444,76 @@ components:
         error:
           type: string
           example: Not authorized to perform this action.
+    comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the comment
+          example: 1
+        body:
+          type: string
+          description: Body of the comment
+          example: I like to comment on things and pancakes are nice!
+        token_id:
+          type: integer
+          description: ID of the token
+          example: 1
+        created_at:
+          type: date_time
+          description: Creation date
+          example: '2022-09-12T23:52:53+02:00'
+        created_by:
+          type: string
+          description: Name of the user who created given comment
+          example: Jonny Bravo
+        last_edit_at:
+          type: date_time
+          description: Last edit date if exists
+          example: '2022-09-12T23:52:53+02:00'
 paths:
+  "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
+    get:
+      summary: Retrieves all the comments for given token
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: List of comments
+      parameters:
+      - name: project_id
+        in: path
+        description: ID of the project
+        required: true
+        schema:
+          type: integer
+      - name: token_id
+        in: path
+        description: ID of the token
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/comment"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users/confirmation":
     post:
       summary: Re-sends the confirmation email
