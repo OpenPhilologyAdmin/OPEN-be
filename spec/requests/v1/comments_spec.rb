@@ -81,7 +81,7 @@ RSpec.describe 'v1/comments', type: :request do
 
       response(200, 'OK') do
         let(:Authorization) { authorization_header_for(user) }
-        let(:comment) { create(:comment, token:, user:) }
+        let(:comment) { create(:comment, body: 'This went well.', token:, user:) }
 
         schema '$ref' => '#/components/schemas/comment'
 
@@ -107,7 +107,7 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '401', 'Login required' do
         let(:Authorization) { nil }
-        let(:comment) { create(:comment, token:, user:) }
+        let(:comment) { create(:comment, body: 'Dont forget about logins', token:, user:) }
 
         schema '$ref' => '#/components/schemas/login_required'
 
