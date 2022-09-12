@@ -17,7 +17,7 @@ module TokensManager
         end
 
         def perform
-          process_values
+          add_substrings_to_token_readings
           token
         end
 
@@ -32,12 +32,15 @@ module TokensManager
           )
         end
 
-        def resources_to_process
-          @resources_to_process = [token.variants, token.editorial_remark, token.grouped_variants].flatten.compact
+        # all attributes that have :t
+        def token_readings
+          @token_readings = [
+            token.variants, token.editorial_remark, token.grouped_variants
+          ].flatten.compact
         end
 
-        def process_values
-          resources_to_process.each do |resource|
+        def add_substrings_to_token_readings
+          token_readings.each do |resource|
             resource.t = processed_value(resource.t)
           end
         end
