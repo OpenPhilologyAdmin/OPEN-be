@@ -50,7 +50,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       end
     end
 
-    context 'when there will be more tokens in the project than before' do
+    context 'when there will be more tokens in the project than it was before' do
       let(:new_tokens) { build_list(:token, 3, project:, index: nil) }
       let(:expected_nr_of_tokens) { 6 }
 
@@ -79,7 +79,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       end
     end
 
-    context 'when there will be less tokens in the project than before' do
+    context 'when there will be less tokens in the project than it was before' do
       let(:selected_tokens) do
         index = prev_starting_index
         tokens = []
@@ -106,6 +106,42 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       end
 
       it 'updates other tokens indexes by - 3' do
+        expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
+      end
+
+      it 'keeps correct number of tokens in the project' do
+        expect(project.tokens.size).to eq(expected_nr_of_tokens)
+      end
+    end
+
+    context 'when one of the selected tokens is still in use' do
+      let(:new_tokens) do
+        [
+          build(:token, project:, index: nil),
+          prev_token,
+          build(:token, project:, index: nil)
+        ]
+      end
+      let(:expected_nr_of_tokens) { 6 }
+
+      it 'saves new tokens' do
+        expect(new_tokens).to all(be_persisted)
+      end
+
+      it 'assigns correct indexes to the new tokens' do
+        index = prev_starting_index
+        new_tokens.each do |new_token|
+          expect(new_token.index).to eq(index)
+          index += 1
+        end
+      end
+
+      it 'deletes selected tokens except the one that is still in use' do
+        removed_tokens = selected_tokens - [prev_token]
+        expect(Token.where(id: removed_tokens.pluck(:id))).to be_empty
+      end
+
+      it 'updates other tokens indexes by + 1' do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
