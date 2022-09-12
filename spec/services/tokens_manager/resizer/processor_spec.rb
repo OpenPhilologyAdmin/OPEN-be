@@ -21,7 +21,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
   end
 
   describe '#perform' do
-    context 'when numbers of token in the project is not changed' do
+    context 'when numbers of tokens in the project is not changed' do
       let(:new_tokens) { build_list(:token, 2, project:, index: nil) }
       let(:expected_nr_of_tokens) { 5 }
 

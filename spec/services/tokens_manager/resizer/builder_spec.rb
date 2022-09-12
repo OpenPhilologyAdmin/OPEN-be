@@ -43,7 +43,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
-      it 'applies substrings on the variants of the multiple grouped variants token' do
+      it 'applies substrings on the variants of the multiple readings token' do
         selected_text_token.variants.each do |variant|
           expect(variant.t).to start_with(expected_prefix)
           expect(variant.t).to end_with(expected_suffix)
@@ -75,7 +75,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(suffix_token.t).to eq(prev_token2.t[1...])
       end
 
-      it 'applies substring_after on the variants of the multiple grouped variants token' do
+      it 'applies substring_after on the variants of the multiple readings token' do
         selected_text_token.variants.each do |variant|
           expect(variant.t).to end_with(expected_suffix)
         end
@@ -92,7 +92,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         end
       end
 
-      it 'applies substring_after on the editorial_remark of the multiple grouped variants token' do
+      it 'applies substring_after on the editorial_remark of the multiple readings token' do
         expect(selected_text_token.editorial_remark.t).to end_with(expected_suffix)
       end
 
@@ -176,7 +176,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
-      it 'applies substring_before on the variants of the multiple grouped variants token' do
+      it 'applies substring_before on the variants of the multiple readings token' do
         selected_text_token.variants.each do |variant|
           expect(variant.t).to start_with(expected_prefix)
         end
@@ -221,7 +221,7 @@ RSpec.describe TokensManager::Resizer::Builder, type: :service do
         expect(suffix_token.t).to eq(prev_token3.t[2...])
       end
 
-      it 'applies substring+_after on the variants of the multiple grouped variants token' do
+      it 'applies substring_after on the variants of the multiple readings token' do
         selected_text_token.variants.each do |variant|
           expect(variant.t).to end_with(expected_suffix)
         end

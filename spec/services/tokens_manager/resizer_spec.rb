@@ -93,7 +93,7 @@ RSpec.describe TokensManager::Resizer, type: :service do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
-      it 'saves the substring before the selected_text as a first token' do
+      it 'saves the substring_before the selected_text as a first token' do
         expect(project.tokens.first.t).to eq(selected_token.t[0...1])
       end
 

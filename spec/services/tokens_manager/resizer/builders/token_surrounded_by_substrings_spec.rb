@@ -68,7 +68,7 @@ RSpec.describe TokensManager::Resizer::Builders::TokenSurroundedBySubstrings, ty
       end
     end
 
-    context 'when there is both substring before and substring_after given' do
+    context 'when there are both substring_before and substring_after given' do
       let(:substring_before) { Faker::Lorem.word }
       let(:substring_after) { Faker::Lorem.word }
 
@@ -113,7 +113,7 @@ RSpec.describe TokensManager::Resizer::Builders::TokenSurroundedBySubstrings, ty
       end
     end
 
-    context 'when there are any placeholders' do
+    context 'when there are some placeholders' do
       let(:placeholder) { FormattableT::EMPTY_VALUE_PLACEHOLDER }
       let(:substring_before) { Faker::Lorem.word }
       let(:substring_after) { Faker::Lorem.word }
