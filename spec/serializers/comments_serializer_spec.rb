@@ -10,8 +10,8 @@ describe CommentsSerializer do
     let(:expected_record_methods) { ::CommentSerializer::RECORD_METHODS }
 
     let(:record1) { create(:comment).reload }
-    let(:record2) { create(:comment, body: 'Funny comment') }
-    let(:record3) { create(:comment, body: 'Sad Comment') }
+    let(:record2) { create(:comment).reload }
+    let(:record3) { create(:comment).reload }
 
     let(:serializer) { described_class.new(records: [record1, record2, record3]) }
 

@@ -6,7 +6,7 @@ describe CommentSerializer do
   let(:serializer) { described_class.new(record:) }
 
   describe '#as_json' do
-    let(:record) { create(:comment) }
+    let(:record) { create(:comment).reload }
     let(:expected_hash) do
       {
         id:           record.id,
