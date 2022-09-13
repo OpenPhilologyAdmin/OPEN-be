@@ -25,7 +25,7 @@ RSpec.describe 'v1/comments', type: :request do
         let(:Authorization) { authorization_header_for(user) }
 
         before do
-          create(:comment, token:, user:)
+          create(:comment, body: 'I am working')
         end
 
         schema type:  :array,
