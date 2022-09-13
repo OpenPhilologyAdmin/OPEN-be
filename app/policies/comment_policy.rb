@@ -10,9 +10,6 @@ class CommentPolicy < ApplicationPolicy
   end
 
   def permitted_attributes_for_create
-    %i[
-      body
-      user_id
-    ]
+    %i[body]
   end
 end

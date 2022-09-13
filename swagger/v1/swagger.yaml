@@ -462,7 +462,7 @@ components:
         created_at:
           type: date_time
           description: Creation date
-          example: '2022-09-13T01:31:09+02:00'
+          example: '2022-09-13T13:50:02+02:00'
         created_by:
           type: string
           description: Name of the user who created given comment
@@ -470,7 +470,7 @@ components:
         last_edit_at:
           type: date_time
           description: Last edit date if exists
-          example: '2022-09-13T01:31:09+02:00'
+          example: '2022-09-13T13:50:02+02:00'
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -570,13 +570,8 @@ paths:
                   maximum: 250
                   description: Body of the comment
                   example: This is a really nice comment.
-                user_id:
-                  type: integer
-                  description: ID of the user creating a comment
-                  example: 1
               required:
               - body
-              - user_id
   "/api/v1/users/confirmation":
     post:
       summary: Re-sends the confirmation email

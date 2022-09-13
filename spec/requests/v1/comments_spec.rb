@@ -65,18 +65,13 @@ RSpec.describe 'v1/comments', type: :request do
       parameter name: :comment, in: :body, schema: {
         type:       :object,
         properties: {
-          body:    {
+          body: {
             type:        :string,
             maximum:     250,
             description: 'Body of the comment',
             example:     'This is a really nice comment.'
-          },
-          user_id: {
-            type:        :integer,
-            description: 'ID of the user creating a comment',
-            example:     1
           }
-        }, required: %w[body user_id]
+        }, required: %w[body]
       }
 
       response(200, 'OK') do

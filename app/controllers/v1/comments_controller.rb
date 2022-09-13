@@ -13,7 +13,7 @@ module V1
     end
 
     def create
-      record = token.comments.build(record_params)
+      record = token.comments.build(record_params.with_defaults(user: current_user))
 
       authorize record, :create?
 
