@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_12_124108) do
   end
 
   create_table "comments", force: :cascade do |t|
-    t.string "body", limit: 250
+    t.string "body"
     t.bigint "token_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
