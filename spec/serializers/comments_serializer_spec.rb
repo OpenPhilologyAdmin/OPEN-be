@@ -9,7 +9,7 @@ describe CommentsSerializer do
     let(:expected_record_attributes) { ::CommentSerializer::RECORD_ATTRIBUTES }
     let(:expected_record_methods) { ::CommentSerializer::RECORD_METHODS }
 
-    let(:record1) { create(:comment) }
+    let(:record1) { create(:comment).reload }
     let(:record2) { create(:comment, body: 'Funny comment') }
     let(:record3) { create(:comment, body: 'Sad Comment') }
 
