@@ -80,7 +80,6 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '200', 'OK' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:comment) { create(:comment, body: 'Very nice comment') }
 
         schema type:       :object,
                properties: {
@@ -103,7 +102,6 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '403', 'Forbidden if current user doesn\'t match comment creator' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project) { create(:project, witnesses_number: 1) }
 
         schema '$ref' => '#/components/schemas/forbidden_request'
 
