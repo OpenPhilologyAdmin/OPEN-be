@@ -51,7 +51,9 @@ RSpec.describe 'v1/comments', type: :request do
         run_test!
       end
     end
+  end
 
+  path '/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}' do
     delete('Deletes specified comment') do
       tags 'Projects'
       consumes 'application/json'
