@@ -60,6 +60,8 @@ RSpec.describe 'v1/comments', type: :request do
     let(:project_id) { project.id }
     let(:token) { create(:token, project:) }
     let(:token_id) { token.id }
+    let(:comment) { create(:comment, body: 'This is a nice comment', user_id:) }
+    let(:id) { comment.id }
 
     delete('Deletes specified comment') do
       tags 'Projects'
@@ -111,6 +113,7 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '403', 'Forbidden if current user doesn\'t match comment creator' do
         let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, body: 'Fancy comment') }
 
         schema '$ref' => '#/components/schemas/forbidden_request'
 
