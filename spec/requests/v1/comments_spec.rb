@@ -54,6 +54,13 @@ RSpec.describe 'v1/comments', type: :request do
   end
 
   path '/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:user_id) { user.id }
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
+    let(:token) { create(:token, project:) }
+    let(:token_id) { token.id }
+
     delete('Deletes specified comment') do
       tags 'Projects'
       consumes 'application/json'
