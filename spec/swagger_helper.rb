@@ -537,6 +537,11 @@ RSpec.configure do |config|
                 description: 'ID of the token',
                 example:     1
               },
+              user_id:      {
+                type:        :integer,
+                description: 'ID of the user who created given comment',
+                example:     1
+              },
               created_at:   {
                 type:        :date_time,
                 description: 'Creation date',
