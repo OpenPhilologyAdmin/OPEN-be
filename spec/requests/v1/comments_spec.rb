@@ -91,10 +91,6 @@ RSpec.describe 'v1/comments', type: :request do
                }
 
         run_test!
-
-        it 'soft deletes a comment' do
-          expect(comment.deleted).to be(true)
-        end
       end
 
       response '401', 'Login required' do
