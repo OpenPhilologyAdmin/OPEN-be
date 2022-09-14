@@ -51,5 +51,77 @@ RSpec.describe 'v1/comments', type: :request do
         run_test!
       end
     end
+
+    delete('Deletes specified comment') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description('Deletes specified comment')
+
+      parameter name: :project_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the project'
+      parameter name: :token_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the token'
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the comment'
+
+      response '200', 'OK' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, body: 'Very nice comment') }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('general.notifications.deleted')
+                 }
+               }
+
+        run_test!
+
+        it 'soft deletes a comment' do
+          expect(comment.deleted).to be(true)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '403', 'Forbidden if current user doesn\'t match comment creator' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project) { create(:project, witnesses_number: 1) }
+
+        schema '$ref' => '#/components/schemas/forbidden_request'
+
+        run_test!
+      end
+
+      response '404', 'Project or comment not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
   end
 end

@@ -462,7 +462,7 @@ components:
         created_at:
           type: date_time
           description: Creation date
-          example: '2022-09-12T23:52:53+02:00'
+          example: '2022-09-14T16:15:29+02:00'
         created_by:
           type: string
           description: Name of the user who created given comment
@@ -470,7 +470,7 @@ components:
         last_edit_at:
           type: date_time
           description: Last edit date if exists
-          example: '2022-09-12T23:52:53+02:00'
+          example: '2022-09-14T16:15:29+02:00'
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -510,6 +510,61 @@ paths:
                 "$ref": "#/components/schemas/login_required"
         '404':
           description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+    delete:
+      summary: Deletes specified comment
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Deletes specified comment
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: token_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the token
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Record successfully deleted
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '403':
+          description: Forbidden if current user doesn't match comment creator
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/forbidden_request"
+        '404':
+          description: Project or comment not found
           content:
             application/json:
               schema:

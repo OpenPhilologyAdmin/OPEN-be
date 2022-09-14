@@ -6,6 +6,8 @@ class Comment < ApplicationRecord
 
   validates :body, length: { maximum: 250, allow_blank: false }, presence: true
 
+  default_scope { where(deleted: false) }
+
   def created_by
     user.name
   end
