@@ -462,7 +462,7 @@ components:
         created_at:
           type: date_time
           description: Creation date
-          example: '2022-09-14T16:15:29+02:00'
+          example: '2022-09-14T23:57:04+02:00'
         created_by:
           type: string
           description: Name of the user who created given comment
@@ -470,7 +470,7 @@ components:
         last_edit_at:
           type: date_time
           description: Last edit date if exists
-          example: '2022-09-14T16:15:29+02:00'
+          example: '2022-09-14T23:57:04+02:00'
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -514,6 +514,7 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}":
     delete:
       summary: Deletes specified comment
       tags:
