@@ -60,8 +60,6 @@ RSpec.describe 'v1/comments', type: :request do
     let(:project_id) { project.id }
     let(:token) { create(:token, project:) }
     let(:token_id) { token.id }
-    let(:comment) { create(:comment, body: 'This is a nice comment', user_id:) }
-    let(:id) { comment.id }
 
     delete('Deletes specified comment') do
       tags 'Projects'
@@ -91,6 +89,8 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '200', 'OK' do
         let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, body: 'This is a nice comment', token:, user:) }
+        let(:id) { comment.id }
 
         schema type:       :object,
                properties: {
@@ -101,10 +101,15 @@ RSpec.describe 'v1/comments', type: :request do
                }
 
         run_test!
+
+        it 'deletes a comment' do
+          expect(comment.reload.deleted).to be(true)
+        end
       end
 
       response '401', 'Login required' do
         let(:Authorization) { nil }
+        let(:id) { create(:comment, body: 'This is a nice comment', token:, user:).id }
 
         schema '$ref' => '#/components/schemas/login_required'
 
@@ -113,7 +118,7 @@ RSpec.describe 'v1/comments', type: :request do
 
       response '403', 'Forbidden if current user doesn\'t match comment creator' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:comment) { create(:comment, body: 'Fancy comment') }
+        let(:id) { create(:comment, body: 'Fancy comment').id }
 
         schema '$ref' => '#/components/schemas/forbidden_request'
 
