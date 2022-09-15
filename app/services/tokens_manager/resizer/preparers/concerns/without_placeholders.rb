@@ -2,7 +2,7 @@
 
 module TokensManager
   class Resizer
-    module Builders
+    module Preparers
       module Concerns
         module WithoutPlaceholders
           PLACEHOLDER = FormattableT::EMPTY_VALUE_PLACEHOLDER

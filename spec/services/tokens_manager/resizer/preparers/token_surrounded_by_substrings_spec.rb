@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TokensManager::Resizer::Builders::TokenSurroundedBySubstrings, type: :service do
+RSpec.describe TokensManager::Resizer::Preparers::TokenSurroundedBySubstrings, type: :service do
   let(:token) { build(:token, :variant_selected_and_secondary) }
   let(:base_string) { "#{substring_before}#{token.t}#{substring_after}" }
   let(:service) { described_class.new(token:, selected_text: base_string) }

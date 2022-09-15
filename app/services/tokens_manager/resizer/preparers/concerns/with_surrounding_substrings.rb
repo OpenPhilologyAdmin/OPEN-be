@@ -2,7 +2,7 @@
 
 module TokensManager
   class Resizer
-    module Builders
+    module Preparers
       module Concerns
         module WithSurroundingSubstrings
           extend ActiveSupport::Concern

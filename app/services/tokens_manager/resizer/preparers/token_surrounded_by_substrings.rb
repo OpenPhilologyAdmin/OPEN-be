@@ -2,10 +2,10 @@
 
 module TokensManager
   class Resizer
-    module Builders
+    module Preparers
       class TokenSurroundedBySubstrings
-        include TokensManager::Resizer::Builders::Concerns::WithoutPlaceholders
-        include TokensManager::Resizer::Builders::Concerns::WithSurroundingSubstrings
+        include TokensManager::Resizer::Preparers::Concerns::WithoutPlaceholders
+        include TokensManager::Resizer::Preparers::Concerns::WithSurroundingSubstrings
 
         def initialize(token:, selected_text:)
           @token = token
@@ -26,7 +26,7 @@ module TokensManager
         attr_reader :token, :substring_before, :substring_after
 
         def substrings_surrounding_token(selected_text)
-          TokensManager::Resizer::Builders::SubstringsSurroundingValue.perform(
+          TokensManager::Resizer::Preparer::SubstringsSurroundingValue.perform(
             base_string: selected_text,
             value:       token.t
           )

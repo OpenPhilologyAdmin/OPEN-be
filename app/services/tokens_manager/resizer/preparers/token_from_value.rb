@@ -2,9 +2,9 @@
 
 module TokensManager
   class Resizer
-    module Builders
+    module Preparers
       class TokenFromValue
-        include TokensManager::Resizer::Builders::Concerns::WithoutPlaceholders
+        include TokensManager::Resizer::Preparers::Concerns::WithoutPlaceholders
 
         def initialize(value:, project:)
           @value   = without_placeholders(value)

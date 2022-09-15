@@ -7,7 +7,7 @@ RSpec.configure do |c|
   c.include Helpers::TokenVariants
 end
 
-RSpec.describe TokensManager::Resizer::Builder, type: :service do
+RSpec.describe TokensManager::Resizer::Preparer, type: :service do
   let(:project) { create(:project) }
   let(:service) do
     described_class.new(

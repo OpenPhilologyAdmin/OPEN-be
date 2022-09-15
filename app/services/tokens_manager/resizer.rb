@@ -23,7 +23,7 @@ module TokensManager
     attr_reader :project, :user, :selected_text, :selected_tokens
 
     def update_tokens
-      new_tokens = Resizer::Builder.perform(selected_text:, selected_tokens:, project:)
+      new_tokens = Resizer::Preparer.perform(selected_text:, selected_tokens:, project:)
       Resizer::Processor.perform(project:, selected_tokens:, new_tokens:)
     end
 

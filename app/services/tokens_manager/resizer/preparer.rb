@@ -2,7 +2,7 @@
 
 module TokensManager
   class Resizer
-    class Builder
+    class Preparer
       def initialize(selected_text:, selected_tokens:, project:)
         @selected_text                      = selected_text
         @selected_tokens                    = selected_tokens
@@ -28,7 +28,7 @@ module TokensManager
                   :substring_before, :substring_after
 
       def substrings_surrounding_selected_text
-        TokensManager::Resizer::Builders::SubstringsSurroundingValue.perform(
+        TokensManager::Resizer::Preparers::SubstringsSurroundingValue.perform(
           base_string: selected_tokens_text,
           value:       selected_text
         )
@@ -46,13 +46,13 @@ module TokensManager
       def token_from_value(value)
         return if value.blank?
 
-        Builders::TokenFromValue.perform(value:, project:)
+        Preparers::TokenFromValue.perform(value:, project:)
       end
 
       def token_from_source_token
         return token_from_value(selected_text) if source_token.blank?
 
-        Builders::TokenSurroundedBySubstrings.perform(token: source_token, selected_text:)
+        Preparers::TokenSurroundedBySubstrings.perform(token: source_token, selected_text:)
       end
     end
   end

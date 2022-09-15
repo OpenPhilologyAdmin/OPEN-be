@@ -2,7 +2,7 @@
 
 module TokensManager
   class Resizer
-    module Builders
+    module Preparers
       class SubstringsSurroundingValue
         def initialize(base_string:, value:)
           @base_string = base_string

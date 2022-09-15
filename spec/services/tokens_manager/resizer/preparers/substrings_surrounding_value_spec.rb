@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe TokensManager::Resizer::Builders::SubstringsSurroundingValue, type: :model do
+RSpec.describe TokensManager::Resizer::Preparers::SubstringsSurroundingValue, type: :model do
   let(:substrings) { Faker::Lorem.words(number: 3) }
   let(:base_string) { substrings.join }
   let(:service) { described_class.new(base_string:, value:) }

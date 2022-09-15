@@ -7,7 +7,7 @@ RSpec.configure do |c|
   c.include Helpers::TokenVariants
 end
 
-RSpec.describe TokensManager::Resizer::Builders::TokenFromValue, type: :service do
+RSpec.describe TokensManager::Resizer::Preparers::TokenFromValue, type: :service do
   let(:value) { Faker::Lorem.sentence }
   let(:project) { create(:project) }
   let(:service) { described_class.new(value:, project:) }
