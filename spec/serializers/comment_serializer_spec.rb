@@ -12,6 +12,7 @@ describe CommentSerializer do
         id:           record.id,
         body:         record.body,
         token_id:     record.token_id,
+        user_id:      record.user_id,
         created_at:   record.created_at,
         created_by:   record.created_by,
         last_edit_at: record.last_edit_at
