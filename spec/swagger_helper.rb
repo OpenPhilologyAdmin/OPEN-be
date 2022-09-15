@@ -537,10 +537,15 @@ RSpec.configure do |config|
                 description: 'ID of the token',
                 example:     1
               },
+              user_id:      {
+                type:        :integer,
+                description: 'ID of the user who created given comment',
+                example:     1
+              },
               created_at:   {
                 type:        :date_time,
                 description: 'Creation date',
-                example:     DateTime.now
+                example:     DateTime.new(2021, 2, 3.5)
               },
               created_by:   {
                 type:        :string,
@@ -550,7 +555,7 @@ RSpec.configure do |config|
               last_edit_at: {
                 type:        :date_time,
                 description: 'Last edit date if exists',
-                example:     DateTime.now
+                example:     DateTime.new(2021, 2, 3.5)
               }
             }
           }

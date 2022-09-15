@@ -459,10 +459,14 @@ components:
           type: integer
           description: ID of the token
           example: 1
+        user_id:
+          type: integer
+          description: ID of the user who created given comment
+          example: 1
         created_at:
           type: date_time
           description: Creation date
-          example: '2022-09-14T23:57:04+02:00'
+          example: '2021-02-03T12:00:00+00:00'
         created_by:
           type: string
           description: Name of the user who created given comment
@@ -470,7 +474,7 @@ components:
         last_edit_at:
           type: date_time
           description: Last edit date if exists
-          example: '2022-09-14T23:57:04+02:00'
+          example: '2021-02-03T12:00:00+00:00'
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
