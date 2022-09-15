@@ -545,7 +545,7 @@ RSpec.configure do |config|
               created_at:   {
                 type:        :date_time,
                 description: 'Creation date',
-                example:     DateTime.now
+                example:     DateTime.new(2021, 2, 3.5)
               },
               created_by:   {
                 type:        :string,
@@ -555,7 +555,7 @@ RSpec.configure do |config|
               last_edit_at: {
                 type:        :date_time,
                 description: 'Last edit date if exists',
-                example:     DateTime.now
+                example:     DateTime.new(2021, 2, 3.5)
               }
             }
           }
