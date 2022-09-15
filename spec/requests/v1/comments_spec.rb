@@ -52,4 +52,85 @@ RSpec.describe 'v1/comments', type: :request do
       end
     end
   end
+
+  path '/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:user_id) { user.id }
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
+    let(:token) { create(:token, project:) }
+    let(:token_id) { token.id }
+
+    put('Updates a comment') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Updates a body of given comment'
+
+      parameter name: :project_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the project'
+      parameter name: :token_id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the token'
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of the comment'
+      parameter name: :body, in: :body,
+                schema: {
+                  type:       :object,
+                  properties: {
+                    body: {
+                      type:        :string,
+                      maximum:     250,
+                      description: 'Comment\'s body',
+                      example:     'This is an updated body'
+                    }
+                  }
+                }, required: %w[body]
+
+      response '200', 'OK' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:comment) { create(:comment, body: 'Test body', token:, user:) }
+        let(:id) { comment.id }
+        let(:body) { { body: 'This is a new body' } }
+
+        schema '$ref' => '#/components/schemas/comment'
+
+        run_test!
+
+        it 'updates a comment' do
+          expect(comment.reload.body).to eq('This is a new body')
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+        let(:id) { create(:comment, body: 'Test body', token:, user:).id }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+  end
 end
