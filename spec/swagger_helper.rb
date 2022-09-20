@@ -481,7 +481,13 @@ RSpec.configure do |config|
               value:    {
                 type:       :object,
                 properties: {
-                  details: {
+                  selected_reading: {
+                    type:        :string,
+                    description: "Selected reading value. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* " \
+                                 'means that the reading value is empty.',
+                    example:     'raged]'
+                  },
+                  details:          {
                     type:        :string,
                     description: 'Insignificant readings with their witnesses. The ' \
                                  "*#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that " \
