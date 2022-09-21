@@ -5,32 +5,26 @@ module TokensManager
     module Preparers
       class TokenSurroundedBySubstrings
         include TokensManager::Resizer::Preparers::Concerns::WithoutPlaceholders
-        include TokensManager::Resizer::Preparers::Concerns::WithSurroundingSubstrings
+        include TokensManager::Resizer::Preparers::Concerns::WithSurroundingValues
 
-        def initialize(token:, selected_text:)
+        def initialize(token:, value_before:, value_after:)
           @token = token
-          @substring_before, @substring_after = substrings_surrounding_token(selected_text)
+          @value_before = value_before
+          @value_after = value_after
         end
 
-        def self.perform(token:, selected_text:)
-          new(token:, selected_text:).perform
+        def self.perform(token:, value_before:, value_after:)
+          new(token:, value_before:, value_after:).perform
         end
 
         def perform
-          add_substrings_to_token_readings
+          add_values_to_token_readings
           token
         end
 
         private
 
-        attr_reader :token, :substring_before, :substring_after
-
-        def substrings_surrounding_token(selected_text)
-          TokensManager::Resizer::Preparers::SubstringsSurroundingValue.perform(
-            base_string: selected_text,
-            value:       token.t
-          )
-        end
+        attr_reader :token, :value_before, :value_after
 
         # all attributes that have :t
         def token_readings
@@ -39,7 +33,7 @@ module TokensManager
           ].flatten.compact
         end
 
-        def add_substrings_to_token_readings
+        def add_values_to_token_readings
           token_readings.each do |resource|
             resource.t = processed_value(resource.t)
           end
@@ -47,7 +41,7 @@ module TokensManager
 
         def processed_value(value)
           without_placeholders(
-            with_surrounding_substrings(value:, substring_before:, substring_after:)
+            with_surrounding_values(value:, value_before:, value_after:)
           )
         end
       end

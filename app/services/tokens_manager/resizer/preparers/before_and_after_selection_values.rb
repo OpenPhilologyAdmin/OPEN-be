@@ -20,10 +20,6 @@ module TokensManager
 
         attr_reader :tokens_values_with_offsets, :sort_param
 
-        def sort_tokens_with_offsets
-          tokens_values_with_offsets.sort_by!(&sort_param)
-        end
-
         def before_selection
           @before_selection ||= tokens_values_with_offsets.first
         end

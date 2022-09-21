@@ -4,13 +4,13 @@ module TokensManager
   class Resizer
     module Preparers
       module Concerns
-        module WithSurroundingSubstrings
+        module WithSurroundingValues
           extend ActiveSupport::Concern
 
           private
 
-          def with_surrounding_substrings(value:, substring_before: nil, substring_after: nil)
-            "#{substring_before}#{value}#{substring_after}"
+          def with_surrounding_values(value:, value_before: nil, value_after: nil)
+            "#{value_before}#{value}#{value_after}"
           end
         end
       end

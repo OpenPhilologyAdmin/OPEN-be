@@ -4,30 +4,29 @@ require 'rails_helper'
 
 RSpec.describe TokensManager::Resizer::Preparers::TokenSurroundedBySubstrings, type: :service do
   let(:token) { build(:token, :variant_selected_and_secondary) }
-  let(:base_string) { "#{substring_before}#{token.t}#{substring_after}" }
-  let(:service) { described_class.new(token:, selected_text: base_string) }
+  let(:service) { described_class.new(token:, value_before:, value_after:) }
 
   describe '#perform' do
     before { service.perform }
 
-    context 'when there is only a substring_before given' do
-      let(:substring_before) { Faker::Lorem.word }
-      let(:substring_after) { nil }
+    context 'when there is only a value_before given' do
+      let(:value_before) { Faker::Lorem.word }
+      let(:value_after) { nil }
 
-      it 'adds substring_before at the beginning of variants' do
+      it 'adds value_before at the beginning of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_before at the beginning of grouped_variants' do
+      it 'adds value_before at the beginning of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_before at the beginning of the editorial remark' do
-        expect(token.editorial_remark.t).to start_with(substring_before)
+      it 'adds value_before at the beginning of the editorial remark' do
+        expect(token.editorial_remark.t).to start_with(value_before)
       end
 
       context 'when there is no editorial_remark' do
@@ -39,24 +38,24 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenSurroundedBySubstrings, t
       end
     end
 
-    context 'when there is only a substring_after given' do
-      let(:substring_before) { nil }
-      let(:substring_after) {  Faker::Lorem.word }
+    context 'when there is only a value_after given' do
+      let(:value_before) { nil }
+      let(:value_after) {  Faker::Lorem.word }
 
-      it 'adds substring_after at the end of variants' do
+      it 'adds value_after at the end of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_after at the end of grouped_variants' do
+      it 'adds value_after at the end of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_after at the end of the editorial remark' do
-        expect(token.editorial_remark.t).to end_with(substring_after)
+      it 'adds value_after at the end of the editorial remark' do
+        expect(token.editorial_remark.t).to end_with(value_after)
       end
 
       context 'when there is no editorial_remark' do
@@ -68,40 +67,40 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenSurroundedBySubstrings, t
       end
     end
 
-    context 'when there are both substring_before and substring_after given' do
-      let(:substring_before) { Faker::Lorem.word }
-      let(:substring_after) { Faker::Lorem.word }
+    context 'when there are both value_before and value_after given' do
+      let(:value_before) { Faker::Lorem.word }
+      let(:value_after) { Faker::Lorem.word }
 
-      it 'adds substring_before at the beginning of variants' do
+      it 'adds value_before at the beginning of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_after at the end of variants' do
+      it 'adds value_after at the end of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_before at the beginning of grouped_variants' do
+      it 'adds value_before at the beginning of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_after at the end of grouped_variants' do
+      it 'adds value_after at the end of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_before at the beginning of the editorial remark' do
-        expect(token.editorial_remark.t).to start_with(substring_before)
+      it 'adds value_before at the beginning of the editorial remark' do
+        expect(token.editorial_remark.t).to start_with(value_before)
       end
 
-      it 'adds substring_after at the end of the editorial remark' do
-        expect(token.editorial_remark.t).to end_with(substring_after)
+      it 'adds value_after at the end of the editorial remark' do
+        expect(token.editorial_remark.t).to end_with(value_after)
       end
 
       context 'when there is no editorial_remark' do
@@ -115,40 +114,43 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenSurroundedBySubstrings, t
 
     context 'when there are some placeholders' do
       let(:placeholder) { FormattableT::EMPTY_VALUE_PLACEHOLDER }
-      let(:substring_before) { Faker::Lorem.word }
-      let(:substring_after) { Faker::Lorem.word }
-      let(:base_string) { "#{substring_before}#{placeholder}#{token.t}#{substring_after}#{placeholder}" }
+      let(:value_before) { Faker::Lorem.word }
+      let(:value_after) { Faker::Lorem.word }
+      let(:service) do
+        described_class.new(token:, value_before: "#{value_before}#{placeholder}",
+                            value_after: "#{value_after}#{placeholder}")
+      end
 
-      it 'adds substring_before without placeholders at the beginning of variants' do
+      it 'adds value_before without placeholders at the beginning of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_after without placeholders at the end of variants' do
+      it 'adds value_after without placeholders at the end of variants' do
         token.variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_before without placeholders at the beginning of grouped_variants' do
+      it 'adds value_before without placeholders at the beginning of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to start_with(substring_before)
+          expect(variant.t).to start_with(value_before)
         end
       end
 
-      it 'adds substring_after without placeholders at the end of grouped_variants' do
+      it 'adds value_after without placeholders at the end of grouped_variants' do
         token.grouped_variants.each do |variant|
-          expect(variant.t).to end_with(substring_after)
+          expect(variant.t).to end_with(value_after)
         end
       end
 
-      it 'adds substring_before without placeholders at the beginning of the editorial remark' do
-        expect(token.editorial_remark.t).to start_with(substring_before)
+      it 'adds value_before without placeholders at the beginning of the editorial remark' do
+        expect(token.editorial_remark.t).to start_with(value_before)
       end
 
-      it 'adds substring_after without placeholders at the end of the editorial remark' do
-        expect(token.editorial_remark.t).to end_with(substring_after)
+      it 'adds value_after without placeholders at the end of the editorial remark' do
+        expect(token.editorial_remark.t).to end_with(value_after)
       end
 
       context 'when there is no editorial_remark' do

@@ -7,7 +7,7 @@ module TokensManager
         @selected_text                      = selected_text
         @selected_tokens                    = selected_tokens
         @project                            = project
-        @substring_before, @substring_after = substrings_surrounding_selected_text
+        @value_before_selected_text, @value_after_selected_text = substrings_surrounding_selected_text
       end
 
       def self.perform(selected_text:, selected_tokens:, project:)
@@ -16,16 +16,16 @@ module TokensManager
 
       def perform
         [
-          token_from_value(substring_before),
+          token_from_value(value_before_selected_text),
           token_from_source_token,
-          token_from_value(substring_after)
+          token_from_value(value_after_selected_text)
         ].compact
       end
 
       private
 
       attr_reader :selected_text, :selected_tokens, :project,
-                  :substring_before, :substring_after
+                  :value_before_selected_text, :value_after_selected_text
 
       def substrings_surrounding_selected_text
         TokensManager::Resizer::Preparers::SubstringsSurroundingValue.perform(
@@ -52,7 +52,14 @@ module TokensManager
       def token_from_source_token
         return token_from_value(selected_text) if source_token.blank?
 
-        Preparers::TokenSurroundedBySubstrings.perform(token: source_token, selected_text:)
+        values = TokensManager::Resizer::Preparers::CalculateValueBeforeAndAfterToken.perform(
+          token:                      source_token,
+          tokens:                     selected_tokens,
+          value_before_selected_text:,
+          selected_text:
+        )
+        Preparers::TokenSurroundedBySubstrings.perform(token: source_token, value_before: values.value_before,
+                                                       value_after: values.value_after)
       end
     end
   end

@@ -27,9 +27,9 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
           project:
         )
       end
-      let(:prev_token) { create(:token, :one_grouped_variant, project:) }
-      let(:prev_token2) { create(:token, project:) }
-      let(:prev_token3) { create(:token, :one_grouped_variant, project:) }
+      let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let(:prev_token2) { create(:token, project:, index: 1) }
+      let(:prev_token3) { create(:token, :one_grouped_variant, project:, index: 2) }
       let(:selected_text) { "#{prev_token.t}#{prev_token2.t}#{prev_token3.t}" }
       let(:expected_prefix) { prev_token.t }
       let(:expected_suffix) { prev_token3.t }
@@ -56,8 +56,8 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the beginning' do
-      let(:prev_token) { create(:token, :variant_selected_and_secondary, project:) }
-      let(:prev_token2) { create(:token, :one_grouped_variant, project:) }
+      let(:prev_token) { create(:token, :variant_selected_and_secondary, project:, index: 0) }
+      let(:prev_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
       let(:selected_text) { "#{prev_token.t}#{prev_token2.t[0...1]}" }
       let(:expected_suffix) { prev_token2.t[0...1].to_s }
       let(:selected_text_token) { result.first }
@@ -102,8 +102,8 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the middle' do
-      let(:prev_token) { create(:token, :one_grouped_variant, project:) }
-      let(:prev_token2) { create(:token, :one_grouped_variant, project:) }
+      let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let(:prev_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
       let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t[0...1]}" }
       let(:prefix_token) { result.first }
       let(:selected_text_token) { result.second }
@@ -157,8 +157,8 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the middle to the end' do
-      let(:prev_token) { create(:token, :one_grouped_variant, project:) }
-      let(:prev_token2) { create(:token, project:) }
+      let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let(:prev_token2) { create(:token, project:, index: 1) }
       let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t}" }
       let(:expected_prefix) { prev_token.t[1...] }
       let(:prefix_token) { result.first }
@@ -192,9 +192,9 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text includes EMPTY_VALUE_PLACEHOLDER' do
-      let(:prev_token) { create(:token, project:) }
-      let(:prev_token2) { create(:token, :one_grouped_variant, project:, with_empty_values: true) }
-      let(:prev_token3) { create(:token, :one_grouped_variant, project:) }
+      let(:prev_token) { create(:token, project:, index: 0) }
+      let(:prev_token2) { create(:token, :one_grouped_variant, project:, with_empty_values: true, index: 1) }
+      let(:prev_token3) { create(:token, :one_grouped_variant, project:, index: 2) }
 
       let(:service) do
         described_class.new(
