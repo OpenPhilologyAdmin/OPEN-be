@@ -26,7 +26,7 @@ module TokensManager
         attr_reader :token, :substring_before, :substring_after
 
         def substrings_surrounding_token(selected_text)
-          TokensManager::Resizer::Preparer::SubstringsSurroundingValue.perform(
+          TokensManager::Resizer::Preparers::SubstringsSurroundingValue.perform(
             base_string: selected_text,
             value:       token.t
           )
