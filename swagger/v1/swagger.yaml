@@ -523,6 +523,64 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}":
+    put:
+      summary: Updates a comment
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Updates a body of given comment
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: token_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the token
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/comment"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  maximum: 250
+                  description: Comment's body
+                  example: This is an updated body
+        required: true
   "/api/v1/users/confirmation":
     post:
       summary: Re-sends the confirmation email
