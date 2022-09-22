@@ -24,6 +24,7 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
 
     context 'when there there is a variant selected' do
       let(:record) { build(:apparatus_insignificant_entry, :variant_selected) }
+      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip}]" }
 
       let(:details) do
         record.insignificant_variants.map do |v|
@@ -33,6 +34,7 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
 
       let(:expected_value) do
         {
+          selected_reading:,
           details:
         }
       end

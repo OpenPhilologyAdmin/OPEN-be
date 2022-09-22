@@ -8,6 +8,7 @@ module Apparatus
       return nil unless apparatus?
 
       {
+        selected_reading:,
         details:
       }
     end
