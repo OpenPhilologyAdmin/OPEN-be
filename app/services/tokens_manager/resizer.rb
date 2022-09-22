@@ -2,15 +2,16 @@
 
 module TokensManager
   class Resizer
-    def initialize(project:, user:, selected_text:, selected_token_ids:)
+    def initialize(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:)
       @project         = project
       @user            = user
       @selected_text   = selected_text
       @selected_tokens = project.tokens.where(id: selected_token_ids)
+      @tokens_with_offsets = tokens_with_offsets
     end
 
-    def self.perform(project:, user:, selected_text:, selected_token_ids:)
-      new(project:, user:, selected_text:, selected_token_ids:).perform
+    def self.perform(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:)
+      new(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:).perform
     end
 
     def perform
@@ -20,10 +21,10 @@ module TokensManager
 
     private
 
-    attr_reader :project, :user, :selected_text, :selected_tokens
+    attr_reader :project, :user, :selected_text, :selected_tokens, :tokens_with_offsets
 
     def update_tokens
-      new_tokens = Resizer::Preparer.perform(selected_text:, selected_tokens:, project:)
+      new_tokens = Resizer::Preparer.perform(selected_text:, selected_tokens:, project:, tokens_with_offsets:)
       Resizer::Processor.perform(project:, selected_tokens:, new_tokens:)
     end
 

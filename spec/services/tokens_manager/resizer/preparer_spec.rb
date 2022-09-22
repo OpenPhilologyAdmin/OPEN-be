@@ -12,19 +12,27 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
   let(:service) do
     described_class.new(
       selected_text:,
-      selected_tokens: [prev_token, prev_token2],
-      project:
+      selected_tokens:     [prev_token, prev_token2],
+      project:,
+      tokens_with_offsets:
     )
   end
   let(:result) { service.perform }
 
   describe '#perform' do
     context 'when the whole text from all tokens has been selected' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 0, token_id: prev_token.id },
+          { offset: prev_token3.t.size, token_id: prev_token3.id }
+        ]
+      end
       let(:service) do
         described_class.new(
           selected_text:,
-          selected_tokens: [prev_token, prev_token2, prev_token3],
-          project:
+          selected_tokens:     [prev_token, prev_token2, prev_token3],
+          project:,
+          tokens_with_offsets:
         )
       end
       let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
@@ -56,10 +64,16 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the beginning' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 0, token_id: prev_token.id },
+          { offset: 1, token_id: prev_token2.id }
+        ]
+      end
       let(:prev_token) { create(:token, :variant_selected_and_secondary, project:, index: 0) }
       let(:prev_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
-      let(:selected_text) { "#{prev_token.t}#{prev_token2.t[0...1]}" }
-      let(:expected_suffix) { prev_token2.t[0...1].to_s }
+      let(:selected_text) { "#{prev_token.t}#{prev_token2.t[0]}" }
+      let(:expected_suffix) { prev_token2.t[0] }
       let(:selected_text_token) { result.first }
       let(:suffix_token) { result.second }
 
@@ -102,9 +116,15 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the middle' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 1, token_id: prev_token.id },
+          { offset: 1, token_id: prev_token2.id }
+        ]
+      end
       let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
       let(:prev_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
-      let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t[0...1]}" }
+      let(:selected_text) { "#{prev_token.t[1..]}#{prev_token2.t[0]}" }
       let(:prefix_token) { result.first }
       let(:selected_text_token) { result.second }
       let(:suffix_token) { result.last }
@@ -114,12 +134,12 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       end
 
       it 'uses the part before the selected_text for the first token\'s :t' do
-        expect(prefix_token.t).to eq(prev_token.t[0...1])
+        expect(prefix_token.t).to eq(prev_token.t[0])
       end
 
       it 'uses the part before the selected_text for all variants of the first token\'s :t' do
         prefix_token.variants.each do |variant|
-          expect(variant.t).to eq(prev_token.t[0...1])
+          expect(variant.t).to eq(prev_token.t[0])
         end
       end
 
@@ -134,12 +154,12 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       end
 
       it 'uses the part after the selected_text for the third token\'s :t' do
-        expect(suffix_token.t).to eq(prev_token2.t[1...])
+        expect(suffix_token.t).to eq(prev_token2.t[1..])
       end
 
       it 'uses the part after the selected_text for all variants of the last token\'s :t' do
         suffix_token.variants.each do |variant|
-          expect(variant.t).to eq(prev_token2.t[1...])
+          expect(variant.t).to eq(prev_token2.t[1..])
         end
       end
 
@@ -157,10 +177,16 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text was selected from the middle to the end' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 1, token_id: prev_token.id },
+          { offset: prev_token2.t.size, token_id: prev_token2.id }
+        ]
+      end
       let(:prev_token) { create(:token, :one_grouped_variant, project:, index: 0) }
       let(:prev_token2) { create(:token, project:, index: 1) }
-      let(:selected_text) { "#{prev_token.t[1...]}#{prev_token2.t}" }
-      let(:expected_prefix) { prev_token.t[1...] }
+      let(:selected_text) { "#{prev_token.t[1..]}#{prev_token2.t}" }
+      let(:expected_prefix) { prev_token.t[1..] }
       let(:prefix_token) { result.first }
       let(:selected_text_token) { result.second }
 
@@ -169,7 +195,7 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       end
 
       it 'uses the part before the selected_text for the first token' do
-        expect(prefix_token.t).to eq(prev_token.t[0...1])
+        expect(prefix_token.t).to eq(prev_token.t[0])
       end
 
       it 'uses the selected_text for the second token\'s :t' do
@@ -192,6 +218,13 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
     end
 
     context 'when the text includes EMPTY_VALUE_PLACEHOLDER' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 0, token_id: prev_token.id },
+          { offset: 2, token_id: prev_token3.id }
+        ]
+      end
+
       let(:prev_token) { create(:token, project:, index: 0) }
       let(:prev_token2) { create(:token, :one_grouped_variant, project:, with_empty_values: true, index: 1) }
       let(:prev_token3) { create(:token, :one_grouped_variant, project:, index: 2) }
@@ -199,12 +232,13 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       let(:service) do
         described_class.new(
           selected_text:,
-          selected_tokens: [prev_token, prev_token2, prev_token3],
-          project:
+          selected_tokens:     [prev_token, prev_token2, prev_token3],
+          project:,
+          tokens_with_offsets:
         )
       end
 
-      let(:selected_text) { "#{prev_token.t}#{prev_token2.t}#{prev_token3.t[0...2]}" }
+      let(:selected_text) { "#{prev_token.t}#{prev_token2.t}#{prev_token3.t[0..1]}" }
       let(:expected_suffix) { prev_token3.t[0...2].to_s }
       let(:selected_text_token) { result.first }
       let(:suffix_token) { result.second }
@@ -218,7 +252,7 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       end
 
       it 'uses the part after the selected_text for the second token\'s :t' do
-        expect(suffix_token.t).to eq(prev_token3.t[2...])
+        expect(suffix_token.t).to eq(prev_token3.t[2..])
       end
 
       it 'applies substring_after on the variants of the multiple readings token' do

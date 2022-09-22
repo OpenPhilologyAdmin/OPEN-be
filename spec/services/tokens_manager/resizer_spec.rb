@@ -10,12 +10,19 @@ end
 RSpec.describe TokensManager::Resizer, type: :service do
   let(:project) { create(:project) }
   let(:user) { create(:user, :approved, :admin) }
+
   let(:service) do
-    described_class.new(project:, user:, selected_text:, selected_token_ids:)
+    described_class.new(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:)
   end
 
   describe '#perform' do
     context 'when there are no tokens with multiple readings in the selection' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 1, token_id: selected_token.id },
+          { offset: selected_token.t.size - 1, token_id: selected_token.id }
+        ]
+      end
       let(:selected_token) { create(:token, :one_grouped_variant, project:, index: 0) }
       let(:selected_text) { selected_token.t[1...-1].to_s }
       let(:selected_token_ids) { [selected_token.id] }
@@ -58,9 +65,15 @@ RSpec.describe TokensManager::Resizer, type: :service do
     end
 
     context 'when there is a token with multiple readings in the selection' do
+      let(:tokens_with_offsets) do
+        [
+          { offset: 1, token_id: selected_token.id },
+          { offset: selected_token2.t.size, token_id: selected_token2.id }
+        ]
+      end
       let(:selected_token) { create(:token, :one_grouped_variant, project:, index: 0) }
       let(:selected_token2) { create(:token, :variant_selected, project:, index: 1) }
-      let(:substring_before) { selected_token.t[1...].to_s }
+      let(:substring_before) { selected_token.t[1..].to_s }
       let(:selected_text) { "#{substring_before}#{selected_token2.t}" }
       let(:selected_token_ids) { [selected_token.id, selected_token2.id] }
       let(:expected_nr_of_tokens) { 6 }
