@@ -8,7 +8,7 @@ module Apparatus
     attr_accessor :token, :index
 
     delegate :id, to: :token, prefix: true
-    delegate :apparatus?, to: :token
+    delegate :apparatus?, :selected_variant, to: :token
 
     def attributes
       {
@@ -37,6 +37,10 @@ module Apparatus
 
     def witnesses_for(variant)
       variant.witnesses.join(' ')
+    end
+
+    def selected_reading
+      reading_for(variant: selected_variant, separator: ']', include_witnesses: false)
     end
   end
 end

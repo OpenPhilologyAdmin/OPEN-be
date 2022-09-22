@@ -26,6 +26,18 @@ module V1
       end
     end
 
+    def update
+      authorize record, :update?
+
+      if record.update(record_params)
+        render(
+          json: CommentSerializer.new(record:)
+        )
+      else
+        respond_with_record_errors(record, :unprocessable_entity)
+      end
+    end
+
     private
 
     def token
@@ -34,6 +46,10 @@ module V1
 
     def records
       @records ||= token.comments
+    end
+
+    def record
+      @record ||= records.find(params[:id])
     end
 
     def record_params
