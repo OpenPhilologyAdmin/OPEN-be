@@ -4,12 +4,12 @@ module TokensManager
   class Resizer
     module Preparers
       module Concerns
-        module WithSurroundingValues
+        module WithBeforeAndAfterValues
           extend ActiveSupport::Concern
 
           private
 
-          def with_surrounding_values(value:, value_before: nil, value_after: nil)
+          def with_before_and_after_values(value:, value_before: nil, value_after: nil)
             "#{value_before}#{value}#{value_after}"
           end
         end

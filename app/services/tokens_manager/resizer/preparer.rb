@@ -3,41 +3,43 @@
 module TokensManager
   class Resizer
     class Preparer
-      def initialize(selected_text:, selected_tokens:, project:, tokens_with_offsets:)
-        @selected_text                      = selected_text
-        @selected_tokens                    = selected_tokens
-        @project                            = project
-        @tokens_with_offsets = tokens_with_offsets
-
-        values = Preparers::BeforeAndAfterSelectionValues.new(tokens: selected_tokens, tokens_with_offsets:)
-        @value_before_selected_text = values.before_selection_value
-        @value_after_selected_text = values.after_selection_value
+      def initialize(params:)
+        @params = params
       end
 
-      def self.perform(selected_text:, selected_tokens:, project:, tokens_with_offsets:)
-        new(selected_text:, selected_tokens:, project:, tokens_with_offsets:).perform
+      def self.perform(params:)
+        new(params:).perform
       end
 
       def perform
         [
           token_from_value(value_before_selected_text),
-          token_from_source_token,
+          token_from_selected_text,
           token_from_value(value_after_selected_text)
         ].compact
       end
 
       private
 
-      attr_reader :selected_text, :selected_tokens, :project,
-                  :value_before_selected_text, :value_after_selected_text
+      attr_reader :params
 
-      # selected token that has multiple grouped variants
-      def source_token
-        @source_token ||= selected_tokens.detect { |token| !token.one_grouped_variant? }
+      delegate :project, :selected_text, :selected_tokens,
+               :tokens_with_offsets, :selected_multiple_readings_token,
+               to: :params
+
+      def values_before_and_after_selected_text
+        @values_before_and_after_selected_text ||= Preparers::ValueBeforeAndAfterSelectedTextCalculator.new(
+          tokens:              selected_tokens,
+          tokens_with_offsets:
+        )
       end
 
-      def selected_tokens_text
-        @selected_tokens_text ||= selected_tokens.map(&:t).join
+      def value_before_selected_text
+        @value_before_selected_text ||= values_before_and_after_selected_text.value_before
+      end
+
+      def value_after_selected_text
+        @value_after_selected_text ||= values_before_and_after_selected_text.value_after
       end
 
       def token_from_value(value)
@@ -46,19 +48,12 @@ module TokensManager
         Preparers::TokenFromValue.perform(value:, project:)
       end
 
-      def token_from_source_token
-        return token_from_value(selected_text) if source_token.blank?
+      def token_from_selected_text
+        return token_from_value(selected_text) if selected_multiple_readings_token.blank?
 
-        values = TokensManager::Resizer::Preparers::CalculateValueBeforeAndAfterToken.perform(
-          token:                      source_token,
-          tokens:                     selected_tokens,
-          value_before_selected_text:,
-          selected_text:
-        )
-        Preparers::TokenSurroundedBySubstrings.perform(
-          token:        source_token,
-          value_before: values.value_before,
-          value_after:  values.value_after
+        Preparers::TokenFromMultipleReadingsToken.perform(
+          params:,
+          value_before_selected_text:
         )
       end
     end

@@ -7,9 +7,9 @@ module TokensManager
         include TokensManager::Resizer::Preparers::Concerns::WithoutPlaceholders
 
         def initialize(value:, project:)
-          @value   = without_placeholders(value)
+          @value   = without_placeholders(value:)
           @project = project
-          @token   = Token.new(project:)
+          @token   = project.tokens.new
         end
 
         def self.perform(value:, project:)

@@ -15,7 +15,7 @@ module TokensManager
         end
 
         def perform
-          return if previous_last_index == new_last_index
+          return if index_unchanged?
 
           following_tokens.update_all(index_shift_formula) # rubocop:disable Rails/SkipsModelValidations
         end
@@ -28,6 +28,10 @@ module TokensManager
 
         def following_tokens
           @following_tokens ||= project_tokens.with_index_higher_than(previous_last_index)
+        end
+
+        def index_unchanged?
+          previous_last_index == new_last_index
         end
 
         def index_decreased?

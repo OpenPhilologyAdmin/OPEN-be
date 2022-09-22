@@ -18,10 +18,10 @@ RSpec.describe TokensManager::Resizer::Preparers::Models::ValueWithOffsets, type
     end
 
     context 'when given starting_offset is greater than 0' do
-      let(:starting_offset) { 2 }
+      let(:starting_offset) { 3 }
 
       it 'returns the text from beginning til offset' do
-        expect(record.value_before).to eq(value[0...2])
+        expect(record.value_before).to eq(value[0..2])
       end
     end
   end

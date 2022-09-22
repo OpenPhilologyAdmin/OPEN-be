@@ -5,20 +5,22 @@ module TokensManager
     module Preparers
       module Models
         class TokenValueWithOffset
+          include TokensManager::Resizer::Preparers::Concerns::WithOffsets
+
           attr_reader :token_index, :offset
 
-          def initialize(offset:, token:)
-            @offset = offset
+          def initialize(token:, offset:)
             @token_index = token.index
             @token_value = token.t
+            @offset = offset
           end
 
-          def before_offset_value
-            token_value[0...offset]
+          def value_before
+            value_before_offset(given_value: token_value, given_offset: offset)
           end
 
-          def after_offset_value
-            token_value[offset..]
+          def value_after
+            value_after_offset(given_value: token_value, given_offset: offset)
           end
 
           private

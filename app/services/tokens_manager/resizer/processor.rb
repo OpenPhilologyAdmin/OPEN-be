@@ -14,7 +14,7 @@ module TokensManager
       end
 
       def perform
-        remove_redundant_tokens
+        remove_selected_tokens
         assign_index_to_prepared_tokens
         shift_following_tokens
         save_prepared_tokens
@@ -24,11 +24,10 @@ module TokensManager
 
       attr_reader :selected_tokens, :prepared_tokens, :project
 
-      def remove_redundant_tokens
-        TokensManager::Resizer::Processors::RedundantTokensRemover.perform(
+      def remove_selected_tokens
+        TokensManager::Resizer::Processors::TokensRemover.perform(
           project:,
-          tokens_to_remove: selected_tokens,
-          relevant_tokens:  prepared_tokens
+          tokens_to_remove: selected_tokens
         )
       end
 

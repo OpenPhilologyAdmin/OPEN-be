@@ -2,19 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.describe TokensManager::Resizer::Preparers::TokenValuesWithOffsets, type: :model do
+RSpec.describe TokensManager::Resizer::Preparers::TokenValuesWithOffsetsGenerator, type: :model do
   let(:project) { create(:project) }
   let(:service) { described_class.new(tokens:, tokens_with_offsets:) }
   let(:result) { service.perform }
 
   before do
-    allow(TokensManager::Resizer::Preparers::Models::TokenValueWithOffset).to receive(:new)
-      .at_least(:once)
-      .and_call_original
+    allow(TokensManager::Resizer::Preparers::Models::TokenValueWithOffset)
+      .to receive(:new).at_least(:once).and_call_original
     result
   end
 
-  context 'when there are multiple tokens' do
+  context 'when there are two different tokens in tokens_with_offsets' do
     let(:token1) { create(:token, project:, index: 0) }
     let(:token2) { create(:token, project:, index: 2) }
     let(:tokens) { [token1, token2] }
@@ -35,7 +34,7 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenValuesWithOffsets, type: 
       expect(result.size).to eq(2)
     end
 
-    it 'returns records of correct class' do
+    it 'returns records of the correct class' do
       expect(result).to all(be_an(TokensManager::Resizer::Preparers::Models::TokenValueWithOffset))
     end
 
@@ -63,7 +62,7 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenValuesWithOffsets, type: 
     end
   end
 
-  context 'when there is only one token' do
+  context 'when there is only one token used in tokens_with_offsets' do
     let(:token1) { create(:token, project:, index: 0) }
     let(:tokens) { [token1] }
     let(:tokens_with_offsets) do
@@ -83,7 +82,7 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenValuesWithOffsets, type: 
       expect(result.size).to eq(2)
     end
 
-    it 'returns records of correct class' do
+    it 'returns records of the correct class' do
       expect(result).to all(be_an(TokensManager::Resizer::Preparers::Models::TokenValueWithOffset))
     end
 

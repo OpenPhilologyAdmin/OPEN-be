@@ -10,7 +10,7 @@ module TokensManager
 
           private
 
-          def without_placeholders(value)
+          def without_placeholders(value:)
             value = value.tr(PLACEHOLDER, '')
             value.empty? ? nil : value
           end

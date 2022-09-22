@@ -6,7 +6,7 @@ module TokensManager
       class PreparedTokensIndexer
         def initialize(starting_index:, prepared_tokens:)
           @prepared_tokens = prepared_tokens
-          @starting_index      = starting_index
+          @starting_index  = starting_index
         end
 
         def self.perform(starting_index:, prepared_tokens:)
