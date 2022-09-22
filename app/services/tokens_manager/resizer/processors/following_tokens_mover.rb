@@ -27,11 +27,15 @@ module TokensManager
         delegate :tokens, to: :project, prefix: true
 
         def following_tokens
-          @following_tokens ||= project_tokens.where('index > ?', previous_last_index)
+          @following_tokens ||= project_tokens.with_index_higher_than(previous_last_index)
+        end
+
+        def index_decreased?
+          new_last_index < previous_last_index
         end
 
         def index_shift_formula
-          if previous_last_index > new_last_index
+          if index_decreased?
             value     = previous_last_index - new_last_index
             operation = '-'
           else

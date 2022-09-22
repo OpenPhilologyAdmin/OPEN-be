@@ -21,7 +21,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
   end
 
   describe '#perform' do
-    context 'when numbers of tokens in the project is not changed' do
+    context 'when the number of tokens in the project is not changed' do
       let(:prepared_tokens) { build_list(:token, 2, project:, index: nil) }
       let(:expected_nr_of_tokens) { 5 }
 
@@ -41,7 +41,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
         expect(Token.where(id: selected_tokens.pluck(:id))).to be_empty
       end
 
-      it 'does not change other tokens indexes' do
+      it 'does not change the indexes of tokens that were after the selection' do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
@@ -70,7 +70,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
         expect(Token.where(id: selected_tokens.pluck(:id))).to be_empty
       end
 
-      it 'updates other tokens indexes by + 1' do
+      it 'increases the indexes of tokens that were after the selection by 1' do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
@@ -105,7 +105,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
         expect(new_token.index).to eq(prev_starting_index)
       end
 
-      it 'updates other tokens indexes by - 3' do
+      it 'decreases the indexes of tokens that were after the selection by 3' do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
@@ -141,7 +141,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
         expect(Token.where(id: removed_tokens.pluck(:id))).to be_empty
       end
 
-      it 'updates other tokens indexes by + 1' do
+      it 'increases the indexes of tokens that were after the selection by 1' do
         expect(project.tokens.pluck(:index)).to match_array(expected_indexes)
       end
 
