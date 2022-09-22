@@ -5,8 +5,16 @@ class CommentPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def create?
+    approved_admin?
+  end
+
   def update?
     approved_admin? && record.user_id == user.id
+  end
+
+  def permitted_attributes_for_create
+    %i[body]
   end
 
   def permitted_attributes_for_update

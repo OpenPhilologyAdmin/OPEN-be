@@ -12,6 +12,20 @@ module V1
       )
     end
 
+    def create
+      record = token.comments.build(record_params.with_defaults(user: current_user))
+
+      authorize record, :create?
+
+      if record.save
+        render(
+          json: CommentSerializer.new(record:)
+        )
+      else
+        respond_with_record_errors(record, :unprocessable_entity)
+      end
+    end
+
     def update
       authorize record, :update?
 
