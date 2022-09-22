@@ -24,8 +24,8 @@ module TokensManager
     attr_reader :project, :user, :selected_text, :selected_tokens, :tokens_with_offsets
 
     def update_tokens
-      new_tokens = Resizer::Preparer.perform(selected_text:, selected_tokens:, project:, tokens_with_offsets:)
-      Resizer::Processor.perform(project:, selected_tokens:, new_tokens:)
+      prepared_tokens = Resizer::Preparer.perform(selected_text:, selected_tokens:, project:, tokens_with_offsets:)
+      Resizer::Processor.perform(project:, selected_tokens:, prepared_tokens:)
     end
 
     def update_last_editor

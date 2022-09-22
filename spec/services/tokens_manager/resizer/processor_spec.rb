@@ -16,22 +16,22 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       create(:token, project:, index:)
       index += 1
     end
-    described_class.new(new_tokens:, selected_tokens:, project:).perform
+    described_class.new(prepared_tokens:, selected_tokens:, project:).perform
     project.reload
   end
 
   describe '#perform' do
     context 'when numbers of tokens in the project is not changed' do
-      let(:new_tokens) { build_list(:token, 2, project:, index: nil) }
+      let(:prepared_tokens) { build_list(:token, 2, project:, index: nil) }
       let(:expected_nr_of_tokens) { 5 }
 
       it 'saves new tokens' do
-        expect(new_tokens).to all(be_persisted)
+        expect(prepared_tokens).to all(be_persisted)
       end
 
       it 'assigns correct indexes to the new tokens' do
         index = prev_starting_index
-        new_tokens.each do |new_token|
+        prepared_tokens.each do |new_token|
           expect(new_token.index).to eq(index)
           index += 1
         end
@@ -51,16 +51,16 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
     end
 
     context 'when there will be more tokens in the project than it was before' do
-      let(:new_tokens) { build_list(:token, 3, project:, index: nil) }
+      let(:prepared_tokens) { build_list(:token, 3, project:, index: nil) }
       let(:expected_nr_of_tokens) { 6 }
 
       it 'saves new tokens' do
-        expect(new_tokens).to all(be_persisted)
+        expect(prepared_tokens).to all(be_persisted)
       end
 
       it 'assigns correct indexes to the new tokens' do
         index = prev_starting_index
-        new_tokens.each do |new_token|
+        prepared_tokens.each do |new_token|
           expect(new_token.index).to eq(index)
           index += 1
         end
@@ -89,11 +89,11 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
         end
         tokens
       end
-      let(:new_tokens) { build_list(:token, 1, project:, index: nil) }
+      let(:prepared_tokens) { build_list(:token, 1, project:, index: nil) }
       let(:expected_nr_of_tokens) { 4 }
 
       it 'saves new tokens' do
-        expect(new_tokens).to all(be_persisted)
+        expect(prepared_tokens).to all(be_persisted)
       end
 
       it 'deletes selected tokens' do
@@ -101,7 +101,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       end
 
       it 'assigns correct indexes to the new tokens' do
-        new_token = new_tokens.first
+        new_token = prepared_tokens.first
         expect(new_token.index).to eq(prev_starting_index)
       end
 
@@ -115,7 +115,7 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
     end
 
     context 'when one of the selected tokens is still in use' do
-      let(:new_tokens) do
+      let(:prepared_tokens) do
         [
           build(:token, project:, index: nil),
           prev_token,
@@ -125,12 +125,12 @@ RSpec.describe TokensManager::Resizer::Processor, type: :service do
       let(:expected_nr_of_tokens) { 6 }
 
       it 'saves new tokens' do
-        expect(new_tokens).to all(be_persisted)
+        expect(prepared_tokens).to all(be_persisted)
       end
 
       it 'assigns correct indexes to the new tokens' do
         index = prev_starting_index
-        new_tokens.each do |new_token|
+        prepared_tokens.each do |new_token|
           expect(new_token.index).to eq(index)
           index += 1
         end

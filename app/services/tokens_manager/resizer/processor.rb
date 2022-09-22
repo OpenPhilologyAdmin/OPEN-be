@@ -3,52 +3,52 @@
 module TokensManager
   class Resizer
     class Processor
-      def initialize(project:, selected_tokens:, new_tokens:)
+      def initialize(project:, selected_tokens:, prepared_tokens:)
         @project         = project
         @selected_tokens = selected_tokens
-        @new_tokens      = new_tokens
+        @prepared_tokens = prepared_tokens
       end
 
-      def self.perform(project:, selected_tokens:, new_tokens:)
-        new(project:, selected_tokens:, new_tokens:).perform
+      def self.perform(project:, selected_tokens:, prepared_tokens:)
+        new(project:, selected_tokens:, prepared_tokens:).perform
       end
 
       def perform
         remove_redundant_tokens
-        assign_index_to_new_tokens
+        assign_index_to_prepared_tokens
         shift_following_tokens
-        save_new_tokens
+        save_prepared_tokens
       end
 
       private
 
-      attr_reader :selected_tokens, :new_tokens, :project
+      attr_reader :selected_tokens, :prepared_tokens, :project
 
       def remove_redundant_tokens
         TokensManager::Resizer::Processors::RedundantTokensRemover.perform(
           project:,
           tokens_to_remove: selected_tokens,
-          relevant_tokens:  new_tokens
+          relevant_tokens:  prepared_tokens
         )
       end
 
-      def assign_index_to_new_tokens
-        TokensManager::Resizer::Processors::NewTokensIndexer.perform(
-          starting_index: selected_tokens.first.index,
-          new_tokens:
+      def assign_index_to_prepared_tokens
+        TokensManager::Resizer::Processors::PreparedTokensIndexer.perform(
+          starting_index:  selected_tokens.first.index,
+          prepared_tokens:
         )
       end
 
       def shift_following_tokens
         TokensManager::Resizer::Processors::FollowingTokensMover.perform(
           project:,
-          new_last_index:      new_tokens.last.index,
+          new_last_index:      prepared_tokens.last.index,
           previous_last_index: selected_tokens.last.index
         )
       end
 
-      def save_new_tokens
-        new_tokens.each(&:save)
+      def save_prepared_tokens
+        prepared_tokens.each(&:save)
       end
     end
   end
