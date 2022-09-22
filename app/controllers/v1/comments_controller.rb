@@ -38,6 +38,19 @@ module V1
       end
     end
 
+    def destroy
+      record = Comment.find(params[:id])
+      authorize record, :destroy?
+
+      record.deleted = true
+      record.save
+
+      render(
+        json:   { message: I18n.t('general.notifications.deleted') },
+        status: :ok
+      )
+    end
+
     private
 
     def token

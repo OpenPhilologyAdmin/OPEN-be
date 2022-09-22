@@ -13,6 +13,10 @@ class CommentPolicy < ApplicationPolicy
     approved_admin? && record.user_id == user.id
   end
 
+  def destroy?
+    approved_admin? && record.user_id == user.id
+  end
+
   def permitted_attributes_for_create
     %i[body]
   end
