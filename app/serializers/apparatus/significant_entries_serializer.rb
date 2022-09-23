@@ -10,6 +10,8 @@ module Apparatus
 
     def serialized_records
       @serialized_records ||= records.map.with_index(STARTING_INDEX) do |record, index|
+        next if record.secondary_variants.empty?
+
         serialized_record(record:, index:)
       end
     end
