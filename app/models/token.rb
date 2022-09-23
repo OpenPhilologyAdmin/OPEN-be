@@ -14,6 +14,9 @@ class Token < ApplicationRecord
   validates :variants, store_model: { merge_array_errors: true }
 
   belongs_to :project
+
+  has_many :comments, dependent: :destroy
+
   delegate :witnesses_ids, to: :project, prefix: true
   delegate :default_witness, to: :project, prefix: true
   delegate :witness, to: :editorial_remark, allow_nil: true, prefix: true

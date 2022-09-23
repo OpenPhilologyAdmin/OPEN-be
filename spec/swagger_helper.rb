@@ -481,7 +481,13 @@ RSpec.configure do |config|
               value:    {
                 type:       :object,
                 properties: {
-                  details: {
+                  selected_reading: {
+                    type:        :string,
+                    description: "Selected reading value. The *#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* " \
+                                 'means that the reading value is empty.',
+                    example:     'raged]'
+                  },
+                  details:          {
                     type:        :string,
                     description: 'Insignificant readings with their witnesses. The ' \
                                  "*#{FormattableT::EMPTY_VALUE_PLACEHOLDER}* means that " \
@@ -516,6 +522,46 @@ RSpec.configure do |config|
               error: {
                 type:    :string,
                 example: I18n.t('general.errors.forbidden_request')
+              }
+            }
+          },
+          comment:               {
+            type:       :object,
+            properties: {
+              id:           {
+                type:        :integer,
+                description: 'ID of the comment',
+                example:     1
+              },
+              body:         {
+                type:        :string,
+                description: 'Body of the comment',
+                example:     'I like to comment on things and pancakes are nice!'
+              },
+              token_id:     {
+                type:        :integer,
+                description: 'ID of the token',
+                example:     1
+              },
+              user_id:      {
+                type:        :integer,
+                description: 'ID of the user who created given comment',
+                example:     1
+              },
+              created_at:   {
+                type:        :date_time,
+                description: 'Creation date',
+                example:     DateTime.new(2021, 2, 3.5)
+              },
+              created_by:   {
+                type:        :string,
+                description: 'Name of the user who created given comment',
+                example:     'Jonny Bravo'
+              },
+              last_edit_at: {
+                type:        :date_time,
+                description: 'Last edit date if exists',
+                example:     DateTime.new(2021, 2, 3.5)
               }
             }
           }

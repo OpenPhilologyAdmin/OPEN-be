@@ -15,10 +15,6 @@ module Apparatus
 
     private
 
-    def selected_reading
-      reading_for(variant: selected_variant, separator: ']', include_witnesses: false)
-    end
-
     def details
       secondary_readings.unshift(witnesses_for(selected_variant)).join(', ')
     end

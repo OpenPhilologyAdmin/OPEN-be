@@ -27,6 +27,8 @@ Rails.application.routes.draw do
         resources :tokens, only: %i[index show] do
           patch 'variants', to: 'tokens#update_variants', on: :member
           patch 'grouped_variants', to: 'tokens#update_grouped_variants', on: :member
+
+          resources :comments, only: %i[index create update destroy], on: :member
         end
         resources :insignificant_variants, only: %i[index]
         resources :significant_variants, only: %i[index]
