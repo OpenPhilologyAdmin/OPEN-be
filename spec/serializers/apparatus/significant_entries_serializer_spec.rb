@@ -26,7 +26,7 @@ describe Apparatus::SignificantEntriesSerializer do
     context 'when there are some records' do
       let(:record) { create(:token, :variant_selected) }
       let(:record2) { create(:token, :variant_selected_and_secondary) }
-      let(:serializer) { described_class.new(records: [record2]) }
+      let(:serializer) { described_class.new(records: [record, record2]) }
       let(:expected_hash) do
         {
           records: serialized_entries(apparatus_entries),
@@ -35,7 +35,7 @@ describe Apparatus::SignificantEntriesSerializer do
       end
       let(:apparatus_entries) do
         [
-          build(:apparatus_significant_entry, token: record2, index: 1)
+          build(:apparatus_significant_entry, token: record2, index: 2)
         ]
       end
 
