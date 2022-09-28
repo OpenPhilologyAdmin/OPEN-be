@@ -14,7 +14,8 @@ module TokensManager
         end
 
         def perform
-          project_tokens.where(id: tokens_to_remove_ids).destroy_all
+          project_tokens.where(id: tokens_to_remove_ids)
+                        .update_all(deleted: true) # rubocop:disable Rails/SkipsModelValidations
         end
 
         private
