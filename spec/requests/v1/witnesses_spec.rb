@@ -157,7 +157,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
                 description: 'ID of the project'
       parameter name: :id, in: :path,
                 schema: {
-                  type: :integer
+                  type: :string
                 },
                 required: true,
                 description: 'ID of the edited witness'
@@ -247,7 +247,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
                 description: 'ID of the project'
       parameter name: :id, in: :path,
                 schema: {
-                  type: :integer
+                  type: :string
                 },
                 required: true,
                 description: 'ID of the removed witness'
