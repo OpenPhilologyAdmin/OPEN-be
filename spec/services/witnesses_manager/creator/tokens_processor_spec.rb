@@ -25,6 +25,13 @@ RSpec.describe WitnessesManager::Creator::TokensProcessor, type: :service do
 
     context 'when processing tokens' do
       before do
+        tokens.each do |token|
+          token.grouped_variants << TokenGroupedVariant.new(t:         token.current_variant.t,
+                                                            witnesses: ['nice-witness'],
+                                                            selected:  false,
+                                                            possible:  false)
+        end
+
         service.add_witness
         tokens.each(&:reload)
       end
