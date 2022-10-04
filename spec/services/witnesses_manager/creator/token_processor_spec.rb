@@ -20,6 +20,9 @@ RSpec.describe WitnessesManager::Creator::TokenProcessor, type: :service do
     end
 
     context 'when grouped variants' do
+      let(:token) { create(:token, :variant_selected_and_secondary) }
+      let(:service) { described_class.new(token:, siglum:) }
+
       before do
         token.grouped_variants << TokenGroupedVariant.new(t:         token.current_variant.t,
                                                           witnesses: ['nice-witness'],
@@ -34,6 +37,11 @@ RSpec.describe WitnessesManager::Creator::TokenProcessor, type: :service do
 
         expect(updated_grouped_variant).not_to be_nil
         expect(updated_grouped_variant.t).to eq(token.current_variant.t)
+      end
+
+      it 'ensures that previous selections are preserved' do
+        expect(token.selected_variant).not_to be_nil
+        expect(token.secondary_variants).not_to be_empty
       end
     end
   end
