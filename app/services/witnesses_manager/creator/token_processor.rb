@@ -11,8 +11,6 @@ module WitnessesManager
       def add_witness
         add_variant
         update_grouped_variants
-
-        token.save
       end
 
       private
