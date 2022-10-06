@@ -13,6 +13,15 @@ RSpec.describe Comment, type: :model do
     it { is_expected.not_to allow_value(' ').for(:body) }
   end
 
+  describe '.default_scope' do
+    let!(:comment_one) { create(:comment, body: 'Nice comment.', created_at: DateTime.new(2022, 2, 1)) }
+    let!(:comment_two) { create(:comment, body: 'Even better one!', created_at: DateTime.new(2022, 1, 1)) }
+
+    it 'orders by ascending created_at' do
+      expect(described_class.all).to eq([comment_two, comment_one])
+    end
+  end
+
   describe '#factories' do
     it 'creates valid default factory' do
       expect(build(:comment)).to be_valid
