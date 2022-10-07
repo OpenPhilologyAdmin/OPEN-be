@@ -57,6 +57,10 @@ RSpec.describe Token, type: :model do
     it 'creates valid variant_selected_and_secondary factory' do
       expect(build(:token, :variant_selected_and_secondary)).to be_valid
     end
+
+    it 'creates valid one_variant factory' do
+      expect(build(:token, :one_grouped_variant)).to be_valid
+    end
   end
 
   it 'creates valid without_editorial_remark factory' do
@@ -194,7 +198,7 @@ RSpec.describe Token, type: :model do
 
   describe '#state' do
     context 'when there is just one grouped variant' do
-      let(:token) { create(:token, grouped_variants: build_list(:token_grouped_variant, 1)) }
+      let(:token) { create(:token, :one_grouped_variant) }
 
       it 'returns :one_variant' do
         expect(token.state).to eq(:one_variant)

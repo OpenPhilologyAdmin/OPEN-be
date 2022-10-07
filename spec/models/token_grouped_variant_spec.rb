@@ -94,6 +94,32 @@ RSpec.describe TokenGroupedVariant, type: :model do
     end
   end
 
+  describe '#significant?' do
+    context 'when it should be listed as a secondary variant' do
+      let(:token_grouped_variant) { build(:token_grouped_variant, :secondary) }
+
+      it 'is truthy' do
+        expect(token_grouped_variant).to be_significant
+      end
+    end
+
+    context 'when it is a selected variant' do
+      let(:token_grouped_variant) { build(:token_grouped_variant, :selected) }
+
+      it 'is truthy' do
+        expect(token_grouped_variant).to be_significant
+      end
+    end
+
+    context 'when it is an insignificant variant' do
+      let(:token_grouped_variant) { build(:token_grouped_variant, :insignificant) }
+
+      it 'is falsey' do
+        expect(token_grouped_variant).not_to be_significant
+      end
+    end
+  end
+
   describe '#id' do
     context 'when there is just one witness' do
       let(:token_grouped_variant) { build(:token_grouped_variant, witnesses_number: 1) }
