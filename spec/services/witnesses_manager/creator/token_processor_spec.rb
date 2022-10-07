@@ -24,11 +24,6 @@ RSpec.describe WitnessesManager::Creator::TokenProcessor, type: :service do
       let(:service) { described_class.new(token:, siglum:) }
 
       before do
-        token.grouped_variants << TokenGroupedVariant.new(t:         token.current_variant.t,
-                                                          witnesses: ['nice-witness'],
-                                                          selected:  false,
-                                                          possible:  false)
-
         service.add_witness
       end
 
