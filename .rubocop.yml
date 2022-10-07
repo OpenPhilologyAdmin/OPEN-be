@@ -44,6 +44,13 @@ RSpec:
 RSpec/AnyInstance:
   Enabled: false
 
+RSpec/ExampleLength:
+  Enabled: true
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
 RSpec/MultipleExpectations:
   Enabled: false
 

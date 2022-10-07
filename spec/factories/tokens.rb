@@ -16,9 +16,7 @@ FactoryBot.define do
     end
 
     grouped_variants do
-      witnesses.map do |witness|
-        build(:token_grouped_variant, witnesses: [witness.siglum])
-      end
+      TokensManager::GroupedVariantsGenerator.perform(token: self)
     end
 
     editorial_remark { build(:token_editorial_remark) }
@@ -38,12 +36,14 @@ FactoryBot.define do
 
       # first variant is the selected one
       grouped_variants do
-        witnesses.map.with_index do |witness, index|
-          build(:token_grouped_variant,
-                witnesses: [witness.siglum],
-                selected:  index.zero?,
-                possible:  index.zero?)
+        records = TokensManager::GroupedVariantsGenerator.perform(token: self)
+
+        records.each_with_index do |variant, index|
+          variant.selected = index.zero?
+          variant.possible = index.zero?
         end
+
+        records
       end
     end
 
@@ -58,16 +58,30 @@ FactoryBot.define do
 
       # first variant is the selected one, others are possible
       grouped_variants do
-        witnesses.map.with_index do |witness, index|
-          build(:token_grouped_variant,
-                witnesses: [witness.siglum],
-                selected:  index.zero?,
-                possible:  true)
+        records = TokensManager::GroupedVariantsGenerator.perform(token: self)
+
+        records.each_with_index do |variant, index|
+          variant.selected = index.zero?
+          variant.possible = true
         end
+
+        records
       end
     end
 
     trait :without_editorial_remark do
+      editorial_remark { nil }
+    end
+
+    trait :one_grouped_variant do
+      value = Faker::Lorem.sentence
+
+      variants do
+        witnesses.map do |witness|
+          build(:token_variant, witness: witness.siglum, t: value)
+        end
+      end
+
       editorial_remark { nil }
     end
 

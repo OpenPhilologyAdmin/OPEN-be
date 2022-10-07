@@ -21,9 +21,10 @@ class Token < ApplicationRecord
   delegate :default_witness, to: :project, prefix: true
   delegate :witness, to: :editorial_remark, allow_nil: true, prefix: true
 
-  default_scope { order(index: :asc) }
+  default_scope { where(deleted: false).order(index: :asc) }
   scope :for_project, ->(project) { where(project:) }
   scope :for_apparatus, -> { where('grouped_variants @> ?', '[{"selected": true}]') }
+  scope :with_index_higher_than, ->(index) { where('index > ?', index) }
 
   def validate_selected_grouped_variant
     return if grouped_variants.blank?

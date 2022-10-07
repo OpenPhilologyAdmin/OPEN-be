@@ -20,11 +20,15 @@ class TokenGroupedVariant
     witnesses.include?(siglum)
   end
 
+  def significant?
+    possible? || selected?
+  end
+
   def secondary?
     possible? && !selected?
   end
 
   def insignificant?
-    !(possible? || selected?)
+    !significant?
   end
 end
