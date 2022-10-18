@@ -69,7 +69,7 @@ class Token < ApplicationRecord
   end
 
   def state
-    return :one_variant if one_grouped_variant?
+    return :one_variant unless evaluatable?
     return :not_evaluated unless evaluated?
 
     if secondary_variants.any?
@@ -77,6 +77,12 @@ class Token < ApplicationRecord
     else
       :evaluated_with_single
     end
+  end
+
+  def evaluatable?
+    return true if resized?
+
+    !one_grouped_variant?
   end
 
   def apparatus

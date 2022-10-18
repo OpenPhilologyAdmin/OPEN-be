@@ -61,10 +61,14 @@ RSpec.describe Token, type: :model do
     it 'creates valid one_variant factory' do
       expect(build(:token, :one_grouped_variant)).to be_valid
     end
-  end
 
-  it 'creates valid without_editorial_remark factory' do
-    expect(build(:token, :without_editorial_remark)).to be_valid
+    it 'creates valid without_editorial_remark factory' do
+      expect(build(:token, :without_editorial_remark)).to be_valid
+    end
+
+    it 'creates valid :resized factory' do
+      expect(build(:token, :resized)).to be_valid
+    end
   end
 
   context 'when variants & evaluated' do
@@ -121,7 +125,7 @@ RSpec.describe Token, type: :model do
 
       before do
         selected_variant.selected = true
-        selected_variant.t = nil
+        selected_variant.t        = nil
       end
 
       describe '#default_variant' do
@@ -197,15 +201,31 @@ RSpec.describe Token, type: :model do
   end
 
   describe '#state' do
-    context 'when there is just one grouped variant' do
+    context 'when has the same reading for all witnesses (one grouped_variant)' do
       let(:token) { create(:token, :one_grouped_variant) }
 
-      it 'returns :one_variant' do
-        expect(token.state).to eq(:one_variant)
+      before do
+        allow(token).to receive(:evaluatable?).and_return(evaluatable)
+      end
+
+      context 'when is not evaluatable' do
+        let(:evaluatable) { false }
+
+        it 'returns :one_variant' do
+          expect(token.state).to eq(:one_variant)
+        end
+      end
+
+      context 'when is evaluatable' do
+        let(:evaluatable) { true }
+
+        it 'returns :not_evaluated' do
+          expect(token.state).to eq(:not_evaluated)
+        end
       end
     end
 
-    context 'when there are more grouped variants' do
+    context 'when there are more readings (multiple grouped_variants)' do
       let(:token) { create(:token, grouped_variants:) }
 
       context 'when there is no :selected variant yet' do
@@ -239,6 +259,36 @@ RSpec.describe Token, type: :model do
 
         it 'returns :evaluated_with_multiple' do
           expect(token.state).to eq(:evaluated_with_multiple)
+        end
+      end
+    end
+  end
+
+  describe '#evaluatable?' do
+    context 'when the readings are the same for all variants' do
+      context 'when resized: true' do
+        it 'is truthy' do
+          expect(build(:token, :resized, :one_grouped_variant)).to be_evaluatable
+        end
+      end
+
+      context 'when resized: false' do
+        it 'is falsey' do
+          expect(build(:token, :one_grouped_variant)).not_to be_evaluatable
+        end
+      end
+    end
+
+    context 'when there are multiple readings' do
+      context 'when there are no selected/possible variants yet' do
+        it 'is truthy' do
+          expect(build(:token)).to be_evaluatable
+        end
+      end
+
+      context 'when there are already some selected/possible variants' do
+        it 'is truthy' do
+          expect(build(:token, :variant_selected_and_secondary)).to be_evaluatable
         end
       end
     end

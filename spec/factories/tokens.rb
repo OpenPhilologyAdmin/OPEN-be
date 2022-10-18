@@ -85,6 +85,10 @@ FactoryBot.define do
       editorial_remark { nil }
     end
 
+    trait :resized do
+      resized { true }
+    end
+
     after(:build) do |token, evaluator|
       if evaluator.with_empty_values
         token.variants.each { |variant| variant.t = nil }

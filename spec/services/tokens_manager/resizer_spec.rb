@@ -105,9 +105,19 @@ RSpec.describe TokensManager::Resizer, type: :service do
           expect(token.t).to eq(value_before_selected_text)
         end
 
+        it 'leaves resized as false on the first token' do
+          token = project.tokens.first
+          expect(token).not_to be_resized
+        end
+
         it 'saves the selected_text as second token' do
           token = project.tokens.second
           expect(token.t).to eq(selected_text)
+        end
+
+        it 'sets resized as true on the second token' do
+          token = project.tokens.second
+          expect(token).to be_resized
         end
 
         it 'saves the value after the selected_text as a third token' do
@@ -174,6 +184,21 @@ RSpec.describe TokensManager::Resizer, type: :service do
           token = project.tokens.first
           value_before_selected_text = selected_token.t[0]
           expect(token.t).to eq(value_before_selected_text)
+        end
+
+        it 'leaves resized as false on the first token' do
+          token = project.tokens.first
+          expect(token).not_to be_resized
+        end
+
+        it 'uses the selected_text for the token that have multiple readings' do
+          token = project.tokens.second
+          expect(token.t).to eq(selected_text)
+        end
+
+        it 'sets resized as true on the token that have multiple readings' do
+          token = project.tokens.second
+          expect(token).to be_resized
         end
 
         it 'adds before value to the variants of the token that have multiple readings' do
