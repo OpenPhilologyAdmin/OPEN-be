@@ -2,18 +2,33 @@
 
 module TokensManager
   class Resizer
-    def initialize(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:)
-      @params = Params.new(project:, selected_text:, selected_token_ids:, tokens_with_offsets:)
-      @user   = user
+    def initialize(project:, user:, params:)
+      @params = Params.new(
+        project:,
+        selected_text:       params[:selected_text],
+        selected_token_ids:  params[:selected_token_ids],
+        tokens_with_offsets: params[:tokens_with_offsets]
+      )
+      @user = user
     end
 
-    def self.perform(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:)
-      new(project:, user:, selected_text:, selected_token_ids:, tokens_with_offsets:).perform
+    def self.perform(project:, user:, params:)
+      new(project:, user:, params:).perform
     end
 
     def perform
-      update_tokens
-      update_last_editor
+      if params.valid?
+        perform_updates
+        result.success = true
+      end
+      result
+    end
+
+    def result
+      @result ||= Result.new(
+        success: false,
+        params:
+      )
     end
 
     private
@@ -21,6 +36,11 @@ module TokensManager
     attr_reader :params, :user
 
     delegate :project, :selected_tokens, to: :params
+
+    def perform_updates
+      update_tokens
+      update_last_editor
+    end
 
     def update_tokens
       prepared_tokens = Preparer.perform(params:)

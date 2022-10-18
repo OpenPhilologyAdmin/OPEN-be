@@ -1484,6 +1484,89 @@ paths:
                       "$ref": "#/components/schemas/editorial_remark"
                   required:
                   - variants
+  "/api/v1/projects/{project_id}/tokens/resize":
+    patch:
+      summary: Update the width of selected tokens
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Uses given params to calculate new tokens. <br>If one of the selected
+        tokens had multiple possible readings, then their values be updated using
+        the selected_text. The selections will be preserved. <br>The number of tokens
+        in the project may be changed by this operation.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      responses:
+        '200':
+          description: Changes saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: The selected tokens have been successfully updated.
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Given data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: object
+                  properties:
+                    selected_text:
+                      type: string
+                      description: The selected text value. Must match the text of
+                        all selected tokens or be part of it.
+                    selected_token_ids:
+                      type: array
+                      items:
+                        type: integer
+                        description: IDs of the selected tokens. All tokens must belong
+                          to the given project.The given tokens must be next to each
+                          other in the constituted text.
+                    tokens_with_offsets:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          offset:
+                            type: integer
+                            description: Offset value. Must be a 0 or a positive integer.
+                          token_id:
+                            type: integer
+                            description: ID of the token for the given offset. The
+                              token ID must be also included in :selected_token_ids
+                  required:
+                  - selected_text
+                  - selected_token_ids
+                  - tokens_with_offsets
   "/api/v1/users":
     get:
       summary: Retrieves list of users
