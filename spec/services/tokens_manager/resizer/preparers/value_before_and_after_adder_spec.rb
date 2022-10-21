@@ -113,7 +113,7 @@ RSpec.describe TokensManager::Resizer::Preparers::ValueBeforeAndAfterAdder, type
     end
 
     context 'when there are some placeholders' do
-      let(:placeholder) { FormattableT::EMPTY_VALUE_PLACEHOLDER }
+      let(:placeholder) { FormattableT::NIL_VALUE_PLACEHOLDER }
       let(:value_before) { Faker::Lorem.word }
       let(:value_after) { Faker::Lorem.word }
       let(:service) do

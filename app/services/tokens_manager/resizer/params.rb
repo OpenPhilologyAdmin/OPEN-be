@@ -42,6 +42,12 @@ module TokensManager
         @selected_multiple_readings_tokens ||= selected_tokens.reject(&:one_grouped_variant?)
       end
 
+      def multiple_readings_token_offsets
+        @multiple_readings_token_offsets ||= tokens_with_offsets.select do |token_with_offset|
+          token_with_offset[:token_id] == selected_multiple_readings_token.id
+        end
+      end
+
       def validates_selected_text
         return if selected_tokens.blank?
         return if full_text_of_selected_tokens.include?(selected_text)
@@ -78,6 +84,7 @@ module TokensManager
 
         validates_offsets_of_tokens_with_offsets
         validates_token_ids_of_tokens_with_offsets
+        validate_offsets_of_selected_multiple_readings_token
       end
 
       def validates_offsets_of_tokens_with_offsets
@@ -96,6 +103,29 @@ module TokensManager
         return if (offset_token_ids - selected_token_ids).empty?
 
         errors.add(:tokens_with_offsets, :invalid_token_ids)
+      end
+
+      def validate_offsets_of_selected_multiple_readings_token
+        return unless multiple_readings_token_offset_given?
+
+        return if multiple_readings_token_offsets_valid?
+
+        errors.add(:tokens_with_offsets, :multiple_readings_token_cannot_be_divided)
+      end
+
+      def multiple_readings_token_offset_given?
+        return false if selected_multiple_readings_token.nil?
+
+        multiple_readings_token_offsets.any?
+      end
+
+      def multiple_readings_token_offsets_valid?
+        start_of_token_offset = 0
+        end_of_token_offset = selected_multiple_readings_token.t.size
+        allowed_offsets = [start_of_token_offset, end_of_token_offset]
+        multiple_readings_token_offsets.all? do |token_with_offset|
+          allowed_offsets.include?(token_with_offset[:offset])
+        end
       end
     end
   end

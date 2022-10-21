@@ -32,6 +32,7 @@ en:
             tokens_with_offsets:
               invalid_token_ids: token ids do not match the given selected_token_ids
               invalid_offsets: offsets should be either 0 or a positive integer
+              multiple_readings_token_cannot_be_divided: multiple readings token cannot be divided into two tokens
     attributes:
       token_editorial_remark:
         t: Content

@@ -273,6 +273,38 @@ RSpec.describe TokensManager::Resizer::Params, type: :model do
           expect(resource.errors[:tokens_with_offsets]).to include(expected_error)
         end
       end
+
+      context 'when user tries to divide multiple readings token' do
+        let(:selected_token2) { create(:token, project:, index: 1) }
+        let(:selected_multiple_readings_token) { selected_token2 }
+        let(:tokens_with_offsets) do
+          [
+            {
+              offset:   1,
+              token_id: selected_token1.id
+            },
+            {
+              offset:   selected_token2.t.size - 2,
+              token_id: selected_token2.id
+            }
+          ]
+        end
+        let(:expected_error) do
+          I18n.t(
+            'activemodel.errors.models.tokens_manager/resizer/params.attributes.' \
+            'tokens_with_offsets.multiple_readings_token_cannot_be_divided'
+          )
+        end
+
+        it 'is not valid' do
+          expect(resource).not_to be_valid
+        end
+
+        it 'assigns correct error to the field' do
+          resource.valid?
+          expect(resource.errors[:tokens_with_offsets]).to include(expected_error)
+        end
+      end
     end
   end
 end
