@@ -26,6 +26,8 @@ class User < ApplicationRecord
   has_many :project_roles, dependent: :destroy
   has_many :comments, dependent: :destroy
 
+  belongs_to :last_edited_project, class_name: 'Project', optional: true
+
   def account_approved?
     approved_at.present?
   end
