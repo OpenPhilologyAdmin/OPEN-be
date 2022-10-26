@@ -15,11 +15,8 @@ module TokensManager
         end
 
         def perform
-          ValueBeforeAndAfterAdder.perform(
-            token:,
-            value_before: value_before_token,
-            value_after:  value_after_token
-          )
+          add_before_and_after_value
+          token.resized = true
           token
         end
 
@@ -44,6 +41,14 @@ module TokensManager
             selected_tokens:,
             value_before_selected_text:,
             selected_text:
+          )
+        end
+
+        def add_before_and_after_value
+          ValueBeforeAndAfterAdder.perform(
+            token:,
+            value_before: value_before_token,
+            value_after:  value_after_token
           )
         end
       end

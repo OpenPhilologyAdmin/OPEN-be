@@ -5,7 +5,7 @@ module TokensManager
     module Preparers
       module Concerns
         module WithoutPlaceholders
-          PLACEHOLDER = FormattableT::EMPTY_VALUE_PLACEHOLDER
+          PLACEHOLDER = FormattableT::NIL_VALUE_PLACEHOLDER
           extend ActiveSupport::Concern
 
           private

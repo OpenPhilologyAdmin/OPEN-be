@@ -36,10 +36,22 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenFromValue, type: :service
       it 'generates the grouped variants with the default generator' do
         expect(token.grouped_variants).to eq(generate_grouped_variants(token:))
       end
+
+      it 'by default sets resized to false' do
+        expect(token).not_to be_resized
+      end
+
+      context 'when resized: true' do
+        let(:service) { described_class.new(value:, project:, resized: true) }
+
+        it 'sets resized to true' do
+          expect(token).to be_resized
+        end
+      end
     end
 
     context 'when the given value does include placeholders' do
-      let(:placeholder) {  FormattableT::EMPTY_VALUE_PLACEHOLDER }
+      let(:placeholder) {  FormattableT::NIL_VALUE_PLACEHOLDER }
       let(:value) { "Lorem #{placeholder} ipsum#{placeholder}" }
       let(:expected_t) { 'Lorem  ipsum' }
 
@@ -62,6 +74,18 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenFromValue, type: :service
 
       it 'generates the grouped variants with the default generator' do
         expect(token.grouped_variants).to eq(generate_grouped_variants(token:))
+      end
+
+      it 'by default sets resized to false' do
+        expect(token).not_to be_resized
+      end
+
+      context 'when resized: true' do
+        let(:service) { described_class.new(value:, project:, resized: true) }
+
+        it 'sets resized to true' do
+          expect(token).to be_resized
+        end
       end
     end
   end

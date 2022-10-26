@@ -2,6 +2,7 @@
 
 require 'swagger_helper'
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
   let(:user) { create(:user, :admin, :approved) }
   let(:project) { create(:project) }
@@ -400,4 +401,199 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
       end
     end
   end
+
+  path '/api/v1/projects/{project_id}/tokens/resize' do
+    patch('Update the width of selected tokens') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Uses given params to calculate new tokens. <br>' \
+                  'If one of the selected tokens had multiple possible readings, ' \
+                  'then their values be updated using the selected_text. The selections will be preserved. <br>' \
+                  'The number of tokens in the project may be changed by this operation.'
+
+      parameter name:        :project_id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of the project'
+
+      parameter name: :token, in: :body, schema: {
+        type:       :object,
+        properties: {
+          token: {
+            type:       :object,
+            properties: {
+              selected_text:       {
+                type:        :string,
+                description: 'The selected text value. Must match the text of all selected tokens or be part of it.'
+              },
+              selected_token_ids:  {
+                type:  :array,
+                items: {
+                  type:        :integer,
+                  description: 'IDs of the selected tokens. All tokens must belong to the given project.' \
+                               'The given tokens must be next to each other in the constituted text.'
+                }
+              },
+              tokens_with_offsets: {
+                type:  :array,
+                items: {
+                  type:       :object,
+                  properties: {
+                    offset:   {
+                      type:        :integer,
+                      description: 'Offset value. Must be a 0 or a positive integer.'
+                    },
+                    token_id: {
+                      type:        :integer,
+                      description: 'ID of the token for the given offset. ' \
+                                   'The token ID must be also included in :selected_token_ids'
+                    }
+                  }
+                }
+              }
+            },
+            required:   %w[selected_text selected_token_ids tokens_with_offsets]
+          }
+        }
+      }
+
+      before do
+        selected_token1
+        selected_token2
+        not_selected_token
+      end
+
+      let(:selected_token1) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let(:selected_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
+      let(:not_selected_token) { create(:token, project:, index: 2) }
+
+      let(:selected_text) { "#{selected_token1.t}#{selected_token2.t}" }
+      let(:token) do
+        {
+          token: {
+            selected_text:,
+            selected_token_ids:  [selected_token1.id, selected_token2.id],
+            tokens_with_offsets: [
+              {
+                offset:   0,
+                token_id: selected_token1.id
+              },
+              {
+                offset:   selected_token2.t.size,
+                token_id: selected_token2.id
+              }
+            ]
+          }
+        }
+      end
+
+      response '200', 'Changes saved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('tokens.notifications.tokens_width_updated')
+                 }
+               }
+
+        run_test!
+
+        before { project.reload }
+
+        it 'saves the current user as last_editor of project' do
+          expect(project.last_editor).to eq(user)
+        end
+
+        it 'updates number of project tokens' do
+          expect(project.tokens.size).to eq(2)
+        end
+
+        it 'sets the correct :index of the new token' do
+          new_token = project.tokens.first
+          expect(new_token.index).to eq(0)
+        end
+
+        it 'sets the given selected_text as :t of the new token' do
+          new_token = project.tokens.first
+          expect(new_token.t).to eq(selected_text)
+        end
+
+        it 'sets the given selected_text as :t of the variants of the new token' do
+          new_token = project.tokens.first
+          new_token.variants.each do |variant|
+            expect(variant.t).to eq(selected_text)
+          end
+        end
+
+        it 'sets the given selected_text as :t of the grouped variants of the new token' do
+          new_token = project.tokens.first
+          new_token.grouped_variants.each do |grouped_variant|
+            expect(grouped_variant.t).to eq(selected_text)
+          end
+        end
+
+        it 'updates index of the next not-selected token' do
+          expect(not_selected_token.reload.index).to eq(1)
+        end
+
+        it 'does not update :t of the next not-selected token' do
+          expect(not_selected_token.reload.t).not_to include(selected_text)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+
+      response '422', 'Given data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:token) do
+          {
+            token: {
+              selected_text:       'lorem ipsum',
+              selected_token_ids:  [],
+              tokens_with_offsets: []
+            }
+          }
+        end
+
+        before do
+          allow(TokensManager::Resizer::Preparer).to receive(:perform)
+          allow(TokensManager::Resizer::Processor).to receive(:perform)
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+
+        it 'does not run TokensManager::Resizer::Preparer' do
+          expect(TokensManager::Resizer::Preparer).not_to have_received(:perform)
+        end
+
+        it 'does not run TokensManager::Resizer::Processor' do
+          expect(TokensManager::Resizer::Processor).not_to have_received(:perform)
+        end
+      end
+    end
+  end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

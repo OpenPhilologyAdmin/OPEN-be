@@ -51,6 +51,10 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
+      it 'sets resized to true on the selected text token' do
+        expect(selected_text_token).to be_resized
+      end
+
       it 'adds the beginning of the selected text to the variants of the selected text token' do
         value_before_token = selected_token1.t
         selected_text_token.variants.each do |variant|
@@ -98,6 +102,10 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
+      it 'sets resized to true on the selected text token' do
+        expect(selected_text_token).to be_resized
+      end
+
       it 'adds the end of the selected_text to the variants of the selected text token' do
         value_after_token = selected_token2.t[0]
         selected_text_token.variants.each do |variant|
@@ -125,6 +133,11 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         token = result.second
         value_after_selected_text = selected_token2.t[1..]
         expect(token.t).to eq(value_after_selected_text)
+      end
+
+      it 'leaves resized as false on the second token' do
+        token = result.second
+        expect(token).not_to be_resized
       end
 
       it 'calculates the correct grouped variants for the the second token' do
@@ -163,6 +176,11 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(token.t).to eq(value_before_selected_text)
       end
 
+      it 'leaves resized as false on the first token' do
+        token = result.first
+        expect(token).not_to be_resized
+      end
+
       it 'uses the value before the selected_text for all variants of the first token\'s :t' do
         token = result.first
         value_before_selected_text = selected_token1.t[0]
@@ -175,6 +193,10 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(selected_text_token.t).to eq(selected_text)
       end
 
+      it 'sets resized to true on the selected text token' do
+        expect(selected_text_token).to be_resized
+      end
+
       it 'uses the selected_text for all variants of the first token\'s :t' do
         selected_text_token.variants.each do |variant|
           expect(variant.t).to eq(selected_text)
@@ -185,6 +207,11 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         token = result.last
         value_after_selected_text = selected_token2.t[1..]
         expect(token.t).to eq(value_after_selected_text)
+      end
+
+      it 'leaves resized as false on the third token' do
+        token = result.last
+        expect(token).not_to be_resized
       end
 
       it 'uses the value after the selected_text for all variants of the last token\'s :t' do
@@ -240,8 +267,17 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(token.t).to eq(value_before_selected_text)
       end
 
+      it 'leaves resized as false on the first token' do
+        token = result.first
+        expect(token).not_to be_resized
+      end
+
       it 'uses the selected_text for the second token\'s :t' do
         expect(selected_text_token.t).to eq(selected_text)
+      end
+
+      it 'sets resized to true on the selected text token' do
+        expect(selected_text_token).to be_resized
       end
 
       it 'adds the beginning of the selected text to the variants of the selected text token' do
@@ -261,7 +297,7 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
       end
     end
 
-    context 'when the selected text includes EMPTY_VALUE_PLACEHOLDERs' do
+    context 'when the selected text includes NIL_VALUE_PLACEHOLDERs' do
       let(:selected_text) { "#{selected_token1.t}#{selected_token2.t}#{selected_token3.t[0..1]}" }
       let(:selected_token_ids) { [selected_token1.id, selected_token2.id, selected_token3.id] }
       let(:tokens_with_offsets) do
@@ -287,14 +323,23 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
         expect(result.size).to eq(2)
       end
 
-      it 'uses the selected_text without EMPTY_VALUE_PLACEHOLDER for the first token\'s :t' do
-        expect(selected_text_token.t).to eq(selected_text.tr(FormattableT::EMPTY_VALUE_PLACEHOLDER, ''))
+      it 'uses the selected_text without NIL_VALUE_PLACEHOLDER for the first token\'s :t' do
+        expect(selected_text_token.t).to eq(selected_text.tr(FormattableT::NIL_VALUE_PLACEHOLDER, ''))
+      end
+
+      it 'sets resized to true on the selected text token' do
+        expect(selected_text_token).to be_resized
       end
 
       it 'uses the value after the selected_text for the second token\'s :t' do
         token = result.second
         value_before_selected_text = selected_token3.t[2..]
         expect(token.t).to eq(value_before_selected_text)
+      end
+
+      it 'leaves resized as false on the second token' do
+        token = result.second
+        expect(token).not_to be_resized
       end
 
       it 'adds the end of the selected_text to the variants of the selected text token' do
@@ -310,6 +355,67 @@ RSpec.describe TokensManager::Resizer::Preparer, type: :service do
 
       it 'calculates the correct grouped variants of the second token' do
         token = result.second
+        expect(token.grouped_variants).to eq(generate_grouped_variants(token:))
+      end
+    end
+
+    context 'when one of the new tokens will only include a whitespace' do
+      let(:selected_token1) do
+        create(:token, :one_grouped_variant, one_grouped_variant_value: 'Lorem ipsum ', project:, index: 0)
+      end
+      let(:selected_text) { 'Lorem ipsum' }
+      let(:selected_token_ids) { [selected_token1.id] }
+      let(:tokens_with_offsets) do
+        [
+          {
+            offset:   0,
+            token_id: selected_token1.id
+          },
+          {
+            offset:   11,
+            token_id: selected_token1.id
+          }
+        ]
+      end
+
+      it 'creates two tokens' do
+        expect(result.size).to eq(2)
+      end
+
+      it 'uses the selected_text as a value for the first token' do
+        token = result.first
+        expect(token.t).to eq(selected_text)
+      end
+
+      it 'sets resized to true on the first token' do
+        token = result.first
+        expect(token).to be_resized
+      end
+
+      it 'uses the selected_text as t of all variants of the first token' do
+        token = result.first
+        token.variants.each do |variant|
+          expect(variant.t).to eq(selected_text)
+        end
+      end
+
+      it 'calculates the correct grouped variants of the selected text token' do
+        token = result.first
+        expect(token.grouped_variants).to eq(generate_grouped_variants(token:))
+      end
+
+      it 'uses the remaining whitespace for the second token\'s :t' do
+        token = result.second
+        expect(token.t).to eq(' ')
+      end
+
+      it 'leaves resized as false on the second token' do
+        token = result.second
+        expect(token).not_to be_resized
+      end
+
+      it 'calculates the correct grouped variants of the second token' do
+        token = result.last
         expect(token.grouped_variants).to eq(generate_grouped_variants(token:))
       end
     end

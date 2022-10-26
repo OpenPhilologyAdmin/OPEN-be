@@ -74,15 +74,21 @@ FactoryBot.define do
     end
 
     trait :one_grouped_variant do
-      value = Faker::Lorem.sentence
+      transient do
+        one_grouped_variant_value { nil || Faker::Lorem.sentence }
+      end
 
       variants do
         witnesses.map do |witness|
-          build(:token_variant, witness: witness.siglum, t: value)
+          build(:token_variant, witness: witness.siglum, t: one_grouped_variant_value)
         end
       end
 
       editorial_remark { nil }
+    end
+
+    trait :resized do
+      resized { true }
     end
 
     after(:build) do |token, evaluator|

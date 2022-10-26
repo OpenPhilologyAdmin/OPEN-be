@@ -21,6 +21,18 @@ en:
           attributes:
             witness:
               inclusion: is not on the project witnesses list
+        tokens_manager/resizer/params:
+          attributes:
+            selected_text:
+              does_not_match_full_text_of_selected_tokens: does not match the text of the selected tokens
+            selected_token_ids:
+              tokens_not_found: does not match the tokens of the given project
+              more_than_one_multiple_readings_token: the selection can include only one token with multiple readings
+              tokens_not_in_order: selected tokens are not in order (some tokens are missing)
+            tokens_with_offsets:
+              invalid_token_ids: token ids do not match the given selected_token_ids
+              invalid_offsets: offsets should be either 0 or a positive integer
+              multiple_readings_token_cannot_be_divided: multiple readings token cannot be divided into two tokens
     attributes:
       token_editorial_remark:
         t: Content
@@ -49,7 +61,10 @@ en:
       login_required: Login required.
       not_found: Record not found.
     notifications:
-      deleted: 'Record successfully deleted'
+      deleted: Record successfully deleted
+  tokens:
+    notifications:
+      tokens_width_updated: The selected tokens have been successfully updated.
   importer:
     errors:
       unsupported_file_format: The file format is not supported.

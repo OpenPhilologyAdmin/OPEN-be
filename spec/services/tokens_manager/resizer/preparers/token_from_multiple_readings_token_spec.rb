@@ -81,6 +81,10 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenFromMultipleReadingsToken
           "#{value_before_token}#{selected_multiple_readings_token.editorial_remark.t}#{value_after_token}"
         )
       end
+
+      it 'sets resized to true' do
+        expect(token).to be_resized
+      end
     end
 
     context 'when there are some possible/selected variants in the source multiple readings token' do
@@ -141,6 +145,10 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenFromMultipleReadingsToken
         expect(token.editorial_remark.t).to eq(
           "#{value_before_token}#{selected_multiple_readings_token.editorial_remark.t}#{value_after_token}"
         )
+      end
+
+      it 'sets resized to true' do
+        expect(token).to be_resized
       end
     end
   end

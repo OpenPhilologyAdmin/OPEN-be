@@ -6,14 +6,14 @@ module TokensManager
       class TokenFromValue
         include TokensManager::Resizer::Preparers::Concerns::WithoutPlaceholders
 
-        def initialize(value:, project:)
+        def initialize(value:, project:, resized: false)
           @value   = without_placeholders(value:)
           @project = project
-          @token   = project.tokens.new
+          @token   = project.tokens.new(resized:)
         end
 
-        def self.perform(value:, project:)
-          new(value:, project:).perform
+        def self.perform(value:, project:, resized: false)
+          new(value:, project:, resized:).perform
         end
 
         def perform

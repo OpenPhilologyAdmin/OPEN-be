@@ -17,6 +17,10 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def resize?
+    approved_admin?
+  end
+
   def significant_variants?
     index?
   end
@@ -35,6 +39,16 @@ class TokenPolicy < ApplicationPolicy
   def permitted_attributes_for_update_grouped_variants
     [
       grouped_variants: %i[id selected possible]
+    ]
+  end
+
+  def permitted_attributes_for_resize
+    [
+      :selected_text,
+      {
+        selected_token_ids:  [],
+        tokens_with_offsets: %i[offset token_id]
+      }
     ]
   end
 

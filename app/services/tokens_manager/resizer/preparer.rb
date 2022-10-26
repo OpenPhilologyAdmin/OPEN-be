@@ -43,18 +43,26 @@ module TokensManager
       end
 
       def token_from_value(value)
-        return if value.blank?
+        # Use .empty? to ensure that new token will either have text
+        # or a whitespaces. Empty string '' will be ignored.
+        return if value.empty?
 
         Preparers::TokenFromValue.perform(value:, project:)
       end
 
       def token_from_selected_text
-        return token_from_value(selected_text) if selected_multiple_readings_token.blank?
-
-        Preparers::TokenFromMultipleReadingsToken.perform(
-          params:,
-          value_before_selected_text:
-        )
+        if selected_multiple_readings_token.blank?
+          Preparers::TokenFromValue.perform(
+            value:   selected_text,
+            project:,
+            resized: true
+          )
+        else
+          Preparers::TokenFromMultipleReadingsToken.perform(
+            params:,
+            value_before_selected_text:
+          )
+        end
       end
     end
   end

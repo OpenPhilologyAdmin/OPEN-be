@@ -42,6 +42,26 @@ module V1
       handle_token_update(result)
     end
 
+    def resize
+      authorize Token, :resize?
+      result =  TokensManager::Resizer.perform(
+        project: @project,
+        user:    current_user,
+        params:  permitted_attributes(Token)
+      )
+
+      if result.success?
+        render(
+          json:   {
+            message: I18n.t('tokens.notifications.tokens_width_updated')
+          },
+          status: :ok
+        )
+      else
+        respond_with_record_errors(result.params, :unprocessable_entity)
+      end
+    end
+
     private
 
     def records
