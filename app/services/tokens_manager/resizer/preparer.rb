@@ -43,7 +43,9 @@ module TokensManager
       end
 
       def token_from_value(value)
-        return if value.blank?
+        # Use .empty? to ensure that new token will either have text
+        # or a whitespaces. Empty string '' will be ignored.
+        return if value.empty?
 
         Preparers::TokenFromValue.perform(value:, project:)
       end

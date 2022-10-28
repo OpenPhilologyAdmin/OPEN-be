@@ -10,7 +10,7 @@ module WitnessesManager
 
       def add_witness
         add_variant
-        generate_grouped_variants
+        update_grouped_variants
       end
 
       private
@@ -21,8 +21,9 @@ module WitnessesManager
         token.variants << TokenVariant.new(witness: siglum, t: token.current_variant.t)
       end
 
-      def generate_grouped_variants
-        token.grouped_variants = TokensManager::GroupedVariantsGenerator.perform(token:)
+      def update_grouped_variants
+        grouped_variant = token.grouped_variants.find { |record| record.t == token.current_variant.t }
+        grouped_variant.witnesses << siglum if grouped_variant.present?
       end
     end
   end

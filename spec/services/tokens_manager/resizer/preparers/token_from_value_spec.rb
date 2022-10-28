@@ -51,7 +51,7 @@ RSpec.describe TokensManager::Resizer::Preparers::TokenFromValue, type: :service
     end
 
     context 'when the given value does include placeholders' do
-      let(:placeholder) {  FormattableT::EMPTY_VALUE_PLACEHOLDER }
+      let(:placeholder) {  FormattableT::NIL_VALUE_PLACEHOLDER }
       let(:value) { "Lorem #{placeholder} ipsum#{placeholder}" }
       let(:expected_t) { 'Lorem  ipsum' }
 

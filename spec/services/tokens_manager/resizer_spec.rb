@@ -234,10 +234,6 @@ RSpec.describe TokensManager::Resizer, type: :service do
         it 'returns result with success: true' do
           expect(result).to be_success
         end
-
-        it 'returns result with params that does not have any errors' do
-          expect(result.params).to be_valid
-        end
       end
       # rubocop:enable RSpec/MultipleMemoizedHelpers
     end
