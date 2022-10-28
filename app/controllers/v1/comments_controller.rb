@@ -73,8 +73,8 @@ module V1
     end
 
     def edit_tracking_info
-      update_last_editor(user:)
-      update_last_edited_project(project:)
+      update_last_editor(user:, project:)
+      update_last_edited_project(project:, user:)
     end
   end
 end
