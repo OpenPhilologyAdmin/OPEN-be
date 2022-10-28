@@ -73,8 +73,10 @@ module V1
     end
 
     def edit_tracking_info
-      update_last_editor(user:, project:)
-      update_last_edited_project(project:, user:)
+      project = Project.find(params[:project_id])
+
+      update_last_editor(user: current_user, project:)
+      update_last_edited_project(project:, user: current_user)
     end
   end
 end

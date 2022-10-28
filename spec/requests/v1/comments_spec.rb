@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'v1/comments', type: :request do
+RSpec.describe 'v1/comments' do
   path '/api/v1/projects/{project_id}/tokens/{token_id}/comments' do
     let(:user) { create(:user, :admin, :approved) }
     let(:user_id) { user.id }
@@ -180,6 +180,14 @@ RSpec.describe 'v1/comments', type: :request do
         it 'updates a comment' do
           expect(comment.reload.body).to eq('This is a new body')
         end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
       end
 
       response '401', 'Login required' do
@@ -244,6 +252,14 @@ RSpec.describe 'v1/comments', type: :request do
 
         it 'deletes a comment' do
           expect(comment.reload.deleted).to be(true)
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
         end
       end
 
