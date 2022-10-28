@@ -8,17 +8,15 @@ RSpec.describe EditTrackerHelper do
 
   describe '#update_last_editor' do
     it 'updates last editor' do
-      expect(lambda {
-        helper.update_last_editor(user:)
-      }).to(change(project, :last_editor)).to { user.id }
+      helper.update_last_editor(user:, project:)
+      expect(project.last_editor).to eq(user)
     end
   end
 
   describe '#update_last_edited_project' do
     it 'updates last edited project' do
-      expect(lambda {
-        helper.update_last_edited_project(project:)
-      }).to(change(user, :last_edited_project)).to { project.id }
+      helper.update_last_edited_project(project:, user:)
+      expect(user.last_edited_project).to eq(project)
     end
   end
 end
