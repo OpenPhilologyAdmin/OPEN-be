@@ -2,7 +2,7 @@
 
 module TokensManager
   class VariantsUpdater < Updater
-    AUTO_SELECTED_EDITORIAL_REMARKS = ['em.', 'conj.'].freeze
+    AUTO_SELECTED_EDITORIAL_REMARKS = %w[em. conj.].freeze
 
     delegate :will_save_change_to_variants?, :will_save_change_to_editorial_remark?, to: :token
 
