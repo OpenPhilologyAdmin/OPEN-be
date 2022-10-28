@@ -85,6 +85,10 @@ RSpec.describe TokensManager::Resizer, type: :service do
           expect(project.last_editor).to eq(user)
         end
 
+        it 'saves project as the last edited project by user' do
+          expect(user.last_edited_project).to eq(project)
+        end
+
         it 'removes the selected tokens' do
           removed_tokens_ids = [selected_token.id]
           expect(Token.where(id: removed_tokens_ids)).to be_empty
