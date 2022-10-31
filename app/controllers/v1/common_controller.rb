@@ -3,6 +3,7 @@
 module V1
   class CommonController < ::ApplicationController
     include ApiResponders
+    include EditTrackerHelper
 
     respond_to :json
 

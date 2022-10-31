@@ -81,6 +81,14 @@ RSpec.describe 'v1/comments' do
         schema '$ref' => '#/components/schemas/comment'
 
         run_test!
+
+        it 'updates the user as the last editor of project' do
+          expect(token.reload.project.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(token.project)
+        end
       end
 
       response '422', 'Comment data invalid' do

@@ -3,9 +3,8 @@
 module V1
   class CommentsController < CommonController
     include WithProject
-    include EditTrackerHelper
 
-    before_action :edit_tracking_info, only: %i[create update destroy]
+    after_action :update_tracking_info, except: :index
 
     def index
       authorize Comment, :index?
@@ -72,7 +71,7 @@ module V1
       permitted_attributes(Comment)
     end
 
-    def edit_tracking_info
+    def update_tracking_info
       project = Project.find(params[:project_id])
 
       update_last_editor(user: current_user, project:)

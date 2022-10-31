@@ -41,17 +41,11 @@ module TokensManager
 
     def perform_updates
       update_tokens
-      edit_tracking_info
     end
 
     def update_tokens
       prepared_tokens = Preparer.perform(params:)
       Processor.perform(project:, selected_tokens:, prepared_tokens:)
-    end
-
-    def edit_tracking_info
-      update_last_editor(user:, project:)
-      update_last_edited_project(project:, user:)
     end
   end
 end
