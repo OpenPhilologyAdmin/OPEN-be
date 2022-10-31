@@ -114,7 +114,7 @@ RSpec.describe 'v1/projects' do
       response '200', 'Project can be created' do
         let(:Authorization) { authorization_header_for(user) }
         let(:encoded_source_file) do
-          Base64.encode64(File.read(read.join('spec/fixtures/sample_project.txt')))
+          Base64.encode64(File.read('spec/fixtures/sample_project.txt'))
         end
         let(:source_file) do
           {
