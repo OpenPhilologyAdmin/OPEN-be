@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 # rubocop:disable RSpec/MultipleMemoizedHelpers
-RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
+RSpec.describe 'v1/projects/{project_id}/tokens' do
   let(:user) { create(:user, :admin, :approved) }
   let(:project) { create(:project) }
   let(:project_id) { project.id }
@@ -234,6 +234,14 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           expect(updated_grouped_variant).not_to be_selected
           expect(updated_grouped_variant).to be_possible
         end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
       end
 
       response '401', 'Login required' do
@@ -365,6 +373,14 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
           token[:token][:editorial_remark].each do |key, value|
             expect(record.editorial_remark.send(key)).to eq(value)
           end
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
         end
       end
 
@@ -544,6 +560,14 @@ RSpec.describe 'v1/projects/{project_id}/tokens', type: :request do
 
         it 'does not update :t of the next not-selected token' do
           expect(not_selected_token.reload.t).not_to include(selected_text)
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
         end
       end
 
