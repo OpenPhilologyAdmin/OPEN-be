@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'v1/users', type: :request do
+RSpec.describe 'v1/users' do
   path '/api/v1/users' do
     let(:user) { create(:user, :admin, :approved) }
 
@@ -12,7 +12,7 @@ RSpec.describe 'v1/users', type: :request do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Allows retrieving all users list. The users are sorted by the ' \
-                  'registration date with the most records reords first.'
+                  'registration date with the most records records first.'
 
       response '200', 'Users can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
@@ -220,6 +220,61 @@ RSpec.describe 'v1/users', type: :request do
         let(:Authorization) { nil }
 
         schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/users/{id}/last_edited_project' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:id) { user.id }
+
+    get('Retrieves last edited project id by user') do
+      tags 'Users'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                description: 'User ID',
+                required:    true
+
+      response '200', 'Last edited project id can be retrieved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 last_edited_project_id: {
+                   type:     :integer,
+                   nullable: true,
+                   example:  123
+                 }
+               }
+
+        run_test!
+
+        it 'returns last edited project id by user' do
+          parsed_response = JSON.parse(response.body)
+          expect(parsed_response[:last_edited_project_id]).to eq(user.last_edited_project_id)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Record not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'record-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
 
         run_test!
       end

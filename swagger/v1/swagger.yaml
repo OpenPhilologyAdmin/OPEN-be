@@ -1575,7 +1575,7 @@ paths:
       security:
       - bearer: []
       description: Allows retrieving all users list. The users are sorted by the registration
-        date with the most records reords first.
+        date with the most records records first.
       responses:
         '200':
           description: Users can be retrieved
@@ -1703,6 +1703,44 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
+  "/api/v1/users/{id}/last_edited_project":
+    get:
+      summary: Retrieves last edited project id by user
+      tags:
+      - Users
+      security:
+      - bearer: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        description: User ID
+        required: true
+      responses:
+        '200':
+          description: Last edited project id can be retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  last_edited_project_id:
+                    type: integer
+                    nullable: true
+                    example: 123
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/projects/{project_id}/witnesses":
     get:
       summary: Retrieves witnesses of the specified project

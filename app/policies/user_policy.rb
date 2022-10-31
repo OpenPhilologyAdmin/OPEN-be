@@ -17,6 +17,10 @@ class UserPolicy < ApplicationPolicy
     approved_admin? && record == user
   end
 
+  def last_edited_project?
+    approved_admin?
+  end
+
   def permitted_attributes_for_create
     %i[
       name

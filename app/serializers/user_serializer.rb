@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UserSerializer
-  RECORD_ATTRIBUTES = %i[id email name role zip_code].freeze
+  RECORD_ATTRIBUTES = %i[id email name role zip_code last_edited_project_id].freeze
   RECORD_METHODS    = %i[registration_date account_approved].freeze
 
   def initialize(record:)

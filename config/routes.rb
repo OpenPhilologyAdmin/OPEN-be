@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       resources :users, only: %i[index create] do
         patch 'approve', on: :member
         get 'me', on: :collection
+        get 'last_edited_project', on: :member
       end
 
       resources :editorial_remarks, only: %i[index]

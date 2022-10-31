@@ -41,5 +41,14 @@ module V1
         json: UserSerializer.new(record:)
       )
     end
+
+    def last_edited_project
+      record = User.find(params[:id])
+      authorize record, :last_edited_project?
+
+      render(
+        json: record.as_json(only: [:last_edited_project_id]), status: :ok
+      )
+    end
   end
 end
