@@ -2,8 +2,6 @@
 
 module WitnessesManager
   class Creator
-    include EditTrackerHelper
-
     def initialize(project:, user:, params: {})
       @project = project
       @user    = user
@@ -12,8 +10,6 @@ module WitnessesManager
 
     def perform
       add_witness_to_project
-      update_last_editor(user:, project:)
-      update_last_edited_project(project:, user:)
       add_witness_to_tokens
       Result.new(
         success: project.save,
