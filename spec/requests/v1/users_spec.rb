@@ -12,7 +12,7 @@ RSpec.describe 'v1/users' do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Allows retrieving all users list. The users are sorted by the ' \
-                  'registration date with the most records records first.'
+                  'registration date with the most records first.'
 
       response '200', 'Users can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
