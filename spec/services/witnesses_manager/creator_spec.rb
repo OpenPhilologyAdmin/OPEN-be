@@ -46,14 +46,6 @@ RSpec.describe WitnessesManager::Creator, type: :service do
         expect(result.witness).to eq(witness)
       end
 
-      it 'updates the user as the last editor of project' do
-        expect(project.last_editor).to eq(user)
-      end
-
-      it 'updates project as the last edited project by user' do
-        expect(user.last_edited_project).to eq(project)
-      end
-
       it 'runs TokensProcessor' do
         expect(described_class::TokensProcessor).to have_received(:new).with(
           tokens: project.tokens,
