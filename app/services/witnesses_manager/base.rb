@@ -2,8 +2,6 @@
 
 module WitnessesManager
   class Base
-    include EditTrackerHelper
-
     def initialize(project:, siglum:, user:, params: {})
       @project = project
       @siglum  = siglum
