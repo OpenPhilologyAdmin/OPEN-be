@@ -11,14 +11,6 @@ RSpec.describe WitnessesManager::Base, type: :service do
   let(:service) { described_class.new(project:, siglum:, user:, params:) }
 
   describe '#initialize' do
-    it 'updates user as the last editor of the project' do
-      expect(service.instance_variable_get('@project').last_editor).to eq(user)
-    end
-
-    it 'updates project as last edited project by user' do
-      expect(service.instance_variable_get('@user').last_edited_project).to eq(project)
-    end
-
     context 'when witness with given siglum can be found' do
       it 'sets the @witness' do
         expect(service.instance_variable_get('@witness')).to eq(expected_witness)
