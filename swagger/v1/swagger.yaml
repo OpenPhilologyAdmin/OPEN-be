@@ -42,6 +42,8 @@ components:
           format: date_time
           description: Registration date in ISO 8601 format
           example: '2022-06-30T00:00:00.000+02:00'
+        last_edited_project_id:
+          type: integer
       required:
       - email
       - name
@@ -1575,7 +1577,7 @@ paths:
       security:
       - bearer: []
       description: Allows retrieving all users list. The users are sorted by the registration
-        date with the most records records first.
+        date with the most records first.
       responses:
         '200':
           description: Users can be retrieved
