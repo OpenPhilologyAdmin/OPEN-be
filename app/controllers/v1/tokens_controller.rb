@@ -4,6 +4,8 @@ module V1
   class TokensController < CommonController
     include WithProject
 
+    after_action :update_tracking_info, except: %i[index show]
+
     def index
       authorize Token, :index?
 
@@ -84,6 +86,11 @@ module V1
       else
         respond_with_record_errors(result.token, :unprocessable_entity)
       end
+    end
+
+    def update_tracking_info
+      update_last_editor(user: current_user, project: @project)
+      update_last_edited_project(project: @project, user: current_user)
     end
   end
 end

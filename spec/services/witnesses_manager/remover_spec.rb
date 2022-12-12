@@ -50,9 +50,5 @@ RSpec.describe WitnessesManager::Remover, type: :service do
                                                                                                siglum:)
       expect(project_processor_mock).to have_received(:remove_witness!)
     end
-
-    it 'saves the user as the last editor of project' do
-      expect(project.last_editor).to eq(user)
-    end
   end
 end

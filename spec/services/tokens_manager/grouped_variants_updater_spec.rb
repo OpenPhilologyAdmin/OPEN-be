@@ -41,10 +41,6 @@ RSpec.describe TokensManager::GroupedVariantsUpdater, type: :service do
         end
       end
 
-      it 'sets the current user as last_editor of project' do
-        expect(token.project.last_editor).to eq(user)
-      end
-
       it 'returns success result' do
         expect(result).to be_success
       end

@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'v1/projects', type: :request do
+RSpec.describe 'v1/projects' do
   path '/api/v1/projects' do
     let(:user) { create(:user, :admin, :approved) }
     get('Retrieves list of projects') do
@@ -114,7 +114,7 @@ RSpec.describe 'v1/projects', type: :request do
       response '200', 'Project can be created' do
         let(:Authorization) { authorization_header_for(user) }
         let(:encoded_source_file) do
-          Base64.encode64(File.read(Rails.root.join('spec/fixtures/sample_project.txt')))
+          Base64.encode64(File.read('spec/fixtures/sample_project.txt'))
         end
         let(:source_file) do
           {
@@ -141,6 +141,14 @@ RSpec.describe 'v1/projects', type: :request do
         it 'queues importing project data' do
           expect(ImportProjectJob).to have_received(:perform_now)
             .with(Project.last.id, user.id, default_witness_name)
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(Project.last.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(Project.last)
         end
       end
 
@@ -275,14 +283,18 @@ RSpec.describe 'v1/projects', type: :request do
 
         before { record.reload }
 
-        it 'saves the current user as last_editor of project' do
-          expect(record.last_editor).to eq(user)
-        end
-
         it 'updates the project' do
           project[:project].each do |key, value|
             expect(record.send(key)).to eq(value)
           end
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(record.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(record)
         end
       end
 

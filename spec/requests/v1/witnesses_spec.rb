@@ -2,10 +2,11 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
+RSpec.describe 'v1/projects/{project_id}/witnesses' do
   path '/api/v1/projects/{project_id}/witnesses' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:project_id) { create(:project).id }
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
 
     get('Retrieves witnesses of the specified project') do
       tags 'Projects'
@@ -87,6 +88,14 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         let(:Authorization) { authorization_header_for(user) }
 
         schema '$ref' => '#/components/schemas/witness'
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
 
         run_test!
       end
@@ -188,6 +197,14 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
         it 'runs the WitnessesManager::Updater' do
           expect(WitnessesManager::Updater).to have_received(:perform)
         end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
       end
 
       response '401', 'Login required' do
@@ -275,8 +292,12 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
           )
         end
 
-        it 'saves the current user as last_editor of project' do
+        it 'updates the user as the last editor of project' do
           expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
         end
       end
 
@@ -298,6 +319,14 @@ RSpec.describe 'v1/projects/{project_id}/witnesses', type: :request do
 
         it 'does not run the WitnessesManager::Remover' do
           expect(WitnessesManager::Remover).not_to have_received(:perform)
+        end
+
+        it 'does not update the user as the last editor of project' do
+          expect(project.reload.last_editor).to be_nil
+        end
+
+        it 'does not update project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to be_nil
         end
       end
 

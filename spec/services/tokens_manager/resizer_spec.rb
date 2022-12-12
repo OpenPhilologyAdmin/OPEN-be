@@ -50,10 +50,6 @@ RSpec.describe TokensManager::Resizer, type: :service do
       it 'does not run TokensManager::Resizer::Processor' do
         expect(TokensManager::Resizer::Processor).not_to have_received(:perform)
       end
-
-      it 'does not update last editor of the project' do
-        expect(project.reload.last_editor).to be_nil
-      end
     end
 
     context 'when given params are valid' do
@@ -79,10 +75,6 @@ RSpec.describe TokensManager::Resizer, type: :service do
           1.upto(5) { |index| create(:token, project:, index:) }
           result
           project.reload
-        end
-
-        it 'saves the user as the last editor of the project' do
-          expect(project.last_editor).to eq(user)
         end
 
         it 'removes the selected tokens' do
@@ -159,10 +151,6 @@ RSpec.describe TokensManager::Resizer, type: :service do
           2.upto(5) { |index| create(:token, project:, index:) }
           result
           project.reload
-        end
-
-        it 'saves the user as the last editor of the project' do
-          expect(project.last_editor).to eq(user)
         end
 
         it 'removes all selected tokens' do

@@ -2,9 +2,10 @@
 
 module TokensManager
   class Updater < Base
+    include EditTrackerHelper
+
     def perform
       success = update_token
-      update_last_editor if success
 
       Result.new(success:, token:)
     end
@@ -15,10 +16,6 @@ module TokensManager
 
     def update_token
       raise NotImplementedError
-    end
-
-    def update_last_editor
-      project.update(last_editor: user)
     end
   end
 end

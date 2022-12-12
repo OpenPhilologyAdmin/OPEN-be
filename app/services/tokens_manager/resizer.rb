@@ -2,6 +2,8 @@
 
 module TokensManager
   class Resizer
+    include EditTrackerHelper
+
     def initialize(project:, user:, params:)
       @params = Params.new(
         project:,
@@ -39,16 +41,11 @@ module TokensManager
 
     def perform_updates
       update_tokens
-      update_last_editor
     end
 
     def update_tokens
       prepared_tokens = Preparer.perform(params:)
       Processor.perform(project:, selected_tokens:, prepared_tokens:)
-    end
-
-    def update_last_editor
-      project.update(last_editor: user)
     end
   end
 end

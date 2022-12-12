@@ -70,10 +70,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
       end
-
-      it 'saves the user as the last editor of project' do
-        expect(project.last_editor).to eq(user)
-      end
     end
 
     context 'when the edited witness is not set as default' do
@@ -102,10 +98,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
       end
-
-      it 'saves the user as the last editor of project' do
-        expect(project.last_editor).to eq(user)
-      end
     end
 
     context 'when the edited witness was deselected from being the default one' do
@@ -131,10 +123,6 @@ RSpec.describe WitnessesManager::Updater, type: :service do
 
       it 'returns edited witness in the result' do
         expect(result.witness).to eq(edited_witness)
-      end
-
-      it 'saves the user as the last editor of project' do
-        expect(project.last_editor).to eq(user)
       end
     end
 

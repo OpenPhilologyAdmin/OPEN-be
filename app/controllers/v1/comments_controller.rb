@@ -4,6 +4,8 @@ module V1
   class CommentsController < CommonController
     include WithProject
 
+    after_action :update_tracking_info, except: :index
+
     def index
       authorize Comment, :index?
 
@@ -67,6 +69,13 @@ module V1
 
     def record_params
       permitted_attributes(Comment)
+    end
+
+    def update_tracking_info
+      project = Project.find(params[:project_id])
+
+      update_last_editor(user: current_user, project:)
+      update_last_edited_project(project:, user: current_user)
     end
   end
 end
