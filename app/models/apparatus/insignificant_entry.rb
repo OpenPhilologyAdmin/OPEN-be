@@ -16,7 +16,7 @@ module Apparatus
     private
 
     def details
-      insignificant_readings.join(', ')
+      insignificant_readings.unshift(selected_reading_witnesses).join(', ')
     end
 
     def insignificant_readings

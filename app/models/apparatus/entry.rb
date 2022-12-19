@@ -27,5 +27,9 @@ module Apparatus
     def selected_reading
       base_reading_for(variant: selected_variant, separator: ']')
     end
+
+    def selected_reading_witnesses
+      witnesses_for(variant: selected_variant)
+    end
   end
 end

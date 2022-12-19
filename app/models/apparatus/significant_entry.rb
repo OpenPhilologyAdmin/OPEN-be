@@ -19,10 +19,6 @@ module Apparatus
       secondary_readings.unshift(selected_reading_witnesses).join(', ')
     end
 
-    def selected_reading_witnesses
-      witnesses_for(variant: selected_variant)
-    end
-
     def secondary_readings
       secondary_variants.map do |variant|
         full_reading_for(variant:)

@@ -489,10 +489,10 @@ RSpec.configure do |config|
                   },
                   details:          {
                     type:        :string,
-                    description: 'Insignificant readings with their witnesses. The ' \
-                                 "*#{FormattableT::NIL_VALUE_PLACEHOLDER}* means that " \
+                    description: 'The witnesses of the selected variant and then insignificant readings with their ' \
+                                 "witnesses. The *#{FormattableT::NIL_VALUE_PLACEHOLDER}* means that " \
                                  'the reading value is empty.',
-                    example:     'continued C D, group E F'
+                    example:     'A B, continued C D, group E F'
                   }
                 }
               }

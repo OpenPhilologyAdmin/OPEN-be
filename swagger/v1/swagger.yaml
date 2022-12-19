@@ -428,9 +428,10 @@ components:
               example: raged]
             details:
               type: string
-              description: Insignificant readings with their witnesses. The *Ø* means
-                that the reading value is empty.
-              example: continued C D, group E F
+              description: The witnesses of the selected variant and then insignificant
+                readings with their witnesses. The *Ø* means that the reading value
+                is empty.
+              example: A B, continued C D, group E F
     login_required:
       type: object
       properties:
