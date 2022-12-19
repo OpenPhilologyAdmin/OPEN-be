@@ -21,7 +21,7 @@ module Apparatus
 
     def insignificant_readings
       insignificant_variants.map do |variant|
-        reading_for(variant:)
+        full_reading_for(variant:)
       end
     end
   end

@@ -4,6 +4,7 @@ module Apparatus
   class Entry
     include ActiveModel::Model
     include ActiveModel::Serializers::JSON
+    include Concerns::FormattableReading
 
     attr_accessor :token, :index
 
@@ -23,24 +24,8 @@ module Apparatus
 
     private
 
-    def reading_for(variant:, separator: nil, include_witnesses: true)
-      value = "#{value_for(variant)}#{separator}"
-      return value unless include_witnesses
-
-      "#{value} #{witnesses_for(variant)}"
-    end
-
-    # use the :formatted_t, so the entry is correctly displayed in the apparatus
-    def value_for(variant)
-      variant.formatted_t.strip
-    end
-
-    def witnesses_for(variant)
-      variant.witnesses.join(' ')
-    end
-
     def selected_reading
-      reading_for(variant: selected_variant, separator: ']', include_witnesses: false)
+      base_reading_for(variant: selected_variant, separator: ']')
     end
   end
 end
