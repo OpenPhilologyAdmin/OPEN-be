@@ -74,27 +74,24 @@ RSpec.describe Exporter::Base, type: :service do
     let(:token2) { create(:token, :variant_selected_and_secondary, project:, index: 2) }
     let(:expected_exporter_tokens) do
       [
-        Exporter::Models::Token.new(
-          value:              token1.t,
-          footnote_numbering: false,
-          index:              nil
-        ),
-        Exporter::Models::Token.new(
-          value:              token2.t,
-          footnote_numbering: true,
-          index:              1
-        )
+        build(:exporter_token,
+              value:                 token1.t,
+              footnote_numbering:    false,
+              apparatus_entry_index: nil),
+        build(:exporter_token,
+              value:                 token2.t,
+              footnote_numbering:    true,
+              apparatus_entry_index: 1)
       ]
     end
     let(:expected_apparatuses) do
       [
-        Exporter::Models::Apparatus.new(
-          selected_variant:       token2.selected_variant,
-          secondary_variants:     token2.secondary_variants,
-          insignificant_variants: token2.insignificant_variants,
-          apparatus_options:,
-          index:                  1
-        )
+        build(:exporter_apparatus,
+              selected_variant:       token2.selected_variant,
+              secondary_variants:     token2.secondary_variants,
+              insignificant_variants: token2.insignificant_variants,
+              apparatus_options:,
+              index:                  1)
       ]
     end
 

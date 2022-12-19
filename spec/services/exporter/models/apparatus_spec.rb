@@ -31,7 +31,7 @@ RSpec.describe Exporter::Models::Apparatus, type: :model do
 
       let(:expected_value) do
         "(#{index}) #{expected_selected_reading}, #{expected_secondary_variants}, " \
-          "#{expected_insignificant_variants}#{apparatus_options.entries_separator}" \
+          "#{expected_insignificant_variants}#{apparatus_options.entries_separator} " \
       end
 
       let(:expected_selected_reading) do
@@ -57,9 +57,49 @@ RSpec.describe Exporter::Models::Apparatus, type: :model do
         )
       end
 
-      it 'returns the index, followed by bolded selected reading, secondary readings, insignificant readings ' \
-         'and entries_separator' do
-        expect(resource.to_export).to eq(expected_value)
+      context 'when token has both secondary and insignificant readings' do
+        it 'returns the index, followed by bolded selected reading, secondary readings, insignificant readings ' \
+           'and entries_separator' do
+          expect(resource.to_export).to eq(expected_value)
+        end
+      end
+
+      context 'when token has only selected and secondary readings' do
+        let(:insignificant_variants) { [] }
+        let(:expected_value) do
+          "(#{index}) #{expected_selected_reading}, #{expected_secondary_variants}" \
+            "#{apparatus_options.entries_separator} " \
+        end
+
+        it 'returns the index, followed by bolded selected reading, secondary readings, ' \
+           'and entries_separator' do
+          expect(resource.to_export).to eq(expected_value)
+        end
+      end
+
+      context 'when token has only selected and insignificant readings' do
+        let(:secondary_variants) { [] }
+        let(:expected_value) do
+          "(#{index}) #{expected_selected_reading}, " \
+            "#{expected_insignificant_variants}#{apparatus_options.entries_separator} " \
+        end
+
+        it 'returns the index, followed by bolded selected reading, insignificant readings, ' \
+           'and entries_separator' do
+          expect(resource.to_export).to eq(expected_value)
+        end
+      end
+
+      context 'when token has only selected reading' do
+        let(:secondary_variants) { [] }
+        let(:insignificant_variants) { [] }
+        let(:expected_value) do
+          "(#{index}) #{expected_selected_reading}#{apparatus_options.entries_separator} "
+        end
+
+        it 'returns the index, followed by bolded selected reading and entries_separator' do
+          expect(resource.to_export).to eq(expected_value)
+        end
       end
     end
 
@@ -70,7 +110,7 @@ RSpec.describe Exporter::Models::Apparatus, type: :model do
 
       let(:expected_value) do
         "(#{index}) #{expected_selected_reading}, #{expected_secondary_variants}" \
-          "#{apparatus_options.entries_separator}" \
+          "#{apparatus_options.entries_separator} " \
       end
 
       let(:expected_selected_reading) do
@@ -100,7 +140,7 @@ RSpec.describe Exporter::Models::Apparatus, type: :model do
       end
 
       let(:expected_value) do
-        "(#{index}) #{expected_insignificant_variants}#{apparatus_options.entries_separator}" \
+        "(#{index}) #{expected_insignificant_variants}#{apparatus_options.entries_separator} " \
       end
 
       let(:expected_insignificant_variants) do

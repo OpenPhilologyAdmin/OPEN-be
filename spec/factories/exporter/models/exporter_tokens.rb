@@ -7,7 +7,11 @@ FactoryBot.define do
       new(**attributes)
     end
     value { Faker::Lorem.sentence }
-    index { Faker::Number.digit }
+    apparatus_entry_index { Faker::Number.digit }
     footnote_numbering { true }
+
+    trait :with_nil_value do
+      value { FormattableT::NIL_VALUE_PLACEHOLDER }
+    end
   end
 end

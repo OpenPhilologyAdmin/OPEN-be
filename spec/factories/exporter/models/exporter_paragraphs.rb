@@ -7,5 +7,14 @@ FactoryBot.define do
       new(**attributes)
     end
     contents { build_list(:exporter_token, 2) }
+
+    trait :with_nil_values do
+      contents do
+        [
+          build(:exporter_token),
+          build(:exporter_token, :with_nil_value)
+        ]
+      end
+    end
   end
 end

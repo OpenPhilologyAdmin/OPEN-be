@@ -14,10 +14,7 @@ module Exporter
 
     def perform
       add_data_to_paragraphs
-      [
-        tokens_paragraph,
-        apparatuses_paragraph
-      ]
+      paragraphs
     end
 
     private
@@ -36,54 +33,40 @@ module Exporter
     end
 
     def add_data_to_paragraphs
-      apparatus_index = 0
+      apparatus_entry_index = 0
       project_tokens.each do |token|
-        apparatus_index += 1 if token.apparatus?
-        process_token(token_with_index: TokenWithIndex.new(token, apparatus_index))
+        if token.apparatus?
+          apparatus_entry_index += 1
+          add_token_to_paragraph(token:, apparatus_entry_index:)
+          add_apparatus_to_paragraph(token:, apparatus_entry_index:)
+        else
+          add_token_to_paragraph(token:)
+        end
       end
     end
 
-    def process_token(token_with_index:)
-      add_token_to_paragraph(token_with_index:)
-      add_apparatus_to_paragraph(token_with_index:)
-    end
-
-    def add_token_to_paragraph(token_with_index:)
+    def add_token_to_paragraph(token:, apparatus_entry_index: nil)
       tokens_paragraph.contents << Models::Token.new(
-        value:              token_with_index.t,
-        footnote_numbering: footnote_numbering?,
-        index:              token_with_index.index
+        value:                 token.t,
+        footnote_numbering:    footnote_numbering?,
+        apparatus_entry_index:
       )
     end
 
-    def add_apparatus_to_paragraph(token_with_index:)
-      return unless token_with_index.apparatus?
-
+    def add_apparatus_to_paragraph(token:, apparatus_entry_index:)
       apparatuses_paragraph.contents << Models::Apparatus.new(
-        selected_variant:       token_with_index.selected_variant,
-        secondary_variants:     token_with_index.secondary_variants,
-        insignificant_variants: token_with_index.insignificant_variants,
+        selected_variant:       token.selected_variant,
+        secondary_variants:     token.secondary_variants,
+        insignificant_variants: token.insignificant_variants,
         apparatus_options:,
-        index:                  token_with_index.index
+        index:                  apparatus_entry_index
       )
     end
 
-    class TokenWithIndex
-      def initialize(token, apparatus_index)
-        @token = token
-        @apparatus_index = apparatus_index
-      end
-
-      delegate :apparatus?, :t, to: :token
-      delegate :selected_variant, :secondary_variants, :insignificant_variants, to: :token
-
-      def index
-        apparatus_index if apparatus?
-      end
-
-      private
-
-      attr_reader :token, :apparatus_index
+    def paragraphs
+      result = [tokens_paragraph]
+      result << apparatuses_paragraph if apparatuses_paragraph.contents.any?
+      result
     end
   end
 end

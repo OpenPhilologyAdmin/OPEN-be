@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Exporter::Models::Token, type: :model do
   describe '#to_export' do
-    let(:resource) { described_class.new(value:, footnote_numbering:, index:) }
+    let(:resource) { described_class.new(value:, footnote_numbering:, apparatus_entry_index:) }
     let(:value) { Faker::Lorem.sentence }
-    let(:index) { Faker::Number.digit }
+    let(:apparatus_entry_index) { Faker::Number.digit }
 
     context 'when footnote_numbering disabled' do
       let(:footnote_numbering) { false }
@@ -19,14 +19,14 @@ RSpec.describe Exporter::Models::Token, type: :model do
     context 'when footnote_numbering enabled' do
       let(:footnote_numbering) { true }
 
-      context 'when index given' do
+      context 'when apparatus_entry_index given' do
         it 'returns the value with index wrapped by the RTF subscript tag' do
-          expect(resource.to_export).to eq("#{value}{\\super #{index}}")
+          expect(resource.to_export).to eq("#{value}{\\super #{apparatus_entry_index}}")
         end
       end
 
-      context 'when index not given' do
-        let(:index) { nil }
+      context 'when apparatus_entry_index not given' do
+        let(:apparatus_entry_index) { nil }
 
         it 'returns the value without index' do
           expect(resource.to_export).to eq(value)

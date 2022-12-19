@@ -24,5 +24,11 @@ RSpec.describe Exporter::Models::Styler, type: :model do
         expect { resource.perform(value:, style: :paragraph) }.to raise_error(NotImplementedError)
       end
     end
+
+    context 'when style: document' do
+      it 'raises NotImplementedError' do
+        expect { resource.perform(value:, style: :document) }.to raise_error(NotImplementedError)
+      end
+    end
   end
 end

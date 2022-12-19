@@ -2,7 +2,7 @@
 
 module Exporter
   module Models
-    class Paragraph < DocumentItem
+    class Paragraph < ExportableItem
       attr_reader :contents
 
       def initialize(contents: [])

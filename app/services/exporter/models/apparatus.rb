@@ -2,7 +2,7 @@
 
 module Exporter
   module Models
-    class Apparatus < DocumentItem
+    class Apparatus < ExportableItem
       def initialize(selected_variant:, secondary_variants:, insignificant_variants:,
                      apparatus_options:, index:)
         @selected_variant       = selected_variant
@@ -16,11 +16,7 @@ module Exporter
       def to_export
         return unless apparatus_options_include_apparatus?
 
-        values = []
-        values += significant_readings if apparatus_options_significant_readings?
-        values << insignificant_readings if apparatus_options_insignificant_readings?
-
-        "(#{index}) #{values.join(', ')}#{apparatus_options_entries_separator}"
+        "(#{index}) #{readings.join(', ')}#{apparatus_options_entries_separator} "
       end
 
       private
@@ -35,6 +31,21 @@ module Exporter
       delegate :insignificant_readings_separator, to: :apparatus_options, prefix: true
       delegate :entries_separator, to: :apparatus_options, prefix: true
       delegate :include_apparatus?, to: :apparatus_options, prefix: true
+
+      def readings
+        values = []
+        values += significant_readings if apparatus_options_significant_readings?
+        values << insignificant_readings if apparatus_options_insignificant_readings?
+        values.compact_blank!
+      end
+
+      def significant_readings
+        [styled_selected_reading, secondary_readings]
+      end
+
+      def styled_selected_reading
+        "#{to_style(style: :bold, given_value: selected_reading.reading)} #{selected_reading.witnesses}"
+      end
 
       def selected_reading
         @selected_reading ||= SelectedReading.new(
@@ -55,14 +66,6 @@ module Exporter
           grouped_variants: insignificant_variants,
           separator:        apparatus_options_insignificant_readings_separator
         ).reading
-      end
-
-      def styled_selected_reading
-        "#{to_style(style: :bold, given_value: selected_reading.reading)} #{selected_reading.witnesses}"
-      end
-
-      def significant_readings
-        [styled_selected_reading, secondary_readings]
       end
     end
   end

@@ -13,7 +13,11 @@ module Exporter
         end
 
         def to_paragraph(value:)
-          "{\\par #{value} \\par}"
+          "{\\par\n#{value}\n\\par}\n"
+        end
+
+        def to_document(value:)
+          "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\n#{value}\n}"
         end
       end
     end

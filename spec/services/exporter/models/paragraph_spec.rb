@@ -14,7 +14,7 @@ RSpec.describe Exporter::Models::Paragraph, type: :model do
       let(:contents) { [] }
 
       it 'returns empty string inside paragraph tags' do
-        expect(resource.to_export).to eq('{\par  \par}')
+        expect(resource.to_export).to eq("{\\par\n\n\\par}\n")
       end
     end
 
@@ -24,7 +24,7 @@ RSpec.describe Exporter::Models::Paragraph, type: :model do
       let(:contents) { [token1, token2] }
 
       it 'returns combined :to_export results of given tokens inside paragraph tags' do
-        expect(resource.to_export).to eq("{\\par #{token1.to_export}#{token2.to_export} \\par}")
+        expect(resource.to_export).to eq("{\\par\n#{token1.to_export}#{token2.to_export}\n\\par}\n")
       end
     end
 
@@ -34,7 +34,7 @@ RSpec.describe Exporter::Models::Paragraph, type: :model do
       let(:contents) { [apparatus1, apparatus2] }
 
       it 'returns combined :to_export results of given apparatuses inside paragraph tags' do
-        expect(resource.to_export).to eq("{\\par #{apparatus1.to_export}#{apparatus2.to_export} \\par}")
+        expect(resource.to_export).to eq("{\\par\n#{apparatus1.to_export}#{apparatus2.to_export}\n\\par}\n")
       end
     end
   end
