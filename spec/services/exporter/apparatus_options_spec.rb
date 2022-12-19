@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_examples/has_full_message_errors_hash'
 
 RSpec.describe Exporter::ApparatusOptions, type: :model do
   describe '#validations' do
@@ -82,5 +83,9 @@ RSpec.describe Exporter::ApparatusOptions, type: :model do
         expect(resource).to be_include_apparatus
       end
     end
+  end
+
+  it_behaves_like 'resource with full message errors hash' do
+    let(:resource) { build(:apparatus_options, :invalid) }
   end
 end

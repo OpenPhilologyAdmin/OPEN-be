@@ -5,7 +5,8 @@ require 'rails_helper'
 describe ProjectPolicy do
   subject(:record_policy) { described_class }
 
-  permissions :create?, :update?, :show?, :index?, :manage_witnesses?,
+  permissions :create?, :update?, :show?, :index?,
+              :export?, :manage_witnesses?,
               :index_witnesses?, :create_witnesses?, :update_witnesses? do
     context 'when logged in admin' do
       context 'when admin is approved' do

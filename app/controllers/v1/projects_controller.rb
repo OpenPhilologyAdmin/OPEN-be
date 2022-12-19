@@ -64,6 +64,24 @@ module V1
       )
     end
 
+    def export
+      @record = Project.find(params[:id])
+      authorize @record, :export?
+
+      result = Exporter::Base.perform(
+        project: @record,
+        options: record_params
+      )
+
+      if result.success?
+        send_data(result.data,
+                  filename: "#{@record.name}.rtf",
+                  type:     'application/rtf')
+      else
+        respond_with_record_errors(result, :unprocessable_entity)
+      end
+    end
+
     private
 
     def record_params

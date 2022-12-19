@@ -23,10 +23,17 @@ module Exporter
     end
 
     def perform
-      # @TODO: Handle invalid options when implementing the next steps
-      return unless options_valid?
-
-      document
+      if options_valid?
+        Models::Result.new(
+          success: true,
+          data:
+        )
+      else
+        Models::Result.new(
+          success: false,
+          errors:
+        )
+      end
     end
 
     private
@@ -35,6 +42,17 @@ module Exporter
 
     def options_valid?
       exporter_options.valid? && apparatus_options.valid?
+    end
+
+    def data
+      @data ||= document.to_export
+    end
+
+    def errors
+      @errors ||= Models::ExportErrors.new(
+        exporter_options:,
+        apparatus_options:
+      ).errors
     end
 
     def document

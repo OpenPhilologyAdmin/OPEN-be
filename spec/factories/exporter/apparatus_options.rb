@@ -12,5 +12,10 @@ FactoryBot.define do
     secondary_readings_separator { ',' }
     insignificant_readings_separator { ',' }
     entries_separator { ';' }
+
+    trait :invalid do
+      selected_reading_separator { nil }
+      secondary_readings_separator { nil }
+    end
   end
 end

@@ -110,25 +110,45 @@ RSpec.describe Exporter::Base, type: :service do
               insignificant_readings_separator: options[:insignificant_readings_separator],
               entries_separator:                options[:entries_separator])
       end
-
-      it 'prepares a document' do
-        expect(result).to be_an_instance_of(Exporter::Models::Document)
+      let(:expected_paragraphs) do
+        [
+          build(:exporter_paragraph, contents: expected_exporter_tokens),
+          build(:exporter_paragraph, contents: expected_apparatuses)
+        ]
       end
 
-      it 'assigns two paragraphs to the document' do
-        expect(result.paragraphs.size).to eq(2)
+      it 'returns success: true result' do
+        expect(result).to be_success
       end
 
-      it 'adds the tokens to the first paragraph with the correct styling' do
-        paragraph        = result.paragraphs.first
-        expected_content = build(:exporter_paragraph, contents: expected_exporter_tokens)
-        expect(paragraph.to_export).to eq(expected_content.to_export)
+      it 'returns a correct document.to_export' do
+        expected_result_document = Exporter::Models::Document.new(paragraphs: expected_paragraphs)
+        expect(result.data).to eq(expected_result_document.to_export)
+      end
+    end
+
+    context 'when given options invalid' do
+      let(:options) do
+        attributes_for(:apparatus_options, :invalid).merge(
+          attributes_for(:exporter_options, :invalid)
+        )
+      end
+      let(:expected_errors) do
+        build(:apparatus_options, :invalid).errors_hash.merge(
+          build(:exporter_options, :invalid).errors_hash
+        )
       end
 
-      it 'adds the apparatuses to the second paragraph with the correct styling' do
-        paragraph        = result.paragraphs.second
-        expected_content = build(:exporter_paragraph, contents: expected_apparatuses)
-        expect(paragraph.to_export).to eq(expected_content.to_export)
+      it 'returns success: false result' do
+        expect(result).not_to be_success
+      end
+
+      it 'prepares correct errors' do
+        expect(result.errors).to eq(expected_errors)
+      end
+
+      it 'does not prepare data' do
+        expect(result.data).to be_nil
       end
     end
   end

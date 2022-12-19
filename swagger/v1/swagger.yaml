@@ -481,6 +481,11 @@ components:
           type: date_time
           description: Last edit date if exists
           example: '2021-02-03T12:00:00+00:00'
+    exported_project:
+      type: string
+      format: binary
+      example: "{\rtf1\ansideff0 {\fonttbl {\f0 Times New Roman;}}{par\nLorem ipsum
+        { uper 1}\npar}{par \n(1) {\b Lorem ipsum]} w1, Lorem ipsam w2 w3;\npar}\n}"
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -1142,6 +1147,92 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{id}/export":
+    put:
+      summary: Export project to file
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of project
+      - name: project
+        in: query
+        schema:
+          type: object
+          properties:
+            project:
+              type: object
+              properties:
+                significant_readings:
+                  type: boolean
+                  description: Significant readings enabled
+                insignificant_readings:
+                  type: boolean
+                  description: Insignificant readings enabled
+                footnote_numbering:
+                  type: boolean
+                  description: Footnote numbering enabled
+                layout:
+                  type: string
+                  description: File Layout
+                  enum:
+                  - apparatus_at_the_end
+                selected_reading_separator:
+                  type: string
+                  description: Selected reading separator
+                  example: "]"
+                secondary_readings_separator:
+                  type: string
+                  description: Secondary readings separator
+                  example: ","
+                insignificant_readings_separator:
+                  type: string
+                  description: Insignificant readings separator
+                  example: ","
+                entries_separator:
+                  type: string
+                  description: Entries separator
+                  example: ";"
+              required:
+              - significant_readings
+              - insignificant_readings
+              - footnote_numbering
+              - layout
+              - selected_reading_separator
+              - secondary_readings_separator
+              - insignificant_readings_separator
+              - entries_separator
+      responses:
+        '200':
+          description: File successfully generated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/exported_project"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Given options are invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
   "/api/v1/users/session-token":
     post:
       summary: Generates new JWT token

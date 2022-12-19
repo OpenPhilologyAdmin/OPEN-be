@@ -564,6 +564,13 @@ RSpec.configure do |config|
                 example:     DateTime.new(2021, 2, 3.5)
               }
             }
+          },
+          exported_project:      {
+            type:    'string',
+            format:  'binary',
+            example: "{\rtf1\ansi\deff0 {\fonttbl {\f0 Times New Roman;}}{\par\n" \
+                     "Lorem ipsum {\super 1}\n\par}" \
+                     "{\par \n(1) {\b Lorem ipsum]} w1, Lorem ipsam w2 w3;\n\par}\n}"
           }
         }
       },

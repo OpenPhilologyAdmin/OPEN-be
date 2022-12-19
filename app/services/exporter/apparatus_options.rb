@@ -4,6 +4,7 @@ module Exporter
   class ApparatusOptions
     include ActiveModel::Model
     include ActiveModel::Attributes
+    include Helpers::HasFullMessageErrorsHash
 
     attribute :significant_readings, :boolean
     attribute :insignificant_readings, :boolean

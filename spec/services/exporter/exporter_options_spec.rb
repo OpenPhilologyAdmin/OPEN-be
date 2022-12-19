@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_examples/has_full_message_errors_hash'
 
 RSpec.describe Exporter::ExporterOptions, type: :model do
   describe '#validations' do
@@ -32,5 +33,9 @@ RSpec.describe Exporter::ExporterOptions, type: :model do
         expect(build(:exporter_options, footnote_numbering: false)).not_to be_footnote_numbering
       end
     end
+  end
+
+  it_behaves_like 'resource with full message errors hash' do
+    let(:resource) { build(:exporter_options, :invalid) }
   end
 end

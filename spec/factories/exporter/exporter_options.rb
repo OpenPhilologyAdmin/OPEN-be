@@ -8,5 +8,9 @@ FactoryBot.define do
     end
     footnote_numbering { true }
     layout { Exporter::ExporterOptions::LAYOUTS.sample }
+
+    trait :invalid do
+      layout { nil }
+    end
   end
 end

@@ -4,6 +4,8 @@ module Exporter
   class ExporterOptions
     include ActiveModel::Model
     include ActiveModel::Attributes
+    include Helpers::HasFullMessageErrorsHash
+
     LAYOUTS = %w[apparatus_at_the_end apparatus_in_the_text].freeze
     attribute :footnote_numbering, :boolean
     attribute :layout, :string
