@@ -20,8 +20,8 @@ RSpec.describe Exporter::Models::Token, type: :model do
       let(:footnote_numbering) { true }
 
       context 'when apparatus_entry_index given' do
-        it 'returns the value with index wrapped by the RTF subscript tag' do
-          expect(resource.to_export).to eq("#{value}{\\super #{apparatus_entry_index}}")
+        it 'returns the value with index wrapped by brackets and the RTF subscript tag' do
+          expect(resource.to_export).to eq("#{value}{\\super (#{apparatus_entry_index})}")
         end
       end
 
