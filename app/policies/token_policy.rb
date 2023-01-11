@@ -21,6 +21,10 @@ class TokenPolicy < ApplicationPolicy
     approved_admin?
   end
 
+  def split?
+    approved_admin?
+  end
+
   def significant_variants?
     index?
   end
@@ -48,6 +52,15 @@ class TokenPolicy < ApplicationPolicy
       {
         selected_token_ids:  [],
         tokens_with_offsets: %i[offset token_id]
+      }
+    ]
+  end
+
+  def permitted_attributes_for_split
+    [
+      :token_id,
+      {
+        variants: %i[witness t]
       }
     ]
   end

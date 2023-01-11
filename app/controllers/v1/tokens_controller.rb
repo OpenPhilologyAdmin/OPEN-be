@@ -46,6 +46,7 @@ module V1
 
     def resize
       authorize Token, :resize?
+
       result =  TokensManager::Resizer.perform(
         project: @project,
         user:    current_user,
@@ -56,6 +57,27 @@ module V1
         render(
           json:   {
             message: I18n.t('tokens.notifications.tokens_width_updated')
+          },
+          status: :ok
+        )
+      else
+        respond_with_record_errors(result.params, :unprocessable_entity)
+      end
+    end
+
+    def split
+      authorize Token, :split?
+
+      result = TokensManager::Splitter.perform(
+        project: @project,
+        user:    current_user,
+        params:  permitted_attributes(Token)
+      )
+
+      if result.success?
+        render(
+          json:   {
+            message: I18n.t('tokens.notifications.token_split')
           },
           status: :ok
         )

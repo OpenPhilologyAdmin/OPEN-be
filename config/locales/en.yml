@@ -65,6 +65,7 @@ en:
   tokens:
     notifications:
       tokens_width_updated: The selected tokens have been successfully updated.
+      token_split: Your token was split successfully.
   importer:
     errors:
       unsupported_file_format: The file format is not supported.
