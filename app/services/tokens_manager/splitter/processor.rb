@@ -5,13 +5,14 @@ module TokensManager
     class Processor
       SPLITTER_PHRASE = ':scissors:'
 
-      def initialize(project:, source_token:)
+      def initialize(project:, source_token:, new_variants:)
         @project        = project
         @source_token   = source_token
+        @new_variants   = new_variants
       end
 
-      def self.perform(project:, source_token:)
-        new(project:, source_token:).perform
+      def self.perform(project:, source_token:, new_variants:)
+        new(project:, source_token:, new_variants:).perform
       end
 
       def perform
@@ -22,18 +23,18 @@ module TokensManager
         save_new_tokens
       end
 
-      attr_reader :project, :source_token, :token_one, :token_two
+      attr_reader :project, :source_token, :new_variants, :token_one, :token_two
 
       private
 
       def prepare_split_variants
-        new_variants = { 1 => [], 2 => [] }
+        new_variants_hash = { 1 => [], 2 => [] }
 
-        source_token.variants.each do |variant|
+        new_variants.each do |variant|
           split_t = variant[:t].split(SPLITTER_PHRASE)
 
           (1..2).each do |i|
-            new_variants[i] <<
+            new_variants_hash[i] <<
               TokenVariant.new(
                 witness: variant[:witness],
                 t:       split_t[i - 1]
@@ -41,12 +42,12 @@ module TokensManager
           end
         end
 
-        new_variants
+        new_variants_hash
       end
 
-      def initialize_split_tokens(new_variants)
-        @token_one = Token.new(project:, index: source_token.index, variants: new_variants[1])
-        @token_two = Token.new(project:, index: source_token.index + 1, variants: new_variants[2])
+      def initialize_split_tokens(new_variants_hash)
+        @token_one = Token.new(project:, index: source_token.index, variants: new_variants_hash[1])
+        @token_two = Token.new(project:, index: source_token.index + 1, variants: new_variants_hash[2])
       end
 
       def generate_grouped_variants

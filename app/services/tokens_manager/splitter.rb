@@ -5,7 +5,8 @@ module TokensManager
     def initialize(project:, user:, params:)
       @params = Params.new(
         project:,
-        token_id: params[:id]
+        token_id:     params[:id],
+        new_variants: params[:variants]
       )
       @user = user
     end
@@ -16,11 +17,12 @@ module TokensManager
 
     attr_reader :params, :user
 
-    delegate :project, :token_id, to: :params
+    delegate :project, :token_id, :new_variants, to: :params
 
     def perform
       if params.valid?
-        Processor.perform(project:, source_token: Token.find(params.token_id))
+        source_token = Token.find_by(token_id)
+        Processor.perform(project:, source_token:, new_variants:)
         result.success = true
       end
 

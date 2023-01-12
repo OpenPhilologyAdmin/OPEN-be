@@ -5,14 +5,15 @@ module TokensManager
     class Params
       include ActiveModel::Model
 
-      attr_reader :project, :token_id
+      attr_reader :project, :token_id, :new_variants
 
       validates :project, presence: true
       validate :validate_token_id
 
-      def initialize(project:, token_id:)
+      def initialize(project:, token_id:, new_variants:)
         @project = project
         @token_id = token_id
+        @new_variants = new_variants
       end
 
       def source_token
@@ -27,6 +28,12 @@ module TokensManager
         return errors.add(:token_id, :blank) if token_id.blank?
 
         source_token
+      end
+
+      def validate_new_variants
+        # TO DO: If any variant of new variants doesn't include :scissors: throw an error
+
+        # return error.add(:new_variants, :unprocessable_entity)
       end
     end
   end
