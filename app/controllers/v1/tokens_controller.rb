@@ -69,9 +69,10 @@ module V1
       authorize Token, :split?
 
       result = TokensManager::Splitter.perform(
-        project: @project,
-        user:    current_user,
-        params:  permitted_attributes(Token)
+        project:      @project,
+        user:         current_user,
+        source_token: record,
+        params:       permitted_attributes(Token)
       )
 
       if result.success?

@@ -2,26 +2,25 @@
 
 module TokensManager
   class Splitter
-    def initialize(project:, user:, params:)
+    def initialize(project:, user:, source_token:, params:)
       @params = Params.new(
         project:,
-        token_id:     params[:id],
         new_variants: params[:variants]
       )
       @user = user
+      @source_token = source_token
     end
 
-    def self.perform(project:, user:, params:)
-      new(project:, user:, params:).perform
+    def self.perform(project:, user:, source_token:, params:)
+      new(project:, user:, source_token:, params:).perform
     end
 
-    attr_reader :params, :user
+    attr_reader :params, :user, :source_token
 
-    delegate :project, :token_id, :new_variants, to: :params
+    delegate :project, :new_variants, to: :params
 
     def perform
       if params.valid?
-        source_token = Token.find_by(token_id)
         Processor.perform(project:, source_token:, new_variants:)
         result.success = true
       end

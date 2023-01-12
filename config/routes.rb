@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           patch 'variants', to: 'tokens#update_variants', on: :member
           patch 'grouped_variants', to: 'tokens#update_grouped_variants', on: :member
           patch 'resize', to: 'tokens#resize', on: :collection
+          patch 'split', to: 'tokens#split', on: :member
 
           resources :comments, only: %i[index create update destroy], on: :member
         end

@@ -58,7 +58,6 @@ class TokenPolicy < ApplicationPolicy
 
   def permitted_attributes_for_split
     [
-      :token_id,
       {
         variants: %i[witness t]
       }
