@@ -624,6 +624,9 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
     parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
     parameter name: 'id', in: :path, type: :string, description: 'token_id'
 
+    let(:record) { create(:token, project:) }
+    let(:id) { record.id }
+
     patch('Split token into two new tokens') do
       tags 'Projects'
       consumes 'application/json'
@@ -679,7 +682,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       #                                        ])
       # end
       # let(:not_selected_token) { create(:token, project:, index: 1) }
-      #
+      # #
       # let(:variants) do
       #   {
       #     variants: [
