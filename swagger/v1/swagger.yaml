@@ -1659,6 +1659,88 @@ paths:
                   - selected_text
                   - selected_token_ids
                   - tokens_with_offsets
+  "/api/v1/projects/{project_id}/tokens/{id}/split":
+    parameters:
+    - name: project_id
+      in: path
+      description: project_id
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: token_id
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Split token into two new tokens
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Splits given token into two new tokens <br>Variants will be separated
+        between two tokens based on user's choice to split
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Changes saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your token was split successfully.
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Given data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variants:
+                  type: object
+                  properties:
+                    witness:
+                      type: string
+                      description: Witness value with splitting point
+                    t:
+                      type: string
+                      description: t value with splitting point
+              required:
+              - witness
+              - t
   "/api/v1/users":
     get:
       summary: Retrieves list of users
