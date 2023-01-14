@@ -797,31 +797,31 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
       end
 
-      response '422', 'Given data invalid' do
-        let(:Authorization) { authorization_header_for(user) }
-        let(:variants) do
-          {
-            variants: [
-              {
-                witness: 'A',
-                t:       'this is text'
-              }
-            ]
-          }
-        end
-
-        # before do
-        #   allow(TokensManager::Splitter::Processor).to receive(:perform)
-        # end
-
-        schema '$ref' => '#/components/schemas/invalid_record'
-
-        run_test!
-
-        # it 'does not run TokensManager::Splitter::Processor' do
-        #   expect(TokensManager::Splitter::Processor).not_to have_received(:perform)
-        # end
-      end
+      # response '422', 'Given data invalid' do
+      #   let(:Authorization) { authorization_header_for(user) }
+      #   let(:variants) do
+      #     {
+      #       variants: [
+      #         {
+      #           witness: 'A',
+      #           t:       'this is text'
+      #         }
+      #       ]
+      #     }
+      #   end
+      #
+      #   # before do
+      #   #   allow(TokensManager::Splitter::Processor).to receive(:perform)
+      #   # end
+      #
+      #   schema '$ref' => '#/components/schemas/invalid_record'
+      #
+      #   # run_test!
+      #
+      #   # it 'does not run TokensManager::Splitter::Processor' do
+      #   #   expect(TokensManager::Splitter::Processor).not_to have_received(:perform)
+      #   # end
+      # end
     end
   end
 end
