@@ -674,29 +674,29 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       #   not_selected_token
       # end
       #
-      # let(:selected_token1) do
-      #   create(:token, project:, index: 0,
-      #                                        variants: [
-      #                                          { witness: 'A', t: 'This is a nice text' },
-      #                                          { witness: 'B', t: 'This is quite a bad text' }
-      #                                        ])
-      # end
-      # let(:not_selected_token) { create(:token, project:, index: 1) }
-      # #
-      # let(:variants) do
-      #   {
-      #     variants: [
-      #       {
-      #         witness: 'A',
-      #         t:       'This is:scissors: a nice text'
-      #       },
-      #       {
-      #         witness: 'B',
-      #         t:       'This is quite a b:scissors:ad text'
-      #       }
-      #     ]
-      #   }
-      # end
+      let(:selected_token1) do
+        create(:token, project:, index: 0,
+                                             variants: [
+                                               { witness: 'A', t: 'This is a nice text' },
+                                               { witness: 'B', t: 'This is quite a bad text' }
+                                             ])
+      end
+      let(:not_selected_token) { create(:token, project:, index: 1) }
+
+      let(:variants) do
+        {
+          variants: [
+            {
+              witness: 'A',
+              t:       'This is:scissors: a nice text'
+            },
+            {
+              witness: 'B',
+              t:       'This is quite a b:scissors:ad text'
+            }
+          ]
+        }
+      end
 
       response '200', 'Changes saved' do
         let(:Authorization) { authorization_header_for(user) }
