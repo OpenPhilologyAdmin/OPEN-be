@@ -31,7 +31,7 @@ module TokensManager
         new_variants_hash = { 1 => [], 2 => [] }
 
         new_variants.each do |variant|
-          split_t = variant[:t].split(SPLITTER_PHRASE)
+          split_t = variant['t'].split(SPLITTER_PHRASE)
 
           (1..2).each do |i|
             new_variants_hash[i] <<
