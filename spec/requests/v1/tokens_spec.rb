@@ -801,10 +801,12 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         let(:Authorization) { authorization_header_for(user) }
         let(:variants) do
           {
-            variants: {
-              witness: 'A',
-              t:       'this is text'
-            }
+            variants: [
+              {
+                witness: 'A',
+                t:       'this is text'
+              }
+            ]
           }
         end
 
