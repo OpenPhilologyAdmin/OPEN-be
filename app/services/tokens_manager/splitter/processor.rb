@@ -3,7 +3,7 @@
 module TokensManager
   class Splitter
     class Processor
-      SPLITTER_PHRASE = ':scissors:'
+      SPLITTER_PHRASE = '{scissors}'
 
       def initialize(project:, source_token:, new_variants:)
         @project        = project

@@ -17,7 +17,7 @@ module TokensManager
       private
 
       def validate_new_variants
-        # TO DO: If any variant of new variants doesn't include :scissors: throw an error
+        # TO DO: If any variant of new variants doesn't include {scissors} throw an error
 
         # return error.add(:new_variants, :unprocessable_entity)
       end
