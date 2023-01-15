@@ -6,7 +6,8 @@ RSpec.describe TokensManager::Splitter::Result, type: :model do
   let(:params) do
     TokensManager::Splitter::Params.new(
       project:      nil,
-      new_variants: nil
+      new_variants: nil,
+      source_token: nil
     )
   end
   let(:resource) { described_class.new(success:, params:) }
