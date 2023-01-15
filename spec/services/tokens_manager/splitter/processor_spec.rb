@@ -57,16 +57,14 @@ RSpec.describe TokensManager::Splitter::Processor, type: :service do
       expect(project.tokens.pluck(:index)).to eq([0, 1])
     end
 
+    it 'generates group variants' do
+      project.tokens.each do |token|
+        expect(token.grouped_variants).not_to be_empty
+      end
+    end
+
     it 'deletes source token' do
       expect(source_token.reload.deleted).to be(true)
     end
-
-    # it 'increases the indexes of tokens that were after the selection by 1' do
-    ## TO DO: Why other token is not being returned in TokenMover - project_tokens is empty
-
-    # @project.tokens.reload
-    #
-    # expect(other_token.reload.index).to eq(2)
-    # end
   end
 end
