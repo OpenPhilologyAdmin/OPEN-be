@@ -5,6 +5,7 @@ module TokensManager
     def initialize(project:, user:, source_token:, params:)
       @params = Params.new(
         project:,
+        source_token:,
         new_variants: params[:variants]
       )
       @user = user
@@ -17,7 +18,7 @@ module TokensManager
 
     attr_reader :params, :user, :source_token
 
-    delegate :project, :new_variants, to: :params
+    delegate :project, :new_variants, :source_token, to: :params
 
     def perform
       if params.valid?
