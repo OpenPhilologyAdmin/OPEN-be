@@ -3,6 +3,7 @@
 require 'swagger_helper'
 
 # rubocop:disable RSpec/MultipleMemoizedHelpers
+# rubocop:disable RSpec/ScatteredSetup
 RSpec.describe 'v1/projects/{project_id}/tokens' do
   let(:user) { create(:user, :admin, :approved) }
   let(:project) { create(:project) }
@@ -624,6 +625,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
     parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
     parameter name: 'id', in: :path, type: :string, description: 'token_id'
 
+    let(:project) { create(:project, witnesses: [Witness.new(siglum: 'A'), Witness.new(siglum: 'B')]) }
+    let(:project_id) { project.id }
     let(:record) { create(:token, project:) }
     let(:id) { record.id }
 
@@ -669,17 +672,21 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         required:   %w[witness t]
       }
 
-      # before do
-      #   selected_token1
-      #   not_selected_token
-      # end
-      #
-      let(:selected_token1) do
-        create(:token, project:, index: 0,
-                                             variants: [
-                                               { witness: 'A', t: 'This is a nice text' },
-                                               { witness: 'B', t: 'This is quite a bad text' }
-                                             ])
+      before do
+        record
+        not_selected_token
+      end
+
+      let(:record) do
+        create(:token, project:, index: 0, variants: [
+                 build(:token_variant,
+                       witness: 'A',
+                       t:       'This is a nice text'),
+
+                 build(:token_variant,
+                       witness: 'B',
+                       t:       'This is quite a bad text')
+               ])
       end
       let(:not_selected_token) { create(:token, project:, index: 1) }
 
@@ -688,15 +695,17 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
           variants: [
             {
               witness: 'A',
-              t:       'This is:scissors: a nice text'
+              t:       'This is{scissors} a nice text'
             },
             {
               witness: 'B',
-              t:       'This is quite a b:scissors:ad text'
+              t:       'This is quite a b{scissors}ad text'
             }
           ]
         }
       end
+
+      let(:params) { variants }
 
       response '200', 'Changes saved' do
         let(:Authorization) { authorization_header_for(user) }
@@ -713,71 +722,57 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
         before { project.reload }
 
-        # it 'saves the current user as last_editor of project' do
-        #   expect(project.last_editor).to eq(user)
-        # end
-        #
-        # it 'updates number of project tokens' do
-        #   expect(project.tokens.size).to eq(2)
-        # end
-        #
-        # it 'deletes source token' do
-        #   expect(selected_token1.reload.deletd).to eq(true)
-        # end
-        #
-        # it 'sets the first new token\'s index to source token\'s index' do
-        #   first_token = project.tokens.first
-        #   expect(first_token.index).to eq(0)
-        # end
-        #
-        # it 'sets the second new token\'s index to source token\'s index incremented by one' do
-        #   second_token = project.tokens.second
-        #   expect(second_token.index).to eq(1)
-        # end
-        #
-        # it 'splits variants to the first new token' do
-        #   first_token = project.tokens.first
-        #   expect(first_token.variants.first.witness).to eq('A')
-        #   expect(first_token.variants.first.t).to eq('This is')
-        #   expect(first_token.variants.second.witness).to eq('B')
-        #   expect(first_token.variants.second.t).to eq('This is quite a b')
-        # end
-        #
-        # it 'splits variants to the second new token' do
-        #   second_token = project.tokens.second
-        #   expect(second_token.variants.first.witness).to eq('A')
-        #   expect(second_token.variants.first.t).to eq(' a nice text')
-        #   expect(second_token.variants.second.witness).to eq('B')
-        #   expect(second_token.variants.second.t).to eq('ad text')
-        # end
-        #
-        # it 'splits variants to the first new token' do
-        #   first_token = project.tokens.first
-        #   expect(first_token.grouped_variants.first.witness).to eq('A')
-        #   expect(first_token.grouped_variants.first.t).to eq('This is')
-        #   expect(first_token.grouped_variants.second.witness).to eq('B')
-        #   expect(first_token.grouped_variants.second.t).to eq('This is quite a b')
-        # end
-        #
-        # it 'splits variants to the second new token' do
-        #   second_token = project.tokens.second
-        #   expect(second_token.grouped_variants.first.witness).to eq('A')
-        #   expect(second_token.grouped_variants.first.t).to eq(' a nice text')
-        #   expect(second_token.grouped_variants.second.witness).to eq('B')
-        #   expect(second_token.grouped_variants.second.t).to eq('ad text')
-        # end
-        #
-        # it 'updates index of the next not-selected token' do
-        #   expect(not_selected_token.reload.index).to eq(2)
-        # end
-        #
-        # it 'updates the user as the last editor of project' do
-        #   expect(project.reload.last_editor).to eq(user)
-        # end
-        #
-        # it 'updates project as the last edited project by user' do
-        #   expect(user.reload.last_edited_project).to eq(project)
-        # end
+        it 'saves the current user as last_editor of project' do
+          expect(project.last_editor).to eq(user)
+        end
+
+        it 'updates number of project tokens' do
+          expect(project.tokens.size).to eq(3)
+        end
+
+        it 'deletes source token' do
+          expect(record.reload.deleted).to be(true)
+        end
+
+        it 'sets the first new token\'s index to source token\'s index' do
+          first_token = project.tokens.reload.first
+          expect(first_token.index).to eq(0)
+        end
+
+        it 'sets the second new token\'s index to source token\'s index incremented by one' do
+          second_token = project.tokens.second
+          expect(second_token.index).to eq(1)
+        end
+
+        context 'when splits variants to the first new token' do
+          let(:first_token) { project.tokens.reload.first }
+
+          it { expect(first_token.variants.first.witness).to eq('A') }
+          it { expect(first_token.variants.first.t).to eq('This is') }
+          it { expect(first_token.variants.second.witness).to eq('B') }
+          it { expect(first_token.variants.second.t).to eq('This is quite a b') }
+        end
+
+        context 'when splits variants to the second new token' do
+          let(:second_token) { project.tokens.reload.second }
+
+          it { expect(second_token.variants.first.witness).to eq('A') }
+          it { expect(second_token.reload.variants.first.t).to eq(' a nice text') }
+          it { expect(second_token.variants.second.witness).to eq('B') }
+          it { expect(second_token.variants.second.t).to eq('ad text') }
+        end
+
+        it 'updates index of the next not-selected token' do
+          expect(not_selected_token.reload.index).to eq(2)
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
       end
 
       response '401', 'Login required' do
@@ -797,32 +792,33 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
       end
 
-      # response '422', 'Given data invalid' do
-      #   let(:Authorization) { authorization_header_for(user) }
-      #   let(:variants) do
-      #     {
-      #       variants: [
-      #         {
-      #           witness: 'A',
-      #           t:       'this is text'
-      #         }
-      #       ]
-      #     }
-      #   end
-      #
-      #   # before do
-      #   #   allow(TokensManager::Splitter::Processor).to receive(:perform)
-      #   # end
-      #
-      #   schema '$ref' => '#/components/schemas/invalid_record'
-      #
-      #   # run_test!
-      #
-      #   # it 'does not run TokensManager::Splitter::Processor' do
-      #   #   expect(TokensManager::Splitter::Processor).not_to have_received(:perform)
-      #   # end
-      # end
+      response '422', 'Given data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:variants) do
+          {
+            variants: [
+              {
+                witness: 'A',
+                t:       'this is text'
+              }
+            ]
+          }
+        end
+
+        before do
+          allow(TokensManager::Splitter::Processor).to receive(:perform)
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+
+        it 'does not run TokensManager::Splitter::Processor' do
+          expect(TokensManager::Splitter::Processor).not_to have_received(:perform)
+        end
+      end
     end
   end
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers
+# rubocop:enable RSpec/ScatteredSetup
