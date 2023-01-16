@@ -619,5 +619,72 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       end
     end
   end
+
+  path '/api/v1/projects/{project_id}/tokens/edited' do
+    get('Checks if tokens with given ids have comments, editorial remarks, or selected variants.') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Checks if tokens with given ids have comments, editorial remarks, or selected variants.'
+
+      parameter name:        :project_id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of the project'
+
+      parameter name: :selected_token_ids, in: :path,
+                schema: {
+                  type: :array
+                },
+                required:   true,
+                description: 'IDs of the selected tokens. All tokens must belong to the given project.'
+
+      let!(:selected_token1) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let!(:selected_token2) { create(:token, project:, index: 1) }
+      let(:selected_token_ids) { [selected_token1.id, selected_token2.id] }
+
+      response '200', 'Tokens checked' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 comments:            {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has at least one comment'
+                 },
+                 editorial_remarks:   {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has an editorial remark'
+                 },
+                 variants_selections: {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has selected variant'
+                 }
+               }
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers

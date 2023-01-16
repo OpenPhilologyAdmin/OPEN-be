@@ -5,6 +5,6 @@ FactoryBot.define do
     user { create(:user, :admin, :approved) }
     token { create(:token) }
 
-    body { Faker::String.random(length: 200) }
+    body { Faker::Lorem.paragraph_by_chars(number: 200) }
   end
 end

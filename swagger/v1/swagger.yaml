@@ -1659,6 +1659,62 @@ paths:
                   - selected_text
                   - selected_token_ids
                   - tokens_with_offsets
+  "/api/v1/projects/{project_id}/tokens/edited":
+    get:
+      summary: Checks if tokens with given ids have comments, editorial remarks, or
+        selected variants.
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Checks if tokens with given ids have comments, editorial remarks,
+        or selected variants.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: selected_token_ids
+        in: path
+        schema:
+          type: array
+        required: true
+        description: IDs of the selected tokens. All tokens must belong to the given
+          project.
+      responses:
+        '200':
+          description: Tokens checked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: boolean
+                    description: It is true if any of the given tokens has at least
+                      one comment
+                  editorial_remarks:
+                    type: boolean
+                    description: It is true if any of the given tokens has an editorial
+                      remark
+                  variants_selections:
+                    type: boolean
+                    description: It is true if any of the given tokens has selected
+                      variant
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users":
     get:
       summary: Retrieves list of users
