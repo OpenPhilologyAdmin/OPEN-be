@@ -1583,9 +1583,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Uses given params to calculate new tokens. <br>If one of the selected
-        tokens had multiple possible readings, then their values be updated using
-        the selected_text. The selections will be preserved. <br>The number of tokens
+      description: Uses given params to merge multiple tokens into one. <br>The selections,
+        editorial remarks, and comments won't be preserved. <br>The number of tokens
         in the project may be changed by this operation.
       parameters:
       - name: project_id
@@ -1632,10 +1631,6 @@ paths:
                 token:
                   type: object
                   properties:
-                    selected_text:
-                      type: string
-                      description: The selected text value. Must match the text of
-                        all selected tokens or be part of it.
                     selected_token_ids:
                       type: array
                       items:
@@ -1643,22 +1638,8 @@ paths:
                         description: IDs of the selected tokens. All tokens must belong
                           to the given project.The given tokens must be next to each
                           other in the constituted text.
-                    tokens_with_offsets:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          offset:
-                            type: integer
-                            description: Offset value. Must be a 0 or a positive integer.
-                          token_id:
-                            type: integer
-                            description: ID of the token for the given offset. The
-                              token ID must be also included in :selected_token_ids
                   required:
-                  - selected_text
                   - selected_token_ids
-                  - tokens_with_offsets
   "/api/v1/projects/{project_id}/tokens/edited":
     get:
       summary: Checks if tokens with given ids have comments, editorial remarks, or

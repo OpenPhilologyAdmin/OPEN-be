@@ -5,10 +5,8 @@ require 'rails_helper'
 RSpec.describe TokensManager::Resizer::Result, type: :model do
   let(:params) do
     TokensManager::Resizer::Params.new(
-      project:             nil,
-      selected_text:       nil,
-      selected_token_ids:  nil,
-      tokens_with_offsets: nil
+      project:            nil,
+      selected_token_ids: nil
     )
   end
   let(:resource) { described_class.new(success:, params:) }

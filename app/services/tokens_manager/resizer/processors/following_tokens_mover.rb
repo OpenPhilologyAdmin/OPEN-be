@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# The service should be used when the tokens are removed or added to the project.
+# If you are adding new tokens, please run the service first and then save new tokens.
+# The :previous_last_index is the last index for the edited tokens.
+# The :new_last_index is the index where the new/edited tokens end.
+# Service will calculate if the indexes of tokens follows the updated ones
+# should be changed (increased/decreased) and it will update them to the new value.
+
 module TokensManager
   class Resizer
     module Processors

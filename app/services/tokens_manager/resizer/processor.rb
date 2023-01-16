@@ -3,26 +3,25 @@
 module TokensManager
   class Resizer
     class Processor
-      def initialize(project:, selected_tokens:, prepared_tokens:)
+      def initialize(project:, selected_tokens:, prepared_token:)
         @project         = project
         @selected_tokens = selected_tokens
-        @prepared_tokens = prepared_tokens
+        @prepared_token = prepared_token
       end
 
-      def self.perform(project:, selected_tokens:, prepared_tokens:)
-        new(project:, selected_tokens:, prepared_tokens:).perform
+      def self.perform(project:, selected_tokens:, prepared_token:)
+        new(project:, selected_tokens:, prepared_token:).perform
       end
 
       def perform
         remove_selected_tokens
-        assign_index_to_prepared_tokens
         shift_following_tokens
-        save_prepared_tokens
+        prepared_token.save
       end
 
       private
 
-      attr_reader :selected_tokens, :prepared_tokens, :project
+      attr_reader :selected_tokens, :prepared_token, :project
 
       def remove_selected_tokens
         TokensManager::Resizer::Processors::TokensRemover.perform(
@@ -31,23 +30,20 @@ module TokensManager
         )
       end
 
-      def assign_index_to_prepared_tokens
-        TokensManager::Resizer::Processors::PreparedTokensIndexer.perform(
-          starting_index:  selected_tokens.first.index,
-          prepared_tokens:
-        )
-      end
-
       def shift_following_tokens
         TokensManager::Resizer::Processors::FollowingTokensMover.perform(
           project:,
-          new_last_index:      prepared_tokens.last.index,
-          previous_last_index: selected_tokens.last.index
+          new_last_index:,
+          previous_last_index:
         )
       end
 
-      def save_prepared_tokens
-        prepared_tokens.each(&:save)
+      def new_last_index
+        prepared_token.index
+      end
+
+      def previous_last_index
+        selected_tokens.last.index
       end
     end
   end
