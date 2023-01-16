@@ -15,7 +15,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Get tokens of the project. It returns tokens for the *Read mode* by default. <br>' \
-                  'When *edit_mode* flag is enabled, the tokens will include additional details (token state).'
+                  'When *edit_mode* flag is enabled, the tokens will include additional details (state and index).'
 
       parameter name:        :project_id, in: :path,
                 schema:      {

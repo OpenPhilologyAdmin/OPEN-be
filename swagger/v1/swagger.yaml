@@ -243,6 +243,11 @@ components:
           description: Index of apparatus, available only if the token is listed there
           example: 1
           nullable: true
+        index:
+          type: integer
+          description: Index of token, starting from 0
+          example: 1
+          nullable: true
         state:
           type: string
           enum:
@@ -1360,7 +1365,7 @@ paths:
       - bearer: []
       description: Get tokens of the project. It returns tokens for the *Read mode*
         by default. <br>When *edit_mode* flag is enabled, the tokens will include
-        additional details (token state).
+        additional details (state and index).
       parameters:
       - name: project_id
         in: path
