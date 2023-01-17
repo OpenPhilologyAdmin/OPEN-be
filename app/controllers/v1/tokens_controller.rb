@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 module V1
   class TokensController < CommonController
     include WithProject
 
-    after_action :update_tracking_info, except: %i[index show]
+    after_action :update_tracking_info, except: %i[index show edited]
 
     def index
       authorize Token, :index?
@@ -87,6 +88,20 @@ module V1
       end
     end
 
+    def edited
+      authorize Token, :edited?
+
+      result =  EditedTokensEvaluator.perform(
+        project:            @project,
+        selected_token_ids: params[:selected_token_ids]
+      )
+
+      render(
+        json:   result.as_json,
+        status: :ok
+      )
+    end
+
     private
 
     def records
@@ -117,3 +132,4 @@ module V1
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

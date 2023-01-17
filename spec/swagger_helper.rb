@@ -265,6 +265,12 @@ RSpec.configure do |config|
                 example:     1,
                 nullable:    true
               },
+              index:           {
+                type:        :integer,
+                description: 'Index of token, starting from 0',
+                example:     1,
+                nullable:    true
+              },
               state:           {
                 type:        :string,
                 enum:        %i[one_variant not_evaluated evaluated_with_single evaluated_with_multiple],

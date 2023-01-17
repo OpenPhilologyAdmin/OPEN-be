@@ -25,7 +25,7 @@ class TokensSerializer < RecordsSerializer
   class RecordSerializer
     RECORD_ATTRIBUTES = %i[id].freeze
     RECORD_METHODS = %i[t apparatus_index].freeze
-    EDIT_MODE_RECORD_METHODS = %i[t apparatus_index state].freeze
+    EDIT_MODE_RECORD_METHODS = %i[t apparatus_index index state].freeze
 
     def initialize(record:, edit_mode: false)
       @record = record

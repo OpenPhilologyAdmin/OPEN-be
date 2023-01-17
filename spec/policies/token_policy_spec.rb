@@ -7,7 +7,7 @@ describe TokenPolicy do
 
   permissions :index?, :show?,
               :update_variants?, :update_grouped_variants?,
-              :resize?,
+              :resize?, :edited?,
               :significant_variants?, :insignificant_variants? do
     context 'when logged in admin' do
       context 'when admin is approved' do
