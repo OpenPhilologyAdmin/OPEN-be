@@ -114,7 +114,7 @@ RSpec.describe 'v1/projects' do
       response '200', 'Project can be created' do
         let(:Authorization) { authorization_header_for(user) }
         let(:encoded_source_file) do
-          Base64.encode64(File.read('spec/fixtures/sample_project.txt'))
+          Base64.encode64(Rails.root.join('spec/fixtures/sample_project.txt').read)
         end
         let(:source_file) do
           {
@@ -389,6 +389,144 @@ RSpec.describe 'v1/projects' do
         let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/projects/{id}/export' do
+    let(:user) { create(:user, :admin, :approved) }
+    let(:record) { create(:project) }
+    let(:id) { record.id }
+
+    put('Export project to file') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+
+      parameter name: :id, in: :path,
+                schema: {
+                  type: :integer
+                },
+                required: true,
+                description: 'ID of project'
+
+      parameter name: :project, in: :query, schema: {
+        type:       :object,
+        properties:
+                    {
+                      project: {
+                        type:       :object,
+                        properties: {
+                          significant_readings:             {
+                            type:        :boolean,
+                            description: 'Significant readings enabled'
+                          },
+                          insignificant_readings:           {
+                            type:        :boolean,
+                            description: 'Insignificant readings enabled'
+                          },
+                          footnote_numbering:               {
+                            type:        :boolean,
+                            description: 'Footnote numbering enabled'
+                          },
+                          layout:                           {
+                            type:        :string,
+                            description: 'File Layout',
+                            enum:        %i[apparatus_at_the_end]
+                          },
+                          selected_reading_separator:       {
+                            type:        :string,
+                            description: 'Selected reading separator',
+                            example:     ']'
+                          },
+                          secondary_readings_separator:     {
+                            type:        :string,
+                            description: 'Secondary readings separator',
+                            example:     ','
+                          },
+                          insignificant_readings_separator: {
+                            type:        :string,
+                            description: 'Insignificant readings separator',
+                            example:     ','
+                          },
+                          entries_separator:                {
+                            type:        :string,
+                            description: 'Entries separator',
+                            example:     ';'
+                          }
+                        },
+                        required:   %i[
+                          significant_readings insignificant_readings footnote_numbering
+                          layout selected_reading_separator secondary_readings_separator
+                          insignificant_readings_separator entries_separator
+                        ]
+                      }
+                    }
+      }
+
+      let(:project) do
+        {
+          project:
+                   {
+                     significant_readings:             true,
+                     insignificant_readings:           true,
+                     footnote_numbering:               true,
+                     layout:                           Exporter::ExporterOptions::LAYOUTS.sample,
+                     selected_reading_separator:       ']',
+                     secondary_readings_separator:     ',',
+                     insignificant_readings_separator: ',',
+                     entries_separator:                ';'
+                   }
+        }
+      end
+
+      response '200', 'File successfully generated' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema '$ref' => '#/components/schemas/exported_project'
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project not found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+
+      response '422', 'Given options are invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project) do
+          {
+            project:
+                     {
+                       significant_readings:             nil,
+                       insignificant_readings:           nil,
+                       footnote_numbering:               nil,
+                       layout:                           nil,
+                       selected_reading_separator:       ']',
+                       secondary_readings_separator:     ',',
+                       insignificant_readings_separator: ',',
+                       entries_separator:                nil
+                     }
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
 
         run_test!
       end

@@ -140,6 +140,13 @@ RSpec.describe TokenGroupedVariant, type: :model do
     end
   end
 
+  describe '#formatted_witnesses' do
+    it 'returns all witnesses with spaces' do
+      grouped_variant = build(:token_grouped_variant)
+      expect(grouped_variant.formatted_witnesses).to eq(grouped_variant.witnesses.join(' '))
+    end
+  end
+
   it_behaves_like 'formattable t' do
     let(:resource) { build(:token_grouped_variant) }
   end

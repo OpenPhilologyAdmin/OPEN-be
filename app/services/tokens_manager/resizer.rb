@@ -7,9 +7,7 @@ module TokensManager
     def initialize(project:, user:, params:)
       @params = Params.new(
         project:,
-        selected_text:       params[:selected_text],
-        selected_token_ids:  params[:selected_token_ids],
-        tokens_with_offsets: params[:tokens_with_offsets]
+        selected_token_ids: params[:selected_token_ids]
       )
       @user = user
     end
@@ -39,13 +37,12 @@ module TokensManager
 
     delegate :project, :selected_tokens, to: :params
 
-    def perform_updates
-      update_tokens
+    def prepared_token
+      @prepared_token ||= Preparers::TokenFromMultipleTokens.perform(params:)
     end
 
-    def update_tokens
-      prepared_tokens = Preparer.perform(params:)
-      Processor.perform(project:, selected_tokens:, prepared_tokens:)
+    def perform_updates
+      Processor.perform(project:, selected_tokens:, prepared_token:)
     end
   end
 end

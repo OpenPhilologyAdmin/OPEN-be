@@ -246,6 +246,11 @@ components:
           description: Index of apparatus, available only if the token is listed there
           example: 1
           nullable: true
+        index:
+          type: integer
+          description: Index of token, starting from 0
+          example: 1
+          nullable: true
         state:
           type: string
           enum:
@@ -431,9 +436,10 @@ components:
               example: raged]
             details:
               type: string
-              description: Insignificant readings with their witnesses. The *Ø* means
-                that the reading value is empty.
-              example: continued C D, group E F
+              description: The witnesses of the selected variant and then insignificant
+                readings with their witnesses. The *Ø* means that the reading value
+                is empty.
+              example: A B, continued C D, group E F
     login_required:
       type: object
       properties:
@@ -483,6 +489,11 @@ components:
           type: date_time
           description: Last edit date if exists
           example: '2021-02-03T12:00:00+00:00'
+    exported_project:
+      type: string
+      format: binary
+      example: "{\rtf1\ansideff0 {\fonttbl {\f0 Times New Roman;}}{par\nLorem ipsum
+        { uper 1}\npar}{par \n(1) {\b Lorem ipsum]} w1, Lorem ipsam w2 w3;\npar}\n}"
 paths:
   "/api/v1/projects/{project_id}/tokens/{token_id}/comments":
     get:
@@ -1144,6 +1155,92 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/record_not_found"
+  "/api/v1/projects/{id}/export":
+    put:
+      summary: Export project to file
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of project
+      - name: project
+        in: query
+        schema:
+          type: object
+          properties:
+            project:
+              type: object
+              properties:
+                significant_readings:
+                  type: boolean
+                  description: Significant readings enabled
+                insignificant_readings:
+                  type: boolean
+                  description: Insignificant readings enabled
+                footnote_numbering:
+                  type: boolean
+                  description: Footnote numbering enabled
+                layout:
+                  type: string
+                  description: File Layout
+                  enum:
+                  - apparatus_at_the_end
+                selected_reading_separator:
+                  type: string
+                  description: Selected reading separator
+                  example: "]"
+                secondary_readings_separator:
+                  type: string
+                  description: Secondary readings separator
+                  example: ","
+                insignificant_readings_separator:
+                  type: string
+                  description: Insignificant readings separator
+                  example: ","
+                entries_separator:
+                  type: string
+                  description: Entries separator
+                  example: ";"
+              required:
+              - significant_readings
+              - insignificant_readings
+              - footnote_numbering
+              - layout
+              - selected_reading_separator
+              - secondary_readings_separator
+              - insignificant_readings_separator
+              - entries_separator
+      responses:
+        '200':
+          description: File successfully generated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/exported_project"
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Given options are invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
   "/api/v1/users/session-token":
     post:
       summary: Generates new JWT token
@@ -1271,7 +1368,7 @@ paths:
       - bearer: []
       description: Get tokens of the project. It returns tokens for the *Read mode*
         by default. <br>When *edit_mode* flag is enabled, the tokens will include
-        additional details (token state).
+        additional details (state and index).
       parameters:
       - name: project_id
         in: path
@@ -1494,9 +1591,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Uses given params to calculate new tokens. <br>If one of the selected
-        tokens had multiple possible readings, then their values be updated using
-        the selected_text. The selections will be preserved. <br>The number of tokens
+      description: Uses given params to merge multiple tokens into one. <br>The selections,
+        editorial remarks, and comments won't be preserved. <br>The number of tokens
         in the project may be changed by this operation.
       parameters:
       - name: project_id
@@ -1543,10 +1639,6 @@ paths:
                 token:
                   type: object
                   properties:
-                    selected_text:
-                      type: string
-                      description: The selected text value. Must match the text of
-                        all selected tokens or be part of it.
                     selected_token_ids:
                       type: array
                       items:
@@ -1570,6 +1662,146 @@ paths:
                   - selected_text
                   - selected_token_ids
                   - tokens_with_offsets
+  "/api/v1/projects/{project_id}/tokens/{id}/split":
+    parameters:
+    - name: project_id
+      in: path
+      description: project_id
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: token_id
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Split token into two new tokens
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Splits given token into two new tokens <br>Variants will be separated
+        between two tokens based on user's choice to split
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of token
+      responses:
+        '200':
+          description: Changes saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Your token was split successfully.
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
+        '422':
+          description: Given data invalid
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/invalid_record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variants:
+                  type: object
+                  properties:
+                    witness:
+                      type: string
+                      description: Witness value with splitting point
+                    t:
+                      type: string
+                      description: t value with splitting point
+              required:
+              - witness
+              - t
+                  required:
+                  - selected_token_ids
+  "/api/v1/projects/{project_id}/tokens/edited":
+    get:
+      summary: Checks if tokens with given ids have comments, editorial remarks, or
+        selected variants.
+      tags:
+      - Projects
+      security:
+      - bearer: []
+      description: Checks if tokens with given ids have comments, editorial remarks,
+        or selected variants.
+      parameters:
+      - name: project_id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of the project
+      - name: selected_token_ids
+        in: path
+        schema:
+          type: array
+        required: true
+        description: IDs of the selected tokens. All tokens must belong to the given
+          project.
+      responses:
+        '200':
+          description: Tokens checked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: boolean
+                    description: It is true if any of the given tokens has at least
+                      one comment
+                  editorial_remarks:
+                    type: boolean
+                    description: It is true if any of the given tokens has an editorial
+                      remark
+                  variants_selections:
+                    type: boolean
+                    description: It is true if any of the given tokens has selected
+                      variant
+        '401':
+          description: Login required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_required"
+        '404':
+          description: Project found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/record_not_found"
   "/api/v1/users":
     get:
       summary: Retrieves list of users

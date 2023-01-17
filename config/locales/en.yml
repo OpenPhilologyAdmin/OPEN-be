@@ -33,6 +33,11 @@ en:
               invalid_token_ids: token ids do not match the given selected_token_ids
               invalid_offsets: offsets should be either 0 or a positive integer
               multiple_readings_token_cannot_be_divided: multiple readings token cannot be divided into two tokens
+        tokens_manager/splitter/params:
+          attributes:
+            new_variants:
+              splitter_phrase_missing: splitter phrase is missing
+              invalid_variant_text: new variants do not match source token's variants
     attributes:
       token_editorial_remark:
         t: Content
@@ -65,6 +70,7 @@ en:
   tokens:
     notifications:
       tokens_width_updated: The selected tokens have been successfully updated.
+      token_split: Your token was split successfully.
   importer:
     errors:
       unsupported_file_format: The file format is not supported.

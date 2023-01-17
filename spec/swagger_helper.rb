@@ -266,6 +266,12 @@ RSpec.configure do |config|
                 example:     1,
                 nullable:    true
               },
+              index:           {
+                type:        :integer,
+                description: 'Index of token, starting from 0',
+                example:     1,
+                nullable:    true
+              },
               state:           {
                 type:        :string,
                 enum:        %i[one_variant not_evaluated evaluated_with_single evaluated_with_multiple],
@@ -490,10 +496,10 @@ RSpec.configure do |config|
                   },
                   details:          {
                     type:        :string,
-                    description: 'Insignificant readings with their witnesses. The ' \
-                                 "*#{FormattableT::NIL_VALUE_PLACEHOLDER}* means that " \
+                    description: 'The witnesses of the selected variant and then insignificant readings with their ' \
+                                 "witnesses. The *#{FormattableT::NIL_VALUE_PLACEHOLDER}* means that " \
                                  'the reading value is empty.',
-                    example:     'continued C D, group E F'
+                    example:     'A B, continued C D, group E F'
                   }
                 }
               }
@@ -565,6 +571,13 @@ RSpec.configure do |config|
                 example:     DateTime.new(2021, 2, 3.5)
               }
             }
+          },
+          exported_project:      {
+            type:    'string',
+            format:  'binary',
+            example: "{\rtf1\ansi\deff0 {\fonttbl {\f0 Times New Roman;}}{\par\n" \
+                     "Lorem ipsum {\super 1}\n\par}" \
+                     "{\par \n(1) {\b Lorem ipsum]} w1, Lorem ipsam w2 w3;\n\par}\n}"
           }
         }
       },

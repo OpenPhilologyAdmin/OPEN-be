@@ -9,4 +9,8 @@ module FormattableT
 
     t
   end
+
+  def formatted_value
+    formatted_t.strip
+  end
 end

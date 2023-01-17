@@ -3,6 +3,7 @@
 require 'swagger_helper'
 
 # rubocop:disable RSpec/MultipleMemoizedHelpers
+# rubocop:disable RSpec/ScatteredSetup
 RSpec.describe 'v1/projects/{project_id}/tokens' do
   let(:user) { create(:user, :admin, :approved) }
   let(:project) { create(:project) }
@@ -15,7 +16,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       produces 'application/json'
       security [{ bearer: [] }]
       description 'Get tokens of the project. It returns tokens for the *Read mode* by default. <br>' \
-                  'When *edit_mode* flag is enabled, the tokens will include additional details (token state).'
+                  'When *edit_mode* flag is enabled, the tokens will include additional details (state and index).'
 
       parameter name:        :project_id, in: :path,
                 schema:      {
@@ -424,9 +425,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Uses given params to calculate new tokens. <br>' \
-                  'If one of the selected tokens had multiple possible readings, ' \
-                  'then their values be updated using the selected_text. The selections will be preserved. <br>' \
+      description 'Uses given params to merge multiple tokens into one. <br>' \
+                  'The selections, editorial remarks, and comments won\'t be preserved. <br>' \
                   'The number of tokens in the project may be changed by this operation.'
 
       parameter name:        :project_id, in: :path,
@@ -442,37 +442,16 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
           token: {
             type:       :object,
             properties: {
-              selected_text:       {
-                type:        :string,
-                description: 'The selected text value. Must match the text of all selected tokens or be part of it.'
-              },
-              selected_token_ids:  {
+              selected_token_ids: {
                 type:  :array,
                 items: {
                   type:        :integer,
                   description: 'IDs of the selected tokens. All tokens must belong to the given project.' \
                                'The given tokens must be next to each other in the constituted text.'
                 }
-              },
-              tokens_with_offsets: {
-                type:  :array,
-                items: {
-                  type:       :object,
-                  properties: {
-                    offset:   {
-                      type:        :integer,
-                      description: 'Offset value. Must be a 0 or a positive integer.'
-                    },
-                    token_id: {
-                      type:        :integer,
-                      description: 'ID of the token for the given offset. ' \
-                                   'The token ID must be also included in :selected_token_ids'
-                    }
-                  }
-                }
               }
             },
-            required:   %w[selected_text selected_token_ids tokens_with_offsets]
+            required:   %w[selected_token_ids]
           }
         }
       }
@@ -487,22 +466,10 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       let(:selected_token2) { create(:token, :one_grouped_variant, project:, index: 1) }
       let(:not_selected_token) { create(:token, project:, index: 2) }
 
-      let(:selected_text) { "#{selected_token1.t}#{selected_token2.t}" }
       let(:token) do
         {
           token: {
-            selected_text:,
-            selected_token_ids:  [selected_token1.id, selected_token2.id],
-            tokens_with_offsets: [
-              {
-                offset:   0,
-                token_id: selected_token1.id
-              },
-              {
-                offset:   selected_token2.t.size,
-                token_id: selected_token2.id
-              }
-            ]
+            selected_token_ids: [selected_token1.id, selected_token2.id]
           }
         }
       end
@@ -522,10 +489,6 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
         before { project.reload }
 
-        it 'saves the current user as last_editor of project' do
-          expect(project.last_editor).to eq(user)
-        end
-
         it 'updates number of project tokens' do
           expect(project.tokens.size).to eq(2)
         end
@@ -537,29 +500,12 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
         it 'sets the given selected_text as :t of the new token' do
           new_token = project.tokens.first
-          expect(new_token.t).to eq(selected_text)
-        end
-
-        it 'sets the given selected_text as :t of the variants of the new token' do
-          new_token = project.tokens.first
-          new_token.variants.each do |variant|
-            expect(variant.t).to eq(selected_text)
-          end
-        end
-
-        it 'sets the given selected_text as :t of the grouped variants of the new token' do
-          new_token = project.tokens.first
-          new_token.grouped_variants.each do |grouped_variant|
-            expect(grouped_variant.t).to eq(selected_text)
-          end
+          expected_text = "#{selected_token1.t}#{selected_token2.t}"
+          expect(new_token.t).to eq(expected_text)
         end
 
         it 'updates index of the next not-selected token' do
           expect(not_selected_token.reload.index).to eq(1)
-        end
-
-        it 'does not update :t of the next not-selected token' do
-          expect(not_selected_token.reload.t).not_to include(selected_text)
         end
 
         it 'updates the user as the last editor of project' do
@@ -593,15 +539,13 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         let(:token) do
           {
             token: {
-              selected_text:       'lorem ipsum',
-              selected_token_ids:  [],
-              tokens_with_offsets: []
+              selected_token_ids: []
             }
           }
         end
 
         before do
-          allow(TokensManager::Resizer::Preparer).to receive(:perform)
+          allow(TokensManager::Resizer::Preparers::TokenFromMultipleTokens).to receive(:perform)
           allow(TokensManager::Resizer::Processor).to receive(:perform)
         end
 
@@ -610,7 +554,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
 
         it 'does not run TokensManager::Resizer::Preparer' do
-          expect(TokensManager::Resizer::Preparer).not_to have_received(:perform)
+          expect(TokensManager::Resizer::Preparers::TokenFromMultipleTokens).not_to have_received(:perform)
         end
 
         it 'does not run TokensManager::Resizer::Processor' do
@@ -619,5 +563,272 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       end
     end
   end
+
+  path '/api/v1/projects/{project_id}/tokens/{id}/split' do
+    parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
+    parameter name: 'id', in: :path, type: :string, description: 'token_id'
+
+    let(:project) { create(:project, witnesses: [Witness.new(siglum: 'A'), Witness.new(siglum: 'B')]) }
+    let(:project_id) { project.id }
+    let(:record) { create(:token, project:) }
+    let(:id) { record.id }
+
+    patch('Split token into two new tokens') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Splits given token into two new tokens <br>' \
+                  'Variants will be separated between two tokens based on user\'s choice to split'
+
+      parameter name:        :project_id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of the project'
+
+      parameter name:        :id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of token'
+
+      parameter name: :variants, in: :body, schema: {
+        type:       :object,
+        properties: {
+          variants: {
+            type:       :object,
+            properties: {
+              witness: {
+                type:        :string,
+                description: 'Witness value with splitting point'
+              },
+              t:       {
+                type:        :string,
+                description: 't value with splitting point'
+              }
+            }
+          }
+        },
+        required:   %w[witness t]
+      }
+
+      before do
+        record
+        not_selected_token
+      end
+
+      let(:record) do
+        create(:token, project:, index: 0, variants: [
+                 build(:token_variant,
+                       witness: 'A',
+                       t:       'This is a nice text'),
+
+                 build(:token_variant,
+                       witness: 'B',
+                       t:       'This is quite a bad text')
+               ])
+      end
+      let(:not_selected_token) { create(:token, project:, index: 1) }
+
+      let(:variants) do
+        {
+          variants: [
+            {
+              witness: 'A',
+              t:       'This is{scissors} a nice text'
+            },
+            {
+              witness: 'B',
+              t:       'This is quite a b{scissors}ad text'
+            }
+          ]
+        }
+      end
+
+      let(:params) { variants }
+
+      response '200', 'Changes saved' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 message: {
+                   type:    :string,
+                   example: I18n.t('tokens.notifications.token_split')
+                 }
+               }
+
+        run_test!
+
+        before { project.reload }
+
+        it 'saves the current user as last_editor of project' do
+          expect(project.last_editor).to eq(user)
+        end
+
+        it 'updates number of project tokens' do
+          expect(project.tokens.size).to eq(3)
+        end
+
+        it 'deletes source token' do
+          expect(record.reload.deleted).to be(true)
+        end
+
+        it 'sets the first new token\'s index to source token\'s index' do
+          first_token = project.tokens.reload.first
+          expect(first_token.index).to eq(0)
+        end
+
+        it 'sets the second new token\'s index to source token\'s index incremented by one' do
+          second_token = project.tokens.second
+          expect(second_token.index).to eq(1)
+        end
+
+        context 'when splits variants to the first new token' do
+          let(:first_token) { project.tokens.reload.first }
+
+          it { expect(first_token.variants.first.witness).to eq('A') }
+          it { expect(first_token.variants.first.t).to eq('This is') }
+          it { expect(first_token.variants.second.witness).to eq('B') }
+          it { expect(first_token.variants.second.t).to eq('This is quite a b') }
+        end
+
+        context 'when splits variants to the second new token' do
+          let(:second_token) { project.tokens.reload.second }
+
+          it { expect(second_token.variants.first.witness).to eq('A') }
+          it { expect(second_token.reload.variants.first.t).to eq(' a nice text') }
+          it { expect(second_token.variants.second.witness).to eq('B') }
+          it { expect(second_token.variants.second.t).to eq('ad text') }
+        end
+
+        it 'updates index of the next not-selected token' do
+          expect(not_selected_token.reload.index).to eq(2)
+        end
+
+        it 'updates the user as the last editor of project' do
+          expect(project.reload.last_editor).to eq(user)
+        end
+
+        it 'updates project as the last edited project by user' do
+          expect(user.reload.last_edited_project).to eq(project)
+        end
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+
+      response '422', 'Given data invalid' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:variants) do
+          {
+            variants: [
+              {
+                witness: 'A',
+                t:       'this is text'
+              }
+            ]
+          }
+        end
+
+        before do
+          allow(TokensManager::Splitter::Processor).to receive(:perform)
+        end
+
+        schema '$ref' => '#/components/schemas/invalid_record'
+
+        run_test!
+
+        it 'does not run TokensManager::Splitter::Processor' do
+          expect(TokensManager::Splitter::Processor).not_to have_received(:perform)
+        end
+      end
+    end
+  end
+
+  path '/api/v1/projects/{project_id}/tokens/edited' do
+    get('Checks if tokens with given ids have comments, editorial remarks, or selected variants.') do
+      tags 'Projects'
+      consumes 'application/json'
+      produces 'application/json'
+      security [{ bearer: [] }]
+      description 'Checks if tokens with given ids have comments, editorial remarks, or selected variants.'
+
+      parameter name:        :project_id, in: :path,
+                schema:      {
+                  type: :integer
+                },
+                required:    true,
+                description: 'ID of the project'
+
+      parameter name: :selected_token_ids, in: :path,
+                schema: {
+                  type: :array
+                },
+                required:   true,
+                description: 'IDs of the selected tokens. All tokens must belong to the given project.'
+
+      let!(:selected_token1) { create(:token, :one_grouped_variant, project:, index: 0) }
+      let!(:selected_token2) { create(:token, project:, index: 1) }
+      let(:selected_token_ids) { [selected_token1.id, selected_token2.id] }
+
+      response '200', 'Tokens checked' do
+        let(:Authorization) { authorization_header_for(user) }
+
+        schema type:       :object,
+               properties: {
+                 comments:            {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has at least one comment'
+                 },
+                 editorial_remarks:   {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has an editorial remark'
+                 },
+                 variants_selections: {
+                   type:        :boolean,
+                   description: 'It is true if any of the given tokens has selected variant'
+                 }
+               }
+
+        run_test!
+      end
+
+      response '401', 'Login required' do
+        let(:Authorization) { nil }
+
+        schema '$ref' => '#/components/schemas/login_required'
+
+        run_test!
+      end
+
+      response '404', 'Project found' do
+        let(:Authorization) { authorization_header_for(user) }
+        let(:project_id) { 'invalid-id' }
+
+        schema '$ref' => '#/components/schemas/record_not_found'
+
+        run_test!
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers
+# rubocop:enable RSpec/ScatteredSetup

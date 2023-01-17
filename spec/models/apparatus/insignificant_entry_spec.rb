@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Apparatus::InsignificantEntry, type: :model do
+RSpec.describe Apparatus::InsignificantEntry do
   describe 'factories' do
     it 'creates valid default factory' do
       expect(build(:apparatus_insignificant_entry)).to be_valid
@@ -25,12 +25,13 @@ RSpec.describe Apparatus::InsignificantEntry, type: :model do
     context 'when there there is a variant selected' do
       let(:record) { build(:apparatus_insignificant_entry, :variant_selected) }
       let(:selected_reading) { "#{record.selected_variant.formatted_t.strip}]" }
-
-      let(:details) do
+      let(:selected_witnesses) { record.selected_variant.witnesses.join(' ') }
+      let(:insignificant_variants_readings) do
         record.insignificant_variants.map do |v|
           "#{v.formatted_t.strip} #{v.witnesses.join(' ')}"
         end.join(', ')
       end
+      let(:details) { "#{selected_witnesses}, #{insignificant_variants_readings}" }
 
       let(:expected_value) do
         {

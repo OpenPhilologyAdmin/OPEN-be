@@ -31,4 +31,8 @@ class TokenGroupedVariant
   def insignificant?
     !significant?
   end
+
+  def formatted_witnesses
+    witnesses.join(' ')
+  end
 end

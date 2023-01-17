@@ -21,6 +21,10 @@ class ProjectPolicy < ApplicationPolicy
     approved_admin? && record.creator == user
   end
 
+  def export?
+    approved_admin?
+  end
+
   def manage_witnesses?
     show?
   end
@@ -52,6 +56,19 @@ class ProjectPolicy < ApplicationPolicy
 
   def permitted_attributes_for_update
     [:name]
+  end
+
+  def permitted_attributes_for_export
+    %w[
+      significant_readings
+      insignificant_readings
+      footnote_numbering
+      layout
+      selected_reading_separator
+      secondary_readings_separator
+      insignificant_readings_separator
+      entries_separator
+    ]
   end
 
   class Scope < Scope

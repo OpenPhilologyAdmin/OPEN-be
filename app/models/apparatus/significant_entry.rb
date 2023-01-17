@@ -16,12 +16,12 @@ module Apparatus
     private
 
     def details
-      secondary_readings.unshift(witnesses_for(selected_variant)).join(', ')
+      secondary_readings.unshift(selected_reading_witnesses).join(', ')
     end
 
     def secondary_readings
       secondary_variants.map do |variant|
-        reading_for(variant:)
+        full_reading_for(variant:)
       end
     end
   end
