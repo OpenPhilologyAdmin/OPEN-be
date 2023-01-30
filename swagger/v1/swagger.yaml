@@ -1646,22 +1646,8 @@ paths:
                         description: IDs of the selected tokens. All tokens must belong
                           to the given project.The given tokens must be next to each
                           other in the constituted text.
-                    tokens_with_offsets:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          offset:
-                            type: integer
-                            description: Offset value. Must be a 0 or a positive integer.
-                          token_id:
-                            type: integer
-                            description: ID of the token for the given offset. The
-                              token ID must be also included in :selected_token_ids
                   required:
-                  - selected_text
                   - selected_token_ids
-                  - tokens_with_offsets
   "/api/v1/projects/{project_id}/tokens/{id}/split":
     parameters:
     - name: project_id
@@ -1744,8 +1730,6 @@ paths:
               required:
               - witness
               - t
-                  required:
-                  - selected_token_ids
   "/api/v1/projects/{project_id}/tokens/edited":
     get:
       summary: Checks if tokens with given ids have comments, editorial remarks, or
