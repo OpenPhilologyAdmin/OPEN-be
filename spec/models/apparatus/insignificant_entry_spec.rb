@@ -24,14 +24,14 @@ RSpec.describe Apparatus::InsignificantEntry do
 
     context 'when there there is a variant selected' do
       let(:record) { build(:apparatus_insignificant_entry, :variant_selected) }
-      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip}]" }
+      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip} ]" }
       let(:selected_witnesses) { record.selected_variant.witnesses.join(' ') }
       let(:insignificant_variants_readings) do
         record.insignificant_variants.map do |v|
-          "#{v.formatted_t.strip} #{v.witnesses.join(' ')}"
-        end.join(', ')
+          "#{v.witnesses.sort.join(TokenGroupedVariant::WITNESSES_SEPARATOR)}: #{v.formatted_t.strip}"
+        end.sort.join(described_class::ENTRIES_SEPARATOR)
       end
-      let(:details) { "#{selected_witnesses}, #{insignificant_variants_readings}" }
+      let(:details) { "#{selected_witnesses}#{described_class::ENTRIES_SEPARATOR}#{insignificant_variants_readings}" }
 
       let(:expected_value) do
         {

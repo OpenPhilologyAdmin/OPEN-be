@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Apparatus::SignificantEntry, type: :model do
+RSpec.describe Apparatus::SignificantEntry do
   describe 'factories' do
     it 'creates valid default factory' do
       expect(build(:apparatus_significant_entry)).to be_valid
@@ -29,7 +29,7 @@ RSpec.describe Apparatus::SignificantEntry, type: :model do
     context 'when there is a variant selected' do
       let(:record) { build(:apparatus_significant_entry, :variant_selected) }
       let(:selected_witnesses) { record.selected_variant.witnesses.join(' ') }
-      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip}]" }
+      let(:selected_reading) { "#{record.selected_variant.formatted_t.strip} ]" }
       let(:expected_value) do
         {
           selected_reading:,
@@ -59,10 +59,10 @@ RSpec.describe Apparatus::SignificantEntry, type: :model do
         let(:record) { build(:apparatus_significant_entry, :variant_selected_and_secondary) }
         let(:secondary_variants_readings) do
           record.secondary_variants.map do |v|
-            "#{v.formatted_t.strip} #{v.witnesses.join(' ')}"
-          end.join(', ')
+            "#{v.witnesses.sort.join(TokenGroupedVariant::WITNESSES_SEPARATOR)}: #{v.formatted_t.strip}"
+          end.sort.join(described_class::ENTRIES_SEPARATOR)
         end
-        let(:details) { "#{selected_witnesses}, #{secondary_variants_readings}" }
+        let(:details) { "#{selected_witnesses}#{described_class::ENTRIES_SEPARATOR}#{secondary_variants_readings}" }
 
         context 'when :t is present' do
           it 'contains the selected reading, its witnesses & secondary readings are in :details' do

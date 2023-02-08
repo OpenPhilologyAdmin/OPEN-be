@@ -11,7 +11,7 @@ module Exporter
       end
 
       def reading
-        readings.join("#{separator} ")
+        readings.sort.join("#{separator} ")
       end
 
       private

@@ -11,20 +11,20 @@ module Helpers
     def selected_grouped_variant_to_export(grouped_variant:, separator:, open_tag: nil, close_tag: nil)
       value = grouped_variant_value(grouped_variant:)
       witnesses = grouped_variant_witnesses(grouped_variant:)
-      "#{within_tag(value: "#{value}#{separator}", open_tag:, close_tag:)} #{witnesses}"
+      "#{within_tag(value: "#{value} #{separator}", open_tag:, close_tag:)} #{witnesses}"
     end
 
     def selected_grouped_variant_value(grouped_variant:, separator:)
       value = grouped_variant_value(grouped_variant:)
-      "#{value}#{separator}"
+      "#{value} #{separator}"
     end
 
     def grouped_variants_to_export(grouped_variants:, separator:)
       grouped_variants.map do |grouped_variant|
         value = grouped_variant_value(grouped_variant:)
         witnesses = grouped_variant_witnesses(grouped_variant:)
-        "#{value} #{witnesses}"
-      end.join("#{separator} ")
+        "#{witnesses}: #{value}"
+      end.sort.join("#{separator} ")
     end
 
     def grouped_variant_value(grouped_variant:)
@@ -32,7 +32,7 @@ module Helpers
     end
 
     def grouped_variant_witnesses(grouped_variant:)
-      grouped_variant.witnesses.join(' ')
+      grouped_variant.witnesses.sort.join(TokenGroupedVariant::WITNESSES_SEPARATOR)
     end
   end
 end

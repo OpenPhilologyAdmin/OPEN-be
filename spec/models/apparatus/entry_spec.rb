@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Apparatus::Entry, type: :model do
+RSpec.describe Apparatus::Entry do
   describe 'factories' do
     it 'creates valid default factory' do
       expect(build(:apparatus_entry)).to be_valid
@@ -20,8 +20,8 @@ RSpec.describe Apparatus::Entry, type: :model do
   describe '#value' do
     let(:record) { build(:apparatus_entry) }
 
-    it 'raises NotImplementedError' do
-      expect { record.value }.to raise_error(NotImplementedError)
+    it 'is nil' do
+      expect(record.value).to be_nil
     end
   end
 end

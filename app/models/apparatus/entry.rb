@@ -6,6 +6,9 @@ module Apparatus
     include ActiveModel::Serializers::JSON
     include Concerns::FormattableReading
 
+    ENTRIES_SEPARATOR = '; '
+    SELECTED_READING_SEPARATOR = ']'
+
     attr_accessor :token, :index
 
     delegate :id, to: :token, prefix: true
@@ -19,13 +22,36 @@ module Apparatus
     end
 
     def value
-      raise NotImplementedError
+      return nil unless apparatus?
+
+      {
+        selected_reading:,
+        details:
+      }
     end
 
     private
 
     def selected_reading
-      base_reading_for(variant: selected_variant, separator: ']')
+      base_reading_for(
+        variant:   selected_variant,
+        separator: SELECTED_READING_SEPARATOR
+      )
+    end
+
+    def details
+      additional_readings.unshift(selected_reading_witnesses)
+                         .join(ENTRIES_SEPARATOR)
+    end
+
+    def additional_readings
+      additional_variants.map do |variant|
+        full_reading_for(variant:)
+      end.sort
+    end
+
+    def additional_variants
+      raise NotImplementedError
     end
 
     def selected_reading_witnesses

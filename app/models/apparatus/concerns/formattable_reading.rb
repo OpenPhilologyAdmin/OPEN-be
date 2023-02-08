@@ -31,11 +31,11 @@ module Apparatus
         end
 
         def full_reading
-          "#{base_reading} #{witnesses}"
+          "#{witnesses}: #{base_reading}".strip
         end
 
         def base_reading
-          @base_reading ||= "#{variant_formatted_value}#{separator}"
+          @base_reading ||= "#{variant_formatted_value} #{separator}"
         end
 
         def witnesses

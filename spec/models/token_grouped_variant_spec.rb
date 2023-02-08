@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/shared_examples/formattable_t'
 
-RSpec.describe TokenGroupedVariant, type: :model do
+RSpec.describe TokenGroupedVariant do
   describe 'factories' do
     it 'creates valid default factory' do
       expect(build(:token_grouped_variant)).to be_valid
@@ -134,16 +134,27 @@ RSpec.describe TokenGroupedVariant, type: :model do
       let(:token_grouped_variant) { build(:token_grouped_variant, witnesses_number: 3) }
       let(:expected_value) { token_grouped_variant.witnesses.sort.join }
 
-      it 'equals joined values of alpha ordered witnesses' do
+      it 'equals joined values of alpha-ordered witnesses' do
         expect(token_grouped_variant.id).to eq(expected_value)
       end
     end
   end
 
+  describe '#witnesses' do
+    let(:witnesses) { Array.new(5) { Faker::Alphanumeric.alpha(number: 2).capitalize } }
+    let(:token_grouped_variant) { build(:token_grouped_variant, witnesses:) }
+    let(:expected_value) { witnesses.sort }
+
+    it 'sorts the given witnesses alphabetically' do
+      expect(token_grouped_variant.witnesses).to eq(expected_value)
+    end
+  end
+
   describe '#formatted_witnesses' do
-    it 'returns all witnesses with spaces' do
-      grouped_variant = build(:token_grouped_variant)
-      expect(grouped_variant.formatted_witnesses).to eq(grouped_variant.witnesses.join(' '))
+    it 'returns alpha-ordered witnesses separated by spaces' do
+      grouped_variant = build(:token_grouped_variant, witnesses: %w[E C B Z])
+      expect(grouped_variant.formatted_witnesses)
+        .to eq(grouped_variant.witnesses.sort.join(TokenGroupedVariant::WITNESSES_SEPARATOR))
     end
   end
 

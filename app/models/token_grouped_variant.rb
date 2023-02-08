@@ -3,6 +3,7 @@
 class TokenGroupedVariant
   include StoreModel::Model
   include FormattableT
+  WITNESSES_SEPARATOR = ' '
 
   attribute :id, :string
   attribute :witnesses, :array_of_strings, default: -> { [] }
@@ -33,6 +34,6 @@ class TokenGroupedVariant
   end
 
   def formatted_witnesses
-    witnesses.join(' ')
+    witnesses.join(WITNESSES_SEPARATOR)
   end
 end
