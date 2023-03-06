@@ -413,7 +413,7 @@ RSpec.describe 'v1/projects' do
                 required: true,
                 description: 'ID of project'
 
-      parameter name: :project, in: :query, schema: {
+      parameter name: :project, in: :body, schema: {
         type:       :object,
         properties:
                     {
@@ -434,17 +434,25 @@ RSpec.describe 'v1/projects' do
                           },
                           selected_reading_separator: {
                             type:        :string,
-                            description: 'Selected reading separator',
+                            description: 'Selected reading separator. Forbidden values: ' \
+                                         "'{', '}', '|' and backslash. " \
+                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
                             example:     ']'
                           },
                           readings_separator:         {
                             type:        :string,
-                            description: 'Readings separator, used between reading + sigla pairs',
+                            description: 'Readings separator, used between reading + sigla pairs. ' \
+                                         'Forbidden values: ' \
+                                         "'{', '}', '|' and backslash. " \
+                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
                             example:     ','
                           },
                           sigla_separator:            {
                             type:        :string,
-                            description: 'Sigla separator, will be displayed between sigla and corresponding reading',
+                            description: 'Sigla separator, will be displayed between sigla ' \
+                                         'and corresponding reading. Forbidden values: ' \
+                                         "'{', '}', '|' and backslash. " \
+                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
                             example:     ':'
                           }
                         },

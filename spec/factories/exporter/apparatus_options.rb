@@ -14,7 +14,7 @@ FactoryBot.define do
     footnote_numbering { true }
 
     trait :invalid do
-      selected_reading_separator { nil }
+      selected_reading_separator { Exporter::ApparatusOptions::FORBIDDEN_VALUES.sample }
       readings_separator { nil }
       sigla_separator { nil }
       footnote_numbering { nil }

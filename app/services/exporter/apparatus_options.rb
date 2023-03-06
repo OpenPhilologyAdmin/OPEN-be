@@ -6,6 +6,9 @@ module Exporter
     include ActiveModel::Attributes
     include Helpers::HasFullMessageErrorsHash
 
+    FORBIDDEN_VALUES = ['{', '}', '\\', '|'].freeze
+    MAX_SEPARATOR_LENGTH = 1
+
     attribute :footnote_numbering, :boolean
     attribute :significant_readings, :boolean
     attribute :insignificant_readings, :boolean
@@ -17,7 +20,9 @@ module Exporter
     validates :significant_readings, :insignificant_readings, inclusion: [true, false]
 
     validates :selected_reading_separator, :readings_separator, :sigla_separator,
-              presence: true
+              presence:  true,
+              exclusion: { in: FORBIDDEN_VALUES },
+              length:    { maximum: MAX_SEPARATOR_LENGTH }
 
     alias footnote_numbering? footnote_numbering
     alias significant_readings? significant_readings

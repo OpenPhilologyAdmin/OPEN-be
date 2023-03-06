@@ -38,6 +38,8 @@ en:
             new_variants:
               splitter_phrase_missing: splitter phrase is missing
               invalid_variant_text: new variants do not match source token's variants
+        exporter/apparatus_options:
+          exclusion: value is not allowed
     attributes:
       token_editorial_remark:
         t: Content

@@ -8,6 +8,7 @@ RSpec.describe Exporter::ApparatusOptions, type: :model do
     subject(:resource) { build(:apparatus_options) }
 
     let(:allowed_boolean_values) { [true, false, 'true', 'false', '1', '0'] }
+    let(:forbidden_values_for_string_fields) { described_class::FORBIDDEN_VALUES }
 
     it { is_expected.to allow_value(allowed_boolean_values).for(:footnote_numbering) }
     it { is_expected.not_to allow_value(nil).for(:footnote_numbering) }
@@ -17,6 +18,27 @@ RSpec.describe Exporter::ApparatusOptions, type: :model do
     it { is_expected.not_to allow_value(nil).for(:insignificant_readings) }
     it { is_expected.to validate_presence_of(:selected_reading_separator) }
     it { is_expected.to validate_presence_of(:readings_separator) }
+    it { is_expected.to validate_length_of(:selected_reading_separator).is_at_most(1) }
+    it { is_expected.to validate_length_of(:readings_separator).is_at_most(1) }
+    it { is_expected.to validate_length_of(:sigla_separator).is_at_most(1) }
+
+    it 'does not allow setting any of the forbidden values for :selected_reading_separator' do
+      forbidden_values_for_string_fields.each do |forbidden_value|
+        expect(resource).not_to allow_value(forbidden_value).for(:selected_reading_separator)
+      end
+    end
+
+    it 'does not allow setting any of the forbidden values for :readings_separator' do
+      forbidden_values_for_string_fields.each do |forbidden_value|
+        expect(resource).not_to allow_value(forbidden_value).for(:readings_separator)
+      end
+    end
+
+    it 'does not allow setting any of the forbidden values for :sigla_separator' do
+      forbidden_values_for_string_fields.each do |forbidden_value|
+        expect(resource).not_to allow_value(forbidden_value).for(:sigla_separator)
+      end
+    end
   end
 
   describe 'factories' do
