@@ -9,12 +9,13 @@ end
 
 RSpec.describe Exporter::Models::AdditionalReadings, type: :model do
   describe '#reading' do
-    let(:resource) { described_class.new(grouped_variants:, separator:) }
+    let(:resource) { described_class.new(grouped_variants:, separator:, sigla_separator:) }
     let(:separator) { ',' }
+    let(:sigla_separator) { '#' }
 
     context 'when there are multiple grouped variants given' do
       let(:grouped_variants) { [build(:token_grouped_variant), build(:token_grouped_variant)] }
-      let(:expected_value) { grouped_variants_to_export(grouped_variants:, separator:) }
+      let(:expected_value) { grouped_variants_to_export(grouped_variants:, separator:, sigla_separator:) }
 
       it 'returns the correct reading' do
         expect(resource.reading).to eq(expected_value)
@@ -23,7 +24,7 @@ RSpec.describe Exporter::Models::AdditionalReadings, type: :model do
 
     context 'when there is just one grouped variants given' do
       let(:grouped_variants) { [build(:token_grouped_variant)] }
-      let(:expected_value) { grouped_variants_to_export(grouped_variants:, separator:) }
+      let(:expected_value) { grouped_variants_to_export(grouped_variants:, separator:, sigla_separator:) }
 
       it 'returns the correct reading' do
         expect(resource.reading).to eq(expected_value)

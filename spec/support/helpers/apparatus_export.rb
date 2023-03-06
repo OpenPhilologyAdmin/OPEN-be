@@ -8,6 +8,18 @@ module Helpers
       "#{open_tag} #{value}#{close_tag}"
     end
 
+    def within_indented_line(value:, options: {})
+      "{\\li720 #{value} #{options[:include_line_break] ? '\\line' : ''}}\n"
+    end
+
+    def with_color(value:, color:)
+      "\\#{color} #{value}"
+    end
+
+    def within_paragraph(value:)
+      "{\\par\n#{value}\n\\par}\n"
+    end
+
     def selected_grouped_variant_to_export(grouped_variant:, separator:, open_tag: nil, close_tag: nil)
       value = grouped_variant_value(grouped_variant:)
       witnesses = grouped_variant_witnesses(grouped_variant:)
@@ -19,11 +31,11 @@ module Helpers
       "#{value} #{separator}"
     end
 
-    def grouped_variants_to_export(grouped_variants:, separator:)
+    def grouped_variants_to_export(grouped_variants:, separator:, sigla_separator:)
       grouped_variants.map do |grouped_variant|
         value = grouped_variant_value(grouped_variant:)
         witnesses = grouped_variant_witnesses(grouped_variant:)
-        "#{witnesses}: #{value}"
+        "#{witnesses}#{sigla_separator} #{value}"
       end.sort.join("#{separator} ")
     end
 

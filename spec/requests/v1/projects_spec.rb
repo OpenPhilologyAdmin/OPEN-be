@@ -420,48 +420,37 @@ RSpec.describe 'v1/projects' do
                       project: {
                         type:       :object,
                         properties: {
-                          significant_readings:             {
+                          significant_readings:       {
                             type:        :boolean,
                             description: 'Significant readings enabled'
                           },
-                          insignificant_readings:           {
+                          insignificant_readings:     {
                             type:        :boolean,
                             description: 'Insignificant readings enabled'
                           },
-                          footnote_numbering:               {
+                          footnote_numbering:         {
                             type:        :boolean,
                             description: 'Footnote numbering enabled'
                           },
-                          layout:                           {
-                            type:        :string,
-                            description: 'File Layout',
-                            enum:        %i[apparatus_at_the_end]
-                          },
-                          selected_reading_separator:       {
+                          selected_reading_separator: {
                             type:        :string,
                             description: 'Selected reading separator',
                             example:     ']'
                           },
-                          secondary_readings_separator:     {
+                          readings_separator:         {
                             type:        :string,
-                            description: 'Secondary readings separator',
+                            description: 'Readings separator, used between reading + sigla pairs',
                             example:     ','
                           },
-                          insignificant_readings_separator: {
+                          sigla_separator:            {
                             type:        :string,
-                            description: 'Insignificant readings separator',
-                            example:     ','
-                          },
-                          entries_separator:                {
-                            type:        :string,
-                            description: 'Entries separator',
-                            example:     ';'
+                            description: 'Sigla separator, will be displayed between sigla and corresponding reading',
+                            example:     ':'
                           }
                         },
                         required:   %i[
                           significant_readings insignificant_readings footnote_numbering
-                          layout selected_reading_separator secondary_readings_separator
-                          insignificant_readings_separator entries_separator
+                          selected_reading_separator readings_separator sigla_separator
                         ]
                       }
                     }
@@ -471,14 +460,12 @@ RSpec.describe 'v1/projects' do
         {
           project:
                    {
-                     significant_readings:             true,
-                     insignificant_readings:           true,
-                     footnote_numbering:               true,
-                     layout:                           Exporter::ExporterOptions::LAYOUTS.sample,
-                     selected_reading_separator:       ']',
-                     secondary_readings_separator:     ',',
-                     insignificant_readings_separator: ',',
-                     entries_separator:                ';'
+                     significant_readings:       true,
+                     insignificant_readings:     true,
+                     footnote_numbering:         true,
+                     selected_reading_separator: ']',
+                     readings_separator:         ',',
+                     sigla_separator:            ':'
                    }
         }
       end
@@ -514,14 +501,12 @@ RSpec.describe 'v1/projects' do
           {
             project:
                      {
-                       significant_readings:             nil,
-                       insignificant_readings:           nil,
-                       footnote_numbering:               nil,
-                       layout:                           nil,
-                       selected_reading_separator:       ']',
-                       secondary_readings_separator:     ',',
-                       insignificant_readings_separator: ',',
-                       entries_separator:                nil
+                       significant_readings:       nil,
+                       insignificant_readings:     nil,
+                       footnote_numbering:         nil,
+                       selected_reading_separator: ']',
+                       readings_separator:         ',',
+                       sigla_separator:            ':'
                      }
           }
         end

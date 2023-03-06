@@ -5,9 +5,7 @@ require 'rails_helper'
 RSpec.describe Exporter::Base, type: :service do
   let(:project) { create(:project) }
   let(:options) do
-    attributes_for(:apparatus_options).merge(
-      attributes_for(:exporter_options)
-    )
+    attributes_for(:apparatus_options)
   end
 
   let(:service) { described_class.new(project:, options:) }
@@ -17,19 +15,9 @@ RSpec.describe Exporter::Base, type: :service do
       expect(service.instance_variable_get('@project')).to eq(project)
     end
 
-    it 'sets the @exporter_options' do
-      exporter_options = service.instance_variable_get('@exporter_options')
-      expect(exporter_options).to be_an_instance_of(Exporter::ExporterOptions)
-    end
-
-    it 'passes :footnote_numbering to the @exporter_options' do
-      exporter_options = service.instance_variable_get('@exporter_options')
-      expect(exporter_options.footnote_numbering).to eq(options[:footnote_numbering])
-    end
-
-    it 'passes :layout to the @exporter_options' do
-      exporter_options = service.instance_variable_get('@exporter_options')
-      expect(exporter_options.layout).to eq(options[:layout])
+    it 'passes :footnote_numbering to the @apparatus_options' do
+      apparatus_options = service.instance_variable_get('@apparatus_options')
+      expect(apparatus_options.footnote_numbering).to eq(options[:footnote_numbering])
     end
 
     it 'sets the @apparatus_options' do
@@ -52,19 +40,9 @@ RSpec.describe Exporter::Base, type: :service do
       expect(apparatus_options.selected_reading_separator).to eq(options[:selected_reading_separator])
     end
 
-    it 'passes :secondary_readings_separator to the @apparatus_options' do
+    it 'passes :readings_separator to the @apparatus_options' do
       apparatus_options = service.instance_variable_get('@apparatus_options')
-      expect(apparatus_options.secondary_readings_separator).to eq(options[:secondary_readings_separator])
-    end
-
-    it 'passes :insignificant_readings_separator to the @apparatus_options' do
-      apparatus_options = service.instance_variable_get('@apparatus_options')
-      expect(apparatus_options.insignificant_readings_separator).to eq(options[:insignificant_readings_separator])
-    end
-
-    it 'passes :entries_separator to the @apparatus_options' do
-      apparatus_options = service.instance_variable_get('@apparatus_options')
-      expect(apparatus_options.entries_separator).to eq(options[:entries_separator])
+      expect(apparatus_options.readings_separator).to eq(options[:readings_separator])
     end
   end
 
@@ -90,8 +68,7 @@ RSpec.describe Exporter::Base, type: :service do
               selected_variant:       token2.selected_variant,
               secondary_variants:     token2.secondary_variants,
               insignificant_variants: token2.insignificant_variants,
-              apparatus_options:,
-              index:                  1)
+              apparatus_options:)
       ]
     end
 
@@ -103,12 +80,11 @@ RSpec.describe Exporter::Base, type: :service do
     context 'when given options valid' do
       let(:apparatus_options) do
         build(:apparatus_options,
-              significant_readings:             options[:significant_readings],
-              insignificant_readings:           options[:insignificant_readings],
-              selected_reading_separator:       options[:selected_reading_separator],
-              secondary_readings_separator:     options[:secondary_readings_separator],
-              insignificant_readings_separator: options[:insignificant_readings_separator],
-              entries_separator:                options[:entries_separator])
+              significant_readings:       options[:significant_readings],
+              insignificant_readings:     options[:insignificant_readings],
+              selected_reading_separator: options[:selected_reading_separator],
+              readings_separator:         options[:readings_separator],
+              sigla_separator:            options[:sigla_separator])
       end
       let(:expected_paragraphs) do
         [
@@ -129,14 +105,10 @@ RSpec.describe Exporter::Base, type: :service do
 
     context 'when given options invalid' do
       let(:options) do
-        attributes_for(:apparatus_options, :invalid).merge(
-          attributes_for(:exporter_options, :invalid)
-        )
+        attributes_for(:apparatus_options, :invalid)
       end
       let(:expected_errors) do
-        build(:apparatus_options, :invalid).errors_hash.merge(
-          build(:exporter_options, :invalid).errors_hash
-        )
+        build(:apparatus_options, :invalid).errors_hash
       end
 
       it 'returns success: false result' do

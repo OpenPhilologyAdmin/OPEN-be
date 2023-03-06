@@ -5,7 +5,11 @@ require 'rails_helper'
 RSpec.describe Exporter::Models::Document, type: :model do
   describe '#to_export' do
     let(:resource) { described_class.new(paragraphs:) }
-    let(:expected_value) { "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\n#{content}\n}" }
+    let(:expected_value) do
+      '{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}' \
+        "{\\colortbl;\\red93\\green45\\blue239;\\red252\\green97\\blue69;}\n" \
+        "#{content}\n}"
+    end
 
     context 'when paragraphs empty' do
       let(:paragraphs) { [] }

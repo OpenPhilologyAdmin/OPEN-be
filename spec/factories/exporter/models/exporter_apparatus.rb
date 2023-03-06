@@ -10,6 +10,5 @@ FactoryBot.define do
     secondary_variants { build_list(:token_grouped_variant, 2, :secondary) }
     insignificant_variants { build_list(:token_grouped_variant, 2, :insignificant) }
     apparatus_options { build(:apparatus_options) }
-    index { Faker::Number.digit }
   end
 end

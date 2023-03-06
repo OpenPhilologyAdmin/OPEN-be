@@ -3,11 +3,11 @@
 module Exporter
   module Models
     class Styler
-      def perform(value:, style:)
-        public_send("to_#{style}", value:)
+      def perform(value:, style:, options: {})
+        public_send("to_#{style}", value:, options:)
       end
 
-      %w[superscript bold paragraph document].each do |style|
+      %w[superscript bold paragraph document indented_line color].each do |style|
         define_method "to_#{style}" do |_value = nil|
           raise NotImplementedError
         end

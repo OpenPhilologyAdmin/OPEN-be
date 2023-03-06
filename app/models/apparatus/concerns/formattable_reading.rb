@@ -4,10 +4,12 @@ module Apparatus
   module Concerns
     module FormattableReading
       extend ActiveSupport::Concern
+      DEFAULT_SIGLA_SEPARATOR = ':'
 
-      def full_reading_for(variant:)
+      def full_reading_for(variant:, sigla_separator: DEFAULT_SIGLA_SEPARATOR)
         ReadingsPreparer.new(
-          variant:
+          variant:,
+          sigla_separator:
         ).full_reading
       end
 
@@ -25,13 +27,14 @@ module Apparatus
       end
 
       class ReadingsPreparer
-        def initialize(variant:, separator: nil)
+        def initialize(variant:, separator: nil, sigla_separator: nil)
           @variant   = variant
           @separator = separator
+          @sigla_separator = sigla_separator
         end
 
         def full_reading
-          "#{witnesses}: #{base_reading}".strip
+          "#{witnesses}#{sigla_separator} #{base_reading}".strip
         end
 
         def base_reading
@@ -44,7 +47,7 @@ module Apparatus
 
         private
 
-        attr_reader :variant, :separator
+        attr_reader :variant, :separator, :sigla_separator
 
         delegate :formatted_value, to: :variant, prefix: true
         delegate :formatted_witnesses, to: :variant, prefix: true

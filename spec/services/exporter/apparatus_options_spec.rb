@@ -9,19 +9,33 @@ RSpec.describe Exporter::ApparatusOptions, type: :model do
 
     let(:allowed_boolean_values) { [true, false, 'true', 'false', '1', '0'] }
 
+    it { is_expected.to allow_value(allowed_boolean_values).for(:footnote_numbering) }
+    it { is_expected.not_to allow_value(nil).for(:footnote_numbering) }
     it { is_expected.to allow_value(allowed_boolean_values).for(:significant_readings) }
     it { is_expected.not_to allow_value(nil).for(:significant_readings) }
     it { is_expected.to allow_value(allowed_boolean_values).for(:insignificant_readings) }
     it { is_expected.not_to allow_value(nil).for(:insignificant_readings) }
     it { is_expected.to validate_presence_of(:selected_reading_separator) }
-    it { is_expected.to validate_presence_of(:secondary_readings_separator) }
-    it { is_expected.to validate_presence_of(:insignificant_readings_separator) }
-    it { is_expected.to validate_presence_of(:entries_separator) }
+    it { is_expected.to validate_presence_of(:readings_separator) }
   end
 
   describe 'factories' do
     it 'creates valid default factory' do
       expect(build(:apparatus_options)).to be_valid
+    end
+  end
+
+  describe '#footnote_numbering?' do
+    context 'when footnote_numbering is truthy' do
+      it 'is truthy' do
+        expect(build(:apparatus_options, footnote_numbering: true)).to be_footnote_numbering
+      end
+    end
+
+    context 'when footnote_numbering is falsey' do
+      it 'is falsey' do
+        expect(build(:apparatus_options, footnote_numbering: false)).not_to be_footnote_numbering
+      end
     end
   end
 

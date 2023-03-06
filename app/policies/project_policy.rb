@@ -63,11 +63,9 @@ class ProjectPolicy < ApplicationPolicy
       significant_readings
       insignificant_readings
       footnote_numbering
-      layout
       selected_reading_separator
-      secondary_readings_separator
-      insignificant_readings_separator
-      entries_separator
+      readings_separator
+      sigla_separator
     ]
   end
 

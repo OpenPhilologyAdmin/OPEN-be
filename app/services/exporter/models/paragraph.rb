@@ -14,6 +14,9 @@ module Exporter
         to_style(style: :paragraph, given_value: contents_to_export)
       end
 
+      delegate :push, to: :contents
+      delegate :empty?, to: :contents
+
       private
 
       def contents_to_export

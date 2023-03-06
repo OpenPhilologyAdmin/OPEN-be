@@ -9,13 +9,15 @@ FactoryBot.define do
     significant_readings { true }
     insignificant_readings { true }
     selected_reading_separator { ']' }
-    secondary_readings_separator { ',' }
-    insignificant_readings_separator { ',' }
-    entries_separator { ';' }
+    readings_separator { ';' }
+    sigla_separator { ':' }
+    footnote_numbering { true }
 
     trait :invalid do
       selected_reading_separator { nil }
-      secondary_readings_separator { nil }
+      readings_separator { nil }
+      sigla_separator { nil }
+      footnote_numbering { nil }
     end
   end
 end

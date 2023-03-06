@@ -4,17 +4,13 @@ module Exporter
   class Base
     def initialize(project:, options: {})
       @project           = project
-      @exporter_options  = ExporterOptions.new(
-        footnote_numbering: options[:footnote_numbering],
-        layout:             options[:layout]
-      )
       @apparatus_options = ApparatusOptions.new(
-        significant_readings:             options[:significant_readings],
-        insignificant_readings:           options[:insignificant_readings],
-        selected_reading_separator:       options[:selected_reading_separator],
-        secondary_readings_separator:     options[:secondary_readings_separator],
-        insignificant_readings_separator: options[:insignificant_readings_separator],
-        entries_separator:                options[:entries_separator]
+        footnote_numbering:         options[:footnote_numbering],
+        significant_readings:       options[:significant_readings],
+        insignificant_readings:     options[:insignificant_readings],
+        selected_reading_separator: options[:selected_reading_separator],
+        readings_separator:         options[:readings_separator],
+        sigla_separator:            options[:sigla_separator]
       )
     end
 
@@ -38,10 +34,10 @@ module Exporter
 
     private
 
-    attr_reader :project, :exporter_options, :apparatus_options
+    attr_reader :project, :apparatus_options
 
     def options_valid?
-      exporter_options.valid? && apparatus_options.valid?
+      apparatus_options.valid?
     end
 
     def data
@@ -50,7 +46,6 @@ module Exporter
 
     def errors
       @errors ||= Models::ExportErrors.new(
-        exporter_options:,
         apparatus_options:
       ).errors
     end
@@ -62,7 +57,6 @@ module Exporter
     def paragraphs
       @paragraphs ||= ParagraphsPreparer.perform(
         project:,
-        exporter_options:,
         apparatus_options:
       )
     end

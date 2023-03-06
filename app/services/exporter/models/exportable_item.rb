@@ -15,8 +15,8 @@ module Exporter
         @styler ||= Exporter::Models::Stylers::Rtf.new
       end
 
-      def to_style(given_value:, style:)
-        styler.perform(value: given_value, style:)
+      def to_style(given_value:, style:, options: {})
+        styler.perform(value: given_value, style:, options:)
       end
     end
   end

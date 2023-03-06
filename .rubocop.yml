@@ -84,3 +84,6 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true

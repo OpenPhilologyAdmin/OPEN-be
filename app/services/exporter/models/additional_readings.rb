@@ -5,9 +5,10 @@ module Exporter
     class AdditionalReadings
       include ::Apparatus::Concerns::FormattableReading
 
-      def initialize(grouped_variants:, separator:)
+      def initialize(grouped_variants:, separator:, sigla_separator:)
         @grouped_variants = grouped_variants
-        @separator          = separator
+        @separator = separator
+        @sigla_separator = sigla_separator
       end
 
       def reading
@@ -16,11 +17,11 @@ module Exporter
 
       private
 
-      attr_reader :grouped_variants, :separator
+      attr_reader :grouped_variants, :separator, :sigla_separator
 
       def readings
         grouped_variants.map do |variant|
-          full_reading_for(variant:)
+          full_reading_for(variant:, sigla_separator:)
         end
       end
     end
