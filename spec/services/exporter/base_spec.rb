@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
+
 require 'rails_helper'
 
 RSpec.describe Exporter::Base, type: :service do
   let(:project) { create(:project) }
   let(:options) do
-    attributes_for(:apparatus_options)
+    {
+      significant_readings:   true,
+      insignificant_readings: true,
+      footnote_numbering:     true
+    }
+  end
+  let(:default_separators) do
+    described_class::DEFAULT_SEPARATORS
   end
 
   let(:service) { described_class.new(project:, options:) }
@@ -35,14 +44,19 @@ RSpec.describe Exporter::Base, type: :service do
       expect(apparatus_options.insignificant_readings).to eq(options[:insignificant_readings])
     end
 
-    it 'passes :selected_reading_separator to the @apparatus_options' do
+    it 'uses the default :selected_reading_separator for the @apparatus_options' do
       apparatus_options = service.instance_variable_get('@apparatus_options')
-      expect(apparatus_options.selected_reading_separator).to eq(options[:selected_reading_separator])
+      expect(apparatus_options.selected_reading_separator).to eq(default_separators[:selected_reading_separator])
     end
 
-    it 'passes :readings_separator to the @apparatus_options' do
+    it 'uses the default :readings_separator to the @apparatus_options' do
       apparatus_options = service.instance_variable_get('@apparatus_options')
-      expect(apparatus_options.readings_separator).to eq(options[:readings_separator])
+      expect(apparatus_options.readings_separator).to eq(default_separators[:readings_separator])
+    end
+
+    it 'uses the default :sigla_separator to the @apparatus_options' do
+      apparatus_options = service.instance_variable_get('@apparatus_options')
+      expect(apparatus_options.sigla_separator).to eq(default_separators[:sigla_separator])
     end
   end
 
@@ -82,9 +96,10 @@ RSpec.describe Exporter::Base, type: :service do
         build(:apparatus_options,
               significant_readings:       options[:significant_readings],
               insignificant_readings:     options[:insignificant_readings],
-              selected_reading_separator: options[:selected_reading_separator],
-              readings_separator:         options[:readings_separator],
-              sigla_separator:            options[:sigla_separator])
+              footnote_numbering:         options[:footnote_numbering],
+              selected_reading_separator: default_separators[:selected_reading_separator],
+              readings_separator:         default_separators[:readings_separator],
+              sigla_separator:            default_separators[:sigla_separator])
       end
       let(:expected_paragraphs) do
         [
@@ -125,3 +140,4 @@ RSpec.describe Exporter::Base, type: :service do
     end
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

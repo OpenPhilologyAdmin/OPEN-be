@@ -420,45 +420,21 @@ RSpec.describe 'v1/projects' do
                       project: {
                         type:       :object,
                         properties: {
-                          significant_readings:       {
+                          significant_readings:   {
                             type:        :boolean,
                             description: 'Significant readings enabled'
                           },
-                          insignificant_readings:     {
+                          insignificant_readings: {
                             type:        :boolean,
                             description: 'Insignificant readings enabled'
                           },
-                          footnote_numbering:         {
+                          footnote_numbering:     {
                             type:        :boolean,
                             description: 'Footnote numbering enabled'
-                          },
-                          selected_reading_separator: {
-                            type:        :string,
-                            description: 'Selected reading separator. Forbidden values: ' \
-                                         "'{', '}', '|' and backslash. " \
-                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
-                            example:     ']'
-                          },
-                          readings_separator:         {
-                            type:        :string,
-                            description: 'Readings separator, used between reading + sigla pairs. ' \
-                                         'Forbidden values: ' \
-                                         "'{', '}', '|' and backslash. " \
-                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
-                            example:     ','
-                          },
-                          sigla_separator:            {
-                            type:        :string,
-                            description: 'Sigla separator, will be displayed between sigla ' \
-                                         'and corresponding reading. Forbidden values: ' \
-                                         "'{', '}', '|' and backslash. " \
-                                         "Max length: #{Exporter::ApparatusOptions::MAX_SEPARATOR_LENGTH}",
-                            example:     ':'
                           }
                         },
                         required:   %i[
                           significant_readings insignificant_readings footnote_numbering
-                          selected_reading_separator readings_separator sigla_separator
                         ]
                       }
                     }
@@ -468,12 +444,9 @@ RSpec.describe 'v1/projects' do
         {
           project:
                    {
-                     significant_readings:       true,
-                     insignificant_readings:     true,
-                     footnote_numbering:         true,
-                     selected_reading_separator: ']',
-                     readings_separator:         ',',
-                     sigla_separator:            ':'
+                     significant_readings:   true,
+                     insignificant_readings: true,
+                     footnote_numbering:     true
                    }
         }
       end

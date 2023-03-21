@@ -2,15 +2,20 @@
 
 module Exporter
   class Base
+    DEFAULT_SEPARATORS = {
+      selected_reading_separator: ']',
+      readings_separator:         ';',
+      sigla_separator:            ':'
+    }.freeze
     def initialize(project:, options: {})
       @project           = project
       @apparatus_options = ApparatusOptions.new(
         footnote_numbering:         options[:footnote_numbering],
         significant_readings:       options[:significant_readings],
         insignificant_readings:     options[:insignificant_readings],
-        selected_reading_separator: options[:selected_reading_separator],
-        readings_separator:         options[:readings_separator],
-        sigla_separator:            options[:sigla_separator]
+        selected_reading_separator: DEFAULT_SEPARATORS[:selected_reading_separator],
+        readings_separator:         DEFAULT_SEPARATORS[:readings_separator],
+        sigla_separator:            DEFAULT_SEPARATORS[:sigla_separator]
       )
     end
 
