@@ -18,13 +18,18 @@ Useful links:
 - Redis
 
 # Project setup instructions
+Project should be setup from `staging` branch.
+
+Note: M1 users should use `-arch x86_64` flag for any failing installations
 
 - `cp .env.local.template .env.development.local`
 - `cp .env.local.template .env.test.local`
-- Set up ENV variables in `.env.development.local` and `.env.test.local`
+- Set up ENV variables in `.env.development.local` 
+  and `.env.test.local` alongside with DB username and password
 - `gem install bundler`
 - `bundle install`
 - `lefthook install -f`
+- If you don't run the above, you won't be able to run tests and use left hook.
 - `rails db:setup`
 - `rails server`
 - application is running on `http://localhost:3000`
