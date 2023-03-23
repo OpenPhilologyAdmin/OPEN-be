@@ -24,7 +24,7 @@ RSpec.describe TokensManager::VariantsUpdater, type: :service do
   end
   let(:token) { create(:token, :without_editorial_remark, project:) }
   let(:variant) { build(:token_variant) }
-  let(:service) { described_class.new(token:, user:, params:) }
+  let(:service) { described_class.new(token:, user:, params: params.deep_symbolize_keys) }
 
   describe '#perform' do
     let!(:result) { service.perform }
@@ -41,7 +41,15 @@ RSpec.describe TokensManager::VariantsUpdater, type: :service do
         let(:variants) do
           [
             build(:token_variant, witness: 'A', t: 'lorim'),
-            build(:token_variant, witness: 'B', t: 'lorem'),
+            build(:token_variant, witness: 'B', t: ''),
+            build(:token_variant, witness: 'C', t: 'lorim'),
+            build(:token_variant, witness: 'D', t: 'loren')
+          ]
+        end
+        let(:expected_variants) do
+          [
+            build(:token_variant, witness: 'A', t: 'lorim'),
+            build(:token_variant, witness: 'B', t: nil),
             build(:token_variant, witness: 'C', t: 'lorim'),
             build(:token_variant, witness: 'D', t: 'loren')
           ]
@@ -49,7 +57,7 @@ RSpec.describe TokensManager::VariantsUpdater, type: :service do
         let(:expected_grouped_variants) do
           [
             build(:token_grouped_variant, witnesses: %w[A C], t: 'lorim'),
-            build(:token_grouped_variant, witnesses: ['B'], t: 'lorem'),
+            build(:token_grouped_variant, witnesses: ['B'], t: nil),
             build(:token_grouped_variant, witnesses: ['D'], t: 'loren')
           ]
         end
@@ -57,7 +65,7 @@ RSpec.describe TokensManager::VariantsUpdater, type: :service do
         before { token.reload }
 
         it 'updates the token with variants' do
-          expect(token.variants).to match_array(variants)
+          expect(token.variants).to match_array(expected_variants)
         end
 
         it 'recalculates grouped_variants and clears the previous selections' do
@@ -121,6 +129,29 @@ RSpec.describe TokensManager::VariantsUpdater, type: :service do
 
           it 'saves the editorial remark' do
             expect(token.editorial_remark).to eq(editorial_remark)
+          end
+
+          it 'recalculates grouped_variants and includes editorial_remark' do
+            expect(token.grouped_variants).to match_array(expected_grouped_variants)
+          end
+        end
+
+        context 'when the editorial remark t is empty so it should be removed' do
+          let(:editorial_remark) do
+            build(:token_editorial_remark, t: '', type: 'st.')
+          end
+
+          let(:expected_grouped_variants) do
+            [
+              build(:token_grouped_variant, t: 'lorim', witnesses: ['A']),
+              build(:token_grouped_variant, t: 'lorem', witnesses: ['B'])
+            ]
+          end
+
+          before { token.reload }
+
+          it 'removes the editorial remark' do
+            expect(token.editorial_remark).to be_nil
           end
 
           it 'recalculates grouped_variants and includes editorial_remark' do
