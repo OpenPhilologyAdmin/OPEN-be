@@ -82,6 +82,7 @@ RSpec.describe Exporter::Base, type: :service do
               selected_variant:       token2.selected_variant,
               secondary_variants:     token2.secondary_variants,
               insignificant_variants: token2.insignificant_variants,
+              apparatus_entry_index:  1,
               apparatus_options:)
       ]
     end

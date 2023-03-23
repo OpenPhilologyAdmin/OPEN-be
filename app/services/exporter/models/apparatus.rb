@@ -6,24 +6,30 @@ module Exporter
       COLOR_SIGNIFICANT_VARIANTS = 'cf1'
       COLOR_INSIGNIFICANT_VARIANTS = 'cf2'
 
-      def initialize(selected_variant:, secondary_variants:, insignificant_variants:, apparatus_options:)
+      def initialize(selected_variant:, secondary_variants:, insignificant_variants:, apparatus_options:,
+                     apparatus_entry_index: nil)
         @selected_variant       = selected_variant
         @secondary_variants     = secondary_variants
         @insignificant_variants = insignificant_variants
+        @apparatus_entry_index  = apparatus_entry_index
         @apparatus_options      = apparatus_options
         super
       end
 
       def to_export
-        return if apparatus_empty?
+        return unless content?
 
         value
+      end
+
+      def content?
+        include_significant_readings? || include_insignificant_readings?
       end
 
       private
 
       attr_reader :selected_variant, :secondary_variants, :insignificant_variants,
-                  :apparatus_options
+                  :apparatus_options, :apparatus_entry_index
 
       delegate :significant_readings?, to: :apparatus_options, prefix: true
       delegate :insignificant_readings?, to: :apparatus_options, prefix: true
@@ -31,6 +37,7 @@ module Exporter
       delegate :readings_separator, to: :apparatus_options, prefix: true
       delegate :sigla_separator, to: :apparatus_options, prefix: true
       delegate :include_apparatus?, to: :apparatus_options, prefix: true
+      delegate :footnote_numbering?, to: :apparatus_options, prefix: true
 
       def selected_reading
         @selected_reading ||= SelectedReading.new(
@@ -55,8 +62,19 @@ module Exporter
         ).reading
       end
 
+      def apparatus_index
+        return unless apparatus_options_footnote_numbering?
+        return if apparatus_entry_index.blank?
+
+        "(#{apparatus_entry_index})"
+      end
+
       def styled_selected_reading
-        "#{to_style(style: :bold, given_value: selected_reading.reading)} #{selected_reading.witnesses}"
+        "#{to_style(style: :bold, given_value: selected_reading_with_index)} #{selected_reading.witnesses}"
+      end
+
+      def selected_reading_with_index
+        @selected_reading_with_index ||= [apparatus_index, selected_reading.reading].compact.join(' ')
       end
 
       def styled_line_with_readings(readings:, color:, include_line_break: false)

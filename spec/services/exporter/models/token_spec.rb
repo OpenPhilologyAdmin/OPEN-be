@@ -20,8 +20,18 @@ RSpec.describe Exporter::Models::Token, type: :model do
       let(:footnote_numbering) { true }
 
       context 'when apparatus_entry_index given' do
-        it 'returns the value with index wrapped by brackets and the RTF subscript tag' do
-          expect(resource.to_export).to eq("#{value}{\\super (#{apparatus_entry_index})} ")
+        context 'when the value ends with space' do
+          let(:value) { ' lorem ipsum ' }
+
+          it 'returns the value with trailing space removed and index wrapped by brackets and the RTF subscript tag' do
+            expect(resource.to_export).to eq(" lorem ipsum{\\super (#{apparatus_entry_index})} ")
+          end
+        end
+
+        context 'when the value does not end with space' do
+          it 'returns the value with index wrapped by brackets and the RTF subscript tag' do
+            expect(resource.to_export).to eq("#{value}{\\super (#{apparatus_entry_index})} ")
+          end
         end
       end
 

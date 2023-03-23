@@ -20,8 +20,11 @@ module Helpers
       "{\\par\n#{value}\n\\par}\n"
     end
 
-    def selected_grouped_variant_to_export(grouped_variant:, separator:, open_tag: nil, close_tag: nil)
+    def selected_grouped_variant_to_export(grouped_variant:, separator:,
+                                           open_tag: nil, close_tag: nil, apparatus_entry_index: nil)
       value = grouped_variant_value(grouped_variant:)
+      value = "(#{apparatus_entry_index}) #{value}" if apparatus_entry_index.present?
+
       witnesses = grouped_variant_witnesses(grouped_variant:)
       "#{within_tag(value: "#{value} #{separator}", open_tag:, close_tag:)} #{witnesses}"
     end

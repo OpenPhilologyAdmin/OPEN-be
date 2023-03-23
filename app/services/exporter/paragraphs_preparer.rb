@@ -30,7 +30,7 @@ module Exporter
       current_paragraph = Models::Paragraph.new
 
       project_tokens.each do |token|
-        if token.apparatus?
+        if apparatus_for?(token:)
           apparatus_entry_index += 1
           current_paragraph = process_token_with_apparatus(current_paragraph:, token:, apparatus_entry_index:)
         else
@@ -42,12 +42,19 @@ module Exporter
 
     def process_token_with_apparatus(current_paragraph:, token:, apparatus_entry_index:)
       current_paragraph.push(token_for_paragraph(token:, apparatus_entry_index:))
-      return current_paragraph unless apparatus_options_include_apparatus?
 
       paragraphs.push(current_paragraph)
-      paragraphs.push(paragraph_with_apparatus(token:))
+      paragraphs.push(paragraph_with_apparatus(token:, apparatus_entry_index:))
 
       Models::Paragraph.new
+    end
+
+    def apparatus_for?(token:)
+      token.apparatus? && apparatus_content_for?(token:)
+    end
+
+    def apparatus_content_for?(token:)
+      apparatus_for_paragraph(token:).content?
     end
 
     def token_for_paragraph(token:, apparatus_entry_index: nil)
@@ -58,19 +65,20 @@ module Exporter
       )
     end
 
-    def paragraph_with_apparatus(token:)
+    def paragraph_with_apparatus(token:, apparatus_entry_index: nil)
       Models::Paragraph.new(
         contents: [
-          apparatus_for_paragraph(token:)
+          apparatus_for_paragraph(token:, apparatus_entry_index:)
         ]
       )
     end
 
-    def apparatus_for_paragraph(token:)
+    def apparatus_for_paragraph(token:, apparatus_entry_index: nil)
       Models::Apparatus.new(
         selected_variant:       token.selected_variant,
         secondary_variants:     token.secondary_variants,
         insignificant_variants: token.insignificant_variants,
+        apparatus_entry_index:,
         apparatus_options:
       )
     end

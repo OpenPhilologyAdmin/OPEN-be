@@ -13,7 +13,7 @@ module Exporter
       def to_export
         return value unless include_footnote?
 
-        "#{value}#{to_style(style: :superscript, given_value: "(#{apparatus_entry_index})")} "
+        "#{value.rstrip}#{to_style(style: :superscript, given_value: "(#{apparatus_entry_index})")} "
       end
 
       private

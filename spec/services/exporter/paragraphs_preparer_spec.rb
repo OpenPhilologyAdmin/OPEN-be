@@ -42,6 +42,7 @@ RSpec.describe Exporter::ParagraphsPreparer, type: :service do
                                        selected_variant:       token1.selected_variant,
                                        secondary_variants:     token1.secondary_variants,
                                        insignificant_variants: token1.insignificant_variants,
+                                       apparatus_entry_index:  1,
                                        apparatus_options:)
             expected_content = build(:exporter_paragraph, contents: [expected_apparatus])
             expect(paragraph.to_export).to eq(expected_content.to_export)
@@ -91,6 +92,7 @@ RSpec.describe Exporter::ParagraphsPreparer, type: :service do
                                        selected_variant:       token2.selected_variant,
                                        secondary_variants:     token2.secondary_variants,
                                        insignificant_variants: token2.insignificant_variants,
+                                       apparatus_entry_index:  1,
                                        apparatus_options:)
             expected_content = build(:exporter_paragraph, contents: [expected_apparatus])
             expect(paragraph.to_export).to eq(expected_content.to_export)
@@ -107,8 +109,39 @@ RSpec.describe Exporter::ParagraphsPreparer, type: :service do
           [
             build(:exporter_token,
                   value:                 token1.t,
-                  footnote_numbering:    true,
-                  apparatus_entry_index: 1),
+                  footnote_numbering:    false,
+                  apparatus_entry_index: nil),
+            build(:exporter_token,
+                  value:                 token2.t,
+                  footnote_numbering:    false,
+                  apparatus_entry_index: nil)
+          ]
+        end
+
+        it 'returns one paragraph' do
+          expect(result.size).to eq(1)
+        end
+
+        it 'adds all tokens to the first paragraph with the correct styling' do
+          paragraph        = result.first
+          expected_content = build(:exporter_paragraph, contents: expected_tokens)
+          expect(paragraph.to_export).to eq(expected_content.to_export)
+        end
+      end
+
+      context 'when apparatus has no content for the given settings' do
+        let(:token1) { create(:token, :variant_selected, project:, index: 1) }
+        let(:token2) { create(:token, :variant_selected, project:, index: 2) }
+        let(:apparatus_options) do
+          build(:apparatus_options, significant_readings: true, insignificant_readings: false)
+        end
+
+        let(:expected_tokens) do
+          [
+            build(:exporter_token,
+                  value:                 token1.t,
+                  footnote_numbering:    false,
+                  apparatus_entry_index: nil),
             build(:exporter_token,
                   value:                 token2.t,
                   footnote_numbering:    false,
