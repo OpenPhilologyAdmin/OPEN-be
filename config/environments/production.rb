@@ -14,7 +14,7 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   if ENV['RAILS_LOG_TO_STDOUT'].present?
     logger           = ActiveSupport::Logger.new($stdout)
@@ -25,12 +25,14 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.smtp_settings = {
-    user_name:            Rails.application.credentials.sendgrid.user_name,
-    password:             Rails.application.credentials.sendgrid.password,
+    user_name:            ENV.fetch('SENDGRID_USER_NAME'),
+    password:             ENV.fetch('SENDGRID_PASSWORD'),
     domain:               ENV.fetch('APP_HOST', nil),
     address:              'smtp.sendgrid.net',
     port:                 '587',
     authentication:       :plain,
     enable_starttls_auto: true
   }
+
+  config.require_master_key = false
 end

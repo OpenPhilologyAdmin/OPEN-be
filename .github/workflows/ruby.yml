@@ -15,6 +15,6 @@ jobs:
       - name: Build docker images
         run: docker-compose --env-file=".ci/env" build
       - name: Run setup
-        run: RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }} docker-compose --env-file=".ci/env" run setup
+        run: docker-compose --env-file=".ci/env" run setup
       - name: Run test
-        run: RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }} docker-compose --env-file=".ci/env" run tests
+        run: docker-compose --env-file=".ci/env" run tests

@@ -6,13 +6,26 @@ module Exporter
       COLOR_SIGNIFICANT_VARIANTS = 'cf1'
       COLOR_INSIGNIFICANT_VARIANTS = 'cf2'
 
-      def initialize(selected_variant:, secondary_variants:, insignificant_variants:, apparatus_options:,
-                     apparatus_entry_index: nil)
-        @selected_variant       = selected_variant
-        @secondary_variants     = secondary_variants
-        @insignificant_variants = insignificant_variants
-        @apparatus_entry_index  = apparatus_entry_index
+      def initialize(selected_variant:, secondary_variants:, insignificant_variants:,
+                     apparatus_options:, apparatus_entry_index: nil)
         @apparatus_options      = apparatus_options
+        @apparatus_entry_index  = apparatus_entry_index
+
+        @selected_reading = SelectedReading.new(
+          selected_variant:,
+          separator:        apparatus_options_selected_reading_separator
+        )
+        @secondary_readings = AdditionalReadings.new(
+          grouped_variants: secondary_variants,
+          separator:        apparatus_options_readings_separator,
+          sigla_separator:  apparatus_options_sigla_separator
+        ).reading
+        @insignificant_readings = AdditionalReadings.new(
+          grouped_variants: insignificant_variants,
+          separator:        apparatus_options_readings_separator,
+          sigla_separator:  apparatus_options_sigla_separator
+        ).reading
+
         super
       end
 
@@ -23,12 +36,12 @@ module Exporter
       end
 
       def content?
-        include_significant_readings? || include_insignificant_readings?
+        significant_readings? || insignificant_readings?
       end
 
       private
 
-      attr_reader :selected_variant, :secondary_variants, :insignificant_variants,
+      attr_reader :selected_reading, :secondary_readings, :insignificant_readings,
                   :apparatus_options, :apparatus_entry_index
 
       delegate :significant_readings?, to: :apparatus_options, prefix: true
@@ -38,29 +51,6 @@ module Exporter
       delegate :sigla_separator, to: :apparatus_options, prefix: true
       delegate :include_apparatus?, to: :apparatus_options, prefix: true
       delegate :footnote_numbering?, to: :apparatus_options, prefix: true
-
-      def selected_reading
-        @selected_reading ||= SelectedReading.new(
-          selected_variant:,
-          separator:        apparatus_options_selected_reading_separator
-        )
-      end
-
-      def secondary_significant_readings
-        @secondary_significant_readings ||= AdditionalReadings.new(
-          grouped_variants: secondary_variants,
-          separator:        apparatus_options_readings_separator,
-          sigla_separator:  apparatus_options_sigla_separator
-        ).reading
-      end
-
-      def insignificant_readings
-        @insignificant_readings ||= AdditionalReadings.new(
-          grouped_variants: insignificant_variants,
-          separator:        apparatus_options_readings_separator,
-          sigla_separator:  apparatus_options_sigla_separator
-        ).reading
-      end
 
       def apparatus_index
         return unless apparatus_options_footnote_numbering?
@@ -97,32 +87,28 @@ module Exporter
         [styled_selected_reading, readings].join("#{apparatus_options_readings_separator} ")
       end
 
-      def apparatus_empty?
-        secondary_significant_readings.blank? && insignificant_readings.blank?
+      def significant_readings?
+        apparatus_options_significant_readings? && secondary_readings.present?
       end
 
-      def include_significant_readings?
-        apparatus_options_significant_readings? && secondary_significant_readings.present?
-      end
-
-      def include_insignificant_readings?
+      def insignificant_readings?
         apparatus_options_insignificant_readings? && insignificant_readings.present?
       end
 
-      def include_significant_and_insignificant?
-        include_significant_readings? && include_insignificant_readings?
+      def significant_and_insignificant_readings?
+        significant_readings? && insignificant_readings?
       end
 
       def value
         value = ''
-        if include_significant_readings?
+        if significant_readings?
           value += styled_line_with_readings(
-            readings:           secondary_significant_readings,
+            readings:           secondary_readings,
             color:              COLOR_SIGNIFICANT_VARIANTS,
-            include_line_break: include_significant_and_insignificant?
+            include_line_break: significant_and_insignificant_readings?
           )
         end
-        if include_insignificant_readings?
+        if insignificant_readings?
           value += styled_line_with_readings(
             readings: insignificant_readings,
             color:    COLOR_INSIGNIFICANT_VARIANTS

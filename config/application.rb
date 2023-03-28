@@ -24,13 +24,6 @@ module CollationBe
     config.load_defaults 7.0
     config.time_zone = 'Amsterdam'
     config.api_only = true
-
-    if ENV['ENVIRONMENT_NAME'].present?
-      filename = Rails.root.join('config', 'credentials', ENV['ENVIRONMENT_NAME'])
-      config.credentials.content_path = "#{filename}.yml.enc"
-
-      config.credentials.key_path = "#{filename}.key" if File.exist? "#{filename}.key"
-    end
     config.active_job.queue_adapter = :sidekiq
 
     # ensure the API uses ISO 8601 date and time format

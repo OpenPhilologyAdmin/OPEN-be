@@ -1,0 +1,8 @@
+{
+  "witnesses":["A","B"],
+  "content":[
+    [ [ {"t":"Lorem","ref":123 } ], [ {"t":"Lorum" } ] ],
+    [ [ {"t":"ipsum","adj":true } ], [ {"t":"ipsumem","adj":true } ] ],
+    [ [ {"t":"dolor","id":"xyz" } ], [ {"t":"dolorem.","n":"cat" } ] ]
+  ]
+}

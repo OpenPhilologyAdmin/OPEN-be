@@ -36,7 +36,7 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
 
       before do
         project.source_file.attach(
-          io:           File.open(Rails.root.join(data_path)),
+          io:           Rails.root.join(data_path).open,
           filename:     "#{rand}_project.json",
           content_type: 'application/json'
         )
@@ -46,7 +46,7 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
         let(:data_path) { 'spec/fixtures/invalid/invalid_json.json' }
 
         it 'assigns correct error' do
-          expect(result.errors).to match_array([I18n.t('importer.errors.json_files.invalid_json')])
+          expect(result.errors).to contain_exactly(I18n.t('importer.errors.json_files.invalid_json'))
         end
 
         it 'is not successful' do
@@ -54,8 +54,8 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
         end
       end
 
-      context 'when missing top keys' do
-        let(:data_path) { 'spec/fixtures/invalid/missing_keys.json' }
+      context 'when missing :witnesses key' do
+        let(:data_path) { 'spec/fixtures/invalid/missing_witnesses_key.json' }
         let(:expected_errors) do
           [
             I18n.t('importer.errors.json_files.missing_keys'),
@@ -72,11 +72,28 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
         end
       end
 
+      context 'when missing :table key' do
+        let(:data_path) { 'spec/fixtures/invalid/missing_table_key.json' }
+        let(:expected_errors) do
+          [
+            I18n.t('importer.errors.json_files.missing_keys')
+          ]
+        end
+
+        it 'assigns correct error' do
+          expect(result.errors).to match_array(expected_errors)
+        end
+
+        it 'is not successful' do
+          expect(result).not_to be_success
+        end
+      end
+
       context 'when missing witnesses' do
         let(:data_path) { 'spec/fixtures/invalid/missing_witnesses.json' }
 
         it 'assigns correct error' do
-          expect(result.errors).to match_array([I18n.t('importer.errors.json_files.missing_witnesses')])
+          expect(result.errors).to contain_exactly(I18n.t('importer.errors.json_files.missing_witnesses'))
         end
 
         it 'is not successful' do
@@ -88,7 +105,7 @@ RSpec.describe Importer::FileValidators::ApplicationJson, type: :service do
         let(:data_path) { 'spec/fixtures/invalid/missing_tokens.json' }
 
         it 'assigns correct error' do
-          expect(result.errors).to match_array([I18n.t('importer.errors.json_files.incorrect_number_of_tokens')])
+          expect(result.errors).to contain_exactly(I18n.t('importer.errors.json_files.incorrect_number_of_tokens'))
         end
 
         it 'is not successful' do

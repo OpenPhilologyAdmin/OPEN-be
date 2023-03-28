@@ -50,7 +50,7 @@ module Importer
       end
 
       def validate_table
-        return if witnesses.blank?
+        return if witnesses.blank? || table.blank?
 
         return if table.all? { |tokens| tokens.size == witnesses.size }
 

@@ -20,7 +20,7 @@ Devise.setup do |config|
   config.parent_controller = 'V1::CommonController'
 
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY', '')
     jwt.expiration_time = 21_600 # 6 hours
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/users/sign_in$}],
