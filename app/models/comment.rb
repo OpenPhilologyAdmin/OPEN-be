@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Comment < ApplicationRecord
-  belongs_to :token, dependent: :destroy
+  belongs_to :token
   belongs_to :user
 
   validates :body, length: { maximum: 250, allow_blank: false }, presence: true
