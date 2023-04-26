@@ -30,6 +30,7 @@ class TokensSerializer < RecordsSerializer
     def initialize(record:, edit_mode: false)
       @record = record
       @edit_mode = edit_mode
+      handle_apparatus_index_visibility
     end
 
     def as_json(_options = {})
@@ -45,6 +46,18 @@ class TokensSerializer < RecordsSerializer
 
     def record_methods
       edit_mode ? EDIT_MODE_RECORD_METHODS : RECORD_METHODS
+    end
+
+    def apparatus_index_visible?
+      return true if edit_mode
+
+      record.significant_variants?
+    end
+
+    def handle_apparatus_index_visibility
+      return if apparatus_index_visible?
+
+      record.apparatus_index = nil
     end
   end
 end

@@ -19,12 +19,12 @@ describe TokensSerializer do
     end
 
     context 'when there are some records' do
-      let(:resource) { create(:token, :variant_selected, apparatus_index: 1) }
+      let(:resource) { create(:token, :variant_selected) }
       let(:resource2) { create(:token, apparatus_index: nil) }
-      let(:resource3) { create(:token, :variant_selected, apparatus_index: 2) }
+      let(:resource3) { create(:token, :variant_selected_and_secondary) }
       let(:expected_record_attributes) { described_class::RecordSerializer::RECORD_ATTRIBUTES }
 
-      context 'without options given' do
+      context 'when edit mode disabled' do
         let(:serializer) { described_class.new(records: [resource, resource2, resource3]) }
         let(:expected_record_methods) { described_class::RecordSerializer::RECORD_METHODS }
         let!(:expected_hash) do
@@ -41,13 +41,13 @@ describe TokensSerializer do
               resource3.as_json(
                 only:    expected_record_attributes,
                 methods: expected_record_methods
-              )
+              ).merge('apparatus_index' => 2)
             ],
             count:   3
           }
         end
 
-        it 'returns hash with correct keys' do
+        it 'returns hash with correct keys, where only tokens with significant variants have apparatus_index' do
           expect(serializer.as_json).to eq(expected_hash)
         end
       end
@@ -61,7 +61,7 @@ describe TokensSerializer do
               resource.as_json(
                 only:    expected_record_attributes,
                 methods: expected_record_methods
-              ),
+              ).merge('apparatus_index' => 1),
               resource2.as_json(
                 only:    expected_record_attributes,
                 methods: expected_record_methods
@@ -69,13 +69,13 @@ describe TokensSerializer do
               resource3.as_json(
                 only:    expected_record_attributes,
                 methods: expected_record_methods
-              )
+              ).merge('apparatus_index' => 2)
             ],
             count:   3
           }
         end
 
-        it 'returns hash with correct keys' do
+        it 'returns hash with correct keys, tokens with significant and insignificant variants have apparatus_index' do
           expect(serializer.as_json).to eq(expected_hash)
         end
       end

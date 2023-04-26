@@ -54,6 +54,10 @@ class Token < ApplicationRecord
     grouped_variants.select(&:secondary?)
   end
 
+  def significant_variants?
+    secondary_variants.any?
+  end
+
   def insignificant_variants
     grouped_variants.select(&:insignificant?)
   end
@@ -72,7 +76,7 @@ class Token < ApplicationRecord
     return :one_variant unless evaluatable?
     return :not_evaluated unless evaluated?
 
-    if secondary_variants.any?
+    if significant_variants?
       :evaluated_with_multiple
     else
       :evaluated_with_single

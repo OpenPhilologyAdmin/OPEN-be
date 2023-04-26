@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Token, type: :model do
+RSpec.describe Token do
   describe '#validations' do
     subject(:token) { described_class.new }
 
@@ -101,6 +101,12 @@ RSpec.describe Token, type: :model do
         end
       end
 
+      describe '#significant_variants?' do
+        it 'is false' do
+          expect(token).not_to be_significant_variants
+        end
+      end
+
       describe '#insignificant_variants' do
         it 'returns all variants' do
           expect(token.insignificant_variants).to match_array(token.grouped_variants)
@@ -158,6 +164,22 @@ RSpec.describe Token, type: :model do
 
           it 'returns marching secondary variants' do
             expect(token.secondary_variants).to all(be_secondary)
+          end
+        end
+      end
+
+      describe '#significant_variants?' do
+        context 'when there is only the selected variant and insignificant ones' do
+          it 'is false' do
+            expect(token).not_to be_significant_variants
+          end
+        end
+
+        context 'when there are secondary variants as well' do
+          let(:token) { create(:token, :variant_selected_and_secondary) }
+
+          it 'is true' do
+            expect(token).to be_significant_variants
           end
         end
       end
