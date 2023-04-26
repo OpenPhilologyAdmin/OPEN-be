@@ -7,7 +7,7 @@ module V1
     after_action :update_tracking_info, except: :index
 
     def index
-      authorize Comment, :index?
+      authorize records, :index?
 
       render(
         json: CommentsSerializer.new(records:)
@@ -15,7 +15,7 @@ module V1
     end
 
     def create
-      record = token.comments.build(record_params.with_defaults(user: current_user))
+      record = records.build(record_params.with_defaults(user: current_user))
 
       authorize record, :create?
 
@@ -41,7 +41,7 @@ module V1
     end
 
     def destroy
-      record = Comment.find(params[:id])
+      record = records.find(params[:id])
       authorize record, :destroy?
 
       record.deleted = true
@@ -56,7 +56,7 @@ module V1
     private
 
     def token
-      @token ||= Token.find_by(id: params[:token_id], project_id: params[:project_id])
+      @token ||= policy_scope(Token).find_by(id: params[:token_id], project: @project)
     end
 
     def records
@@ -72,10 +72,8 @@ module V1
     end
 
     def update_tracking_info
-      project = Project.find(params[:project_id])
-
-      update_last_editor(user: current_user, project:)
-      update_last_edited_project(project:, user: current_user)
+      update_last_editor(user: current_user, project: @project)
+      update_last_edited_project(project: @project, user: current_user)
     end
   end
 end

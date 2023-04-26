@@ -2,10 +2,12 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request do
+RSpec.describe 'v1/projects/{project_id}/insignificant_variants' do
+  let(:not_accessible_project_id) { create(:project, :with_creator).id }
+
   path '/api/v1/projects/{project_id}/insignificant_variants' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:project) { create(:project) }
+    let(:project) { create(:project, :with_creator, creator: user) }
     let(:project_id) { project.id }
 
     get('Retrieves insignificant variants of the specified project') do
@@ -13,7 +15,8 @@ RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Apparatus: Insignificant variants of the project.'
+      description 'Apparatus: Insignificant variants of the project. ' \
+                  'Only projects created by the user are accessible. '
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -48,11 +51,11 @@ RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request
         run_test!
 
         it 'fetches correct number of records' do
-          expect(JSON.parse(response.body)['count']).to eq(3)
+          expect(response.parsed_body['count']).to eq(3)
         end
 
         it 'fetches only the tokens that have apparatus and some insignificant variants' do
-          JSON.parse(response.body)['records'].each do |record|
+          response.parsed_body['records'].each do |record|
             expect(record['value']).not_to be_empty
           end
         end
@@ -68,11 +71,20 @@ RSpec.describe 'v1/projects/{project_id}/insignificant_variants', type: :request
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end

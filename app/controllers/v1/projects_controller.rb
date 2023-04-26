@@ -16,7 +16,7 @@ module V1
     end
 
     def show
-      record = Project.find(params[:id])
+      record = policy_scope(Project).find(params[:id])
       authorize record, :show?
 
       render(
@@ -39,7 +39,7 @@ module V1
     end
 
     def update
-      @record = Project.find(params[:id])
+      @record = policy_scope(Project).find(params[:id])
       authorize @record, :update?
 
       if @record.update(record_params.with_defaults(last_editor: current_user))
@@ -52,7 +52,7 @@ module V1
     end
 
     def destroy
-      record = Project.find(params[:id])
+      record = policy_scope(Project).find(params[:id])
       authorize record, :destroy?
 
       record.destroy
@@ -65,7 +65,7 @@ module V1
     end
 
     def export
-      @record = Project.find(params[:id])
+      @record = policy_scope(Project).find(params[:id])
       authorize @record, :export?
 
       result = Exporter::Base.perform(

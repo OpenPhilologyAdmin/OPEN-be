@@ -68,7 +68,7 @@ class TokenPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      scope
+      scope.where(project_id: user.created_project_ids)
     end
   end
 end

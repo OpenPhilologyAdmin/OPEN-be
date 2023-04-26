@@ -10,6 +10,6 @@ module WithProject
   private
 
   def fetch_project
-    @project = Project.find(params[:project_id])
+    @project = policy_scope(Project).find(params[:project_id])
   end
 end

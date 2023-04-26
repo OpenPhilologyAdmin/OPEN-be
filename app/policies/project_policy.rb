@@ -10,11 +10,11 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def update?
-    approved_admin?
+    approved_admin? && record.creator == user
   end
 
   def show?
-    approved_admin?
+    approved_admin? && record.creator == user
   end
 
   def destroy?
@@ -22,11 +22,11 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def export?
-    approved_admin?
+    approved_admin? && record.creator == user
   end
 
   def manage_witnesses?
-    show?
+    show? && record.creator == user
   end
 
   def index_witnesses?
@@ -68,7 +68,7 @@ class ProjectPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      scope
+      scope.created_by(user)
     end
   end
 end

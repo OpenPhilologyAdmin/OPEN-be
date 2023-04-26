@@ -24,6 +24,9 @@ class User < ApplicationRecord
   scope :most_recent_first, -> { order('created_at desc') }
 
   has_many :project_roles, dependent: :destroy
+  has_many :created_projects, -> { merge(ProjectRole.owner) },
+           through: :project_roles,
+           source:  :project
   has_many :comments, dependent: :destroy
 
   belongs_to :last_edited_project, class_name: 'Project', optional: true

@@ -5,8 +5,9 @@ require 'swagger_helper'
 # rubocop:disable RSpec/MultipleMemoizedHelpers
 # rubocop:disable RSpec/ScatteredSetup
 RSpec.describe 'v1/projects/{project_id}/tokens' do
+  let(:not_accessible_project_id) { create(:project, :with_creator).id }
   let(:user) { create(:user, :admin, :approved) }
-  let(:project) { create(:project) }
+  let(:project) { create(:project, :with_creator, creator: user) }
   let(:project_id) { project.id }
 
   path '/api/v1/projects/{project_id}/tokens' do
@@ -15,7 +16,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Get tokens of the project. It returns tokens for the *Read mode* by default. <br>' \
+      description 'Get tokens of the project. Only projects created by the user are accessible. <br />' \
+                  'It returns tokens for the *Read mode* by default. <br />' \
                   'When *edit_mode* flag is enabled, the tokens will include additional details (state and index).'
 
       parameter name:        :project_id, in: :path,
@@ -60,7 +62,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
           let(:edit_mode) { true }
 
           it 'passes the correct edit_mode value to the records serializer' do
-            records = JSON.parse(response.body)['records']
+            records = response.parsed_body['records']
             expect(records).to match_array(expected_records)
           end
         end
@@ -69,7 +71,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
           let(:edit_mode) { [false, nil].sample }
 
           it 'passes the correct edit_mode value to the records serializer' do
-            records = JSON.parse(response.body)['records']
+            records = response.parsed_body['records']
             expect(records).to match_array(expected_records)
           end
         end
@@ -85,11 +87,20 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end
@@ -103,7 +114,7 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Get the token details.'
+      description 'Get the token details. Only tokens from the projects created by the user are accessible. '
 
       parameter name:        :project_id, in: :path,
                 schema:      {
@@ -137,11 +148,26 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
       response '404', 'Project or token not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when token not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
     end
   end
@@ -157,7 +183,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update the token selections by updating the **grouped_variants**.<br>' \
+      description 'Update the token selections by updating the **grouped_variants**. ' \
+                  'Only tokens from the projects created by the user are accessible. <br />' \
                   'Use *selected* when setting the main reading and *possible* for secondary readings. <br>' \
                   'The user who edits the token will be saved as the last editor of the project.'
 
@@ -255,11 +282,26 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
       response '404', 'Project or token not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when token not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
 
       response '422', 'Token data invalid' do
@@ -288,13 +330,14 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update the selected token details.<br>' \
-                  'Use **variants** when editing the content for the specific witness. <br>' \
+      description 'Update the selected token details. ' \
+                  'Only tokens from the projects created by the user are accessible. <br />' \
+                  'Use **variants** when editing the content for the specific witness. <br />' \
                   'Use **editorial_remark** when adding or editing the editorial remark, only the following ' \
                   "types are available: *'st.', 'corr.', 'em.', 'conj.'*. '\
-                  'The *'em.' and 'conj.'* will become automatically selected. <br>" \
+                  'The *'em.' and 'conj.'* will become automatically selected. <br />" \
                   'If **variants** or **editorial_remark** are updated, the **grouped_variants** will  ' \
-                  'be calculated once again, all previous selections will be cleared.<br>' \
+                  'be calculated once again, all previous selections will be cleared.<br />' \
                   'The user who edits the token will be saved as the last editor of the project.'
 
       parameter name:        :project_id, in: :path,
@@ -395,11 +438,26 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
 
       response '404', 'Project or token not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when token not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
 
       response '422', 'Token data invalid' do
@@ -425,8 +483,9 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Uses given params to merge multiple tokens into one. <br>' \
-                  'The selections, editorial remarks, and comments won\'t be preserved. <br>' \
+      description 'Uses given params to merge multiple tokens into one. ' \
+                  'Only tokens from the projects created by the user are accessible. <br />' \
+                  'The selections, editorial remarks, and comments won\'t be preserved. <br />' \
                   'The number of tokens in the project may be changed by this operation.'
 
       parameter name:        :project_id, in: :path,
@@ -525,13 +584,22 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
       end
 
-      response '404', 'Project found' do
+      response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
 
       response '422', 'Given data invalid' do
@@ -568,7 +636,9 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
     parameter name: 'project_id', in: :path, type: :string, description: 'project_id'
     parameter name: 'id', in: :path, type: :string, description: 'token_id'
 
-    let(:project) { create(:project, witnesses: [Witness.new(siglum: 'A'), Witness.new(siglum: 'B')]) }
+    let(:project) do
+      create(:project, :with_creator, witnesses: [Witness.new(siglum: 'A'), Witness.new(siglum: 'B')], creator: user)
+    end
     let(:project_id) { project.id }
     let(:record) { create(:token, project:) }
     let(:id) { record.id }
@@ -578,7 +648,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Splits given token into two new tokens <br>' \
+      description 'Splits given token into two new tokens.  ' \
+                  'Only tokens from the projects created by the user are accessible. <br />' \
                   'Variants will be separated between two tokens based on user\'s choice to split'
 
       parameter name:        :project_id, in: :path,
@@ -726,13 +797,28 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
       end
 
-      response '404', 'Project found' do
+      response '404', 'Project or token not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when token not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
 
       response '422', 'Given data invalid' do
@@ -769,7 +855,8 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Checks if tokens with given ids have comments, editorial remarks, or selected variants.'
+      description 'Checks if tokens with given ids have comments, editorial remarks, or selected variants. ' \
+                  'Only tokens from the projects created by the user are accessible.'
 
       parameter name:        :project_id, in: :path,
                 schema:      {
@@ -819,13 +906,22 @@ RSpec.describe 'v1/projects/{project_id}/tokens' do
         run_test!
       end
 
-      response '404', 'Project found' do
+      response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end

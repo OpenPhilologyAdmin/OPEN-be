@@ -502,7 +502,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: List of comments
+      description: 'List of comments of the given token. Only tokens from the projects
+        created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -543,7 +544,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Creates a new comment
+      description: 'Creates a new comment for the given token. Only tokens from the
+        projects created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -602,7 +604,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Updates a body of given comment
+      description: 'Updates a body of given comment for the given token. Only tokens
+        from the projects created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -636,7 +639,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/login_required"
         '404':
-          description: Project not found
+          description: Project or comment not found
           content:
             application/json:
               schema:
@@ -659,7 +662,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Deletes specified comment
+      description: 'Deletes specified comment of the given token. Only tokens from
+        the projects created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -696,12 +700,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
-        '403':
-          description: Forbidden if current user doesn't match comment creator
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/forbidden_request"
         '404':
           description: Project or comment not found
           content:
@@ -800,7 +798,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: 'Apparatus: Insignificant variants of the project.'
+      description: 'Apparatus: Insignificant variants of the project. Only projects
+        created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -927,13 +926,14 @@ paths:
               "$ref": "#/components/schemas/user_reset_password"
   "/api/v1/projects":
     get:
-      summary: Retrieves list of projects
+      summary: Retrieves list of projects accessible by the user
       tags:
       - Projects
       security:
       - bearer: []
-      description: Allows retrieving list of correctly processed projects. The projects
-        are sorted by the updated_at date with the most recently updated records first.
+      description: Allows retrieving list of correctly processed projects. The user
+        can see only the projects they created. The projects are sorted by the updated_at
+        date with the most recently updated records first.
       responses:
         '200':
           description: Projects can be retrieved
@@ -1030,7 +1030,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Get selected project details.
+      description: Get selected project details. Only projects created by the user
+        are accessible.
       parameters:
       - name: id
         in: path
@@ -1063,7 +1064,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Update selected project details.
+      description: Update selected project details. Only projects created by the user
+        are accessible.
       parameters:
       - name: id
         in: path
@@ -1118,7 +1120,7 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Deletes the project. Available only for project creators.
+      description: Deletes the project. Only projects created by the user are accessible.
       parameters:
       - name: id
         in: path
@@ -1143,12 +1145,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/login_required"
-        '403':
-          description: Request forbidden if not created the project
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/forbidden_request"
         '404':
           description: Project not found
           content:
@@ -1162,6 +1158,8 @@ paths:
       - Projects
       security:
       - bearer: []
+      description: Allows saving the project to a file. Only projects created by the
+        user are accessible.
       parameters:
       - name: id
         in: path
@@ -1298,7 +1296,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: 'Apparatus: Significant variants of the project.'
+      description: 'Apparatus: Significant variants of the project. Only projects
+        created by the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -1341,9 +1340,10 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Get tokens of the project. It returns tokens for the *Read mode*
-        by default. <br>When *edit_mode* flag is enabled, the tokens will include
-        additional details (state and index).
+      description: Get tokens of the project. Only projects created by the user are
+        accessible. <br />It returns tokens for the *Read mode* by default. <br />When
+        *edit_mode* flag is enabled, the tokens will include additional details (state
+        and index).
       parameters:
       - name: project_id
         in: path
@@ -1393,7 +1393,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Get the token details.
+      description: 'Get the token details. Only tokens from the projects created by
+        the user are accessible. '
       parameters:
       - name: project_id
         in: path
@@ -1433,7 +1434,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Update the token selections by updating the **grouped_variants**.<br>Use
+      description: Update the token selections by updating the **grouped_variants**.
+        Only tokens from the projects created by the user are accessible. <br />Use
         *selected* when setting the main reading and *possible* for secondary readings.
         <br>The user who edits the token will be saved as the last editor of the project.
       parameters:
@@ -1496,13 +1498,14 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: 'Update the selected token details.<br>Use **variants** when editing
-        the content for the specific witness. <br>Use **editorial_remark** when adding
+      description: 'Update the selected token details. Only tokens from the projects
+        created by the user are accessible. <br />Use **variants** when editing the
+        content for the specific witness. <br />Use **editorial_remark** when adding
         or editing the editorial remark, only the following types are available: *''st.'',
         ''corr.'', ''em.'', ''conj.''*. ''                  ''The *''em.'' and ''conj.''*
-        will become automatically selected. <br>If **variants** or **editorial_remark**
+        will become automatically selected. <br />If **variants** or **editorial_remark**
         are updated, the **grouped_variants** will  be calculated once again, all
-        previous selections will be cleared.<br>The user who edits the token will
+        previous selections will be cleared.<br />The user who edits the token will
         be saved as the last editor of the project.'
       parameters:
       - name: project_id
@@ -1566,8 +1569,9 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Uses given params to merge multiple tokens into one. <br>The selections,
-        editorial remarks, and comments won't be preserved. <br>The number of tokens
+      description: Uses given params to merge multiple tokens into one. Only tokens
+        from the projects created by the user are accessible. <br />The selections,
+        editorial remarks, and comments won't be preserved. <br />The number of tokens
         in the project may be changed by this operation.
       parameters:
       - name: project_id
@@ -1594,7 +1598,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/login_required"
         '404':
-          description: Project found
+          description: Project not found
           content:
             application/json:
               schema:
@@ -1643,8 +1647,9 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Splits given token into two new tokens <br>Variants will be separated
-        between two tokens based on user's choice to split
+      description: Splits given token into two new tokens.  Only tokens from the projects
+        created by the user are accessible. <br />Variants will be separated between
+        two tokens based on user's choice to split
       parameters:
       - name: project_id
         in: path
@@ -1676,7 +1681,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/login_required"
         '404':
-          description: Project found
+          description: Project or token not found
           content:
             application/json:
               schema:
@@ -1714,7 +1719,8 @@ paths:
       security:
       - bearer: []
       description: Checks if tokens with given ids have comments, editorial remarks,
-        or selected variants.
+        or selected variants. Only tokens from the projects created by the user are
+        accessible.
       parameters:
       - name: project_id
         in: path
@@ -1756,7 +1762,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/login_required"
         '404':
-          description: Project found
+          description: Project not found
           content:
             application/json:
               schema:
@@ -1942,7 +1948,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Get witnesses of the project.
+      description: Get witnesses of the project. Only projects created by the user
+        are accessible.
       parameters:
       - name: project_id
         in: path
@@ -1984,7 +1991,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Adds a new witness to the project.
+      description: Adds a new witness to the project. Only projects created by the
+        user are accessible.
       parameters:
       - name: project_id
         in: path
@@ -2029,7 +2037,8 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Update the given witness.
+      description: Update the given witness. Only projects created by the user are
+        accessible.
       parameters:
       - name: project_id
         in: path
@@ -2079,11 +2088,12 @@ paths:
       - Projects
       security:
       - bearer: []
-      description: Deletes the given witness. It also deletes all token variants for
-        this witness. If any of the token variants was selected, the selection would
-        be removed as well. <br>If the witness was the default one, the **first**
-        of the remaining witnesses would be a new default witness. <br>**It is not
-        possible to delete witness if there are no other witnesses.**
+      description: Deletes the given witness. Only projects created by the user are
+        accessible. <br />It also deletes all token variants for this witness. <br
+        />If any of the token variants was selected, the selection would be removed
+        as well. <br />If the witness was the default one, the **first** of the remaining
+        witnesses would be a new default witness. <br />**It is not possible to delete
+        witness if there are no other witnesses.**
       parameters:
       - name: project_id
         in: path

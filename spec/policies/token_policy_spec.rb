@@ -63,4 +63,41 @@ describe TokenPolicy do
       end
     end
   end
+
+  describe 'policy_scope' do
+    let(:current_user) { build(:user, :admin, :approved) }
+
+    context 'when user has created some projects' do
+      let(:created_project) { create(:project, :with_creator, creator: current_user) }
+      let(:created_project2) { create(:project, :with_creator, creator: current_user) }
+      let(:created_project_token) { create(:token, project: created_project) }
+      let(:created_project2_token) { create(:token, project: created_project2) }
+      let(:other_user_project) { create(:project, :with_creator) }
+
+      before do
+        created_project_token
+        create(:token, project: other_user_project)
+        created_project2_token
+      end
+
+      it 'returns only created projects' do
+        expect(Pundit.policy_scope(current_user, Token.all)).to(
+          contain_exactly(created_project_token, created_project2_token)
+        )
+      end
+    end
+
+    context 'when user has not created any projects yet' do
+      let(:other_user_project) { create(:project, :with_creator) }
+
+      before do
+        create(:token, project: other_user_project)
+        create(:token)
+      end
+
+      it 'returns empty array' do
+        expect(Pundit.policy_scope(current_user, Token.all)).to be_empty
+      end
+    end
+  end
 end

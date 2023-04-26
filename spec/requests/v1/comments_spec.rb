@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 require 'swagger_helper'
-
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe 'v1/comments' do
+  let(:not_accessible_project_id) { create(:project, :with_creator).id }
+
   path '/api/v1/projects/{project_id}/tokens/{token_id}/comments' do
     let(:user) { create(:user, :admin, :approved) }
     let(:user_id) { user.id }
-    let(:project) { create(:project) }
+    let(:project) { create(:project, :with_creator, creator: user) }
     let(:project_id) { project.id }
     let(:token) { create(:token, project:) }
     let(:token_id) { token.id }
@@ -16,7 +18,8 @@ RSpec.describe 'v1/comments' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'List of comments'
+      description 'List of comments of the given token. ' \
+                  'Only tokens from the projects created by the user are accessible. '
 
       parameter name: 'project_id', in: :path, type: :integer, description: 'ID of the project', required: true
       parameter name: 'token_id', in: :path, type: :integer, description: 'ID of the token', required: true
@@ -44,11 +47,20 @@ RSpec.describe 'v1/comments' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
 
@@ -57,7 +69,8 @@ RSpec.describe 'v1/comments' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Creates a new comment'
+      description 'Creates a new comment for the given token. ' \
+                  'Only tokens from the projects created by the user are accessible. '
 
       parameter name: 'project_id', in: :path, type: :integer, description: 'ID of the project', required: true
       parameter name: 'token_id', in: :path, type: :integer, description: 'ID of the token', required: true
@@ -120,11 +133,20 @@ RSpec.describe 'v1/comments' do
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
         let(:comment) { create(:comment, body: 'Not so nice.', token:, user:) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end
@@ -132,7 +154,7 @@ RSpec.describe 'v1/comments' do
   path '/api/v1/projects/{project_id}/tokens/{token_id}/comments/{id}' do
     let(:user) { create(:user, :admin, :approved) }
     let(:user_id) { user.id }
-    let(:project) { create(:project) }
+    let(:project) { create(:project, :with_creator, creator: user) }
     let(:project_id) { project.id }
     let(:token) { create(:token, project:) }
     let(:token_id) { token.id }
@@ -142,7 +164,8 @@ RSpec.describe 'v1/comments' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Updates a body of given comment'
+      description 'Updates a body of given comment for the given token. ' \
+                  'Only tokens from the projects created by the user are accessible. '
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -207,13 +230,29 @@ RSpec.describe 'v1/comments' do
         run_test!
       end
 
-      response '404', 'Project not found' do
+      response '404', 'Project or comment not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
+        let(:id) { create(:comment, token:, user:).id }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when comment does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
     end
 
@@ -222,7 +261,8 @@ RSpec.describe 'v1/comments' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description('Deletes specified comment')
+      description 'Deletes specified comment of the given token. ' \
+                  'Only tokens from the projects created by the user are accessible. '
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -280,23 +320,31 @@ RSpec.describe 'v1/comments' do
         run_test!
       end
 
-      response '403', 'Forbidden if current user doesn\'t match comment creator' do
-        let(:Authorization) { authorization_header_for(user) }
-        let(:id) { create(:comment, body: 'Fancy comment').id }
-
-        schema '$ref' => '#/components/schemas/forbidden_request'
-
-        run_test!
-      end
-
       response '404', 'Project or comment not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
+        let(:id) { create(:comment, token:, user:).id }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when comment does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
     end
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

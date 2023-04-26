@@ -3,15 +3,18 @@
 require 'swagger_helper'
 
 RSpec.describe 'v1/projects' do
+  let(:not_accessible_project_id) { create(:project, :with_creator).id }
+
   path '/api/v1/projects' do
     let(:user) { create(:user, :admin, :approved) }
-    get('Retrieves list of projects') do
+    get('Retrieves list of projects accessible by the user') do
       tags 'Projects'
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Allows retrieving list of correctly processed projects. The projects are sorted by the ' \
-                  'updated_at date with the most recently updated records first.'
+      description 'Allows retrieving list of correctly processed projects. The user can see only the projects ' \
+                  'they created. The projects are sorted by the updated_at date with the most recently updated ' \
+                  'records first.'
 
       response '200', 'Projects can be retrieved' do
         let(:Authorization) { authorization_header_for(user) }
@@ -38,7 +41,7 @@ RSpec.describe 'v1/projects' do
         run_test!
 
         it 'returns only successfully processed projects' do
-          records = JSON.parse(response.body)['records']
+          records = response.parsed_body['records']
           records.each do |record|
             expect(record['status']).to eq('processed')
           end
@@ -190,7 +193,7 @@ RSpec.describe 'v1/projects' do
 
   path '/api/v1/projects/{id}' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:record) { create(:project) }
+    let(:record) { create(:project, :with_creator, creator: user) }
     let(:id) { record.id }
 
     get('Retrieves project details') do
@@ -198,7 +201,7 @@ RSpec.describe 'v1/projects' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Get selected project details.'
+      description 'Get selected project details. Only projects created by the user are accessible.'
 
       parameter name: :id, in: :path,
                 schema: {
@@ -225,11 +228,20 @@ RSpec.describe 'v1/projects' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
 
@@ -238,7 +250,7 @@ RSpec.describe 'v1/projects' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update selected project details.'
+      description 'Update selected project details. Only projects created by the user are accessible.'
 
       parameter name: :id, in: :path,
                 schema: {
@@ -308,11 +320,20 @@ RSpec.describe 'v1/projects' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
 
       response '422', 'Project data invalid' do
@@ -340,7 +361,7 @@ RSpec.describe 'v1/projects' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Deletes the project. Available only for project creators.'
+      description 'Deletes the project. Only projects created by the user are accessible.'
 
       parameter name: :id, in: :path,
                 schema: {
@@ -376,28 +397,29 @@ RSpec.describe 'v1/projects' do
         run_test!
       end
 
-      response '403', 'Request forbidden if not created the project' do
-        let(:Authorization) { authorization_header_for(user) }
-
-        schema '$ref' => '#/components/schemas/forbidden_request'
-
-        run_test!
-      end
-
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end
 
   path '/api/v1/projects/{id}/export' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:record) { create(:project) }
+    let(:record) { create(:project, :with_creator, creator: user) }
     let(:id) { record.id }
 
     put('Export project to file') do
@@ -405,6 +427,7 @@ RSpec.describe 'v1/projects' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
+      description 'Allows saving the project to a file. Only projects created by the user are accessible.'
 
       parameter name: :id, in: :path,
                 schema: {
@@ -469,11 +492,20 @@ RSpec.describe 'v1/projects' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
 
       response '422', 'Given options are invalid' do

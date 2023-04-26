@@ -23,7 +23,9 @@ class Project < ApplicationRecord
 
   scope :most_recently_updated_first, -> { order('updated_at desc') }
   scope :older_than, ->(date) { where('created_at < ?', date) }
-
+  scope :created_by, lambda { |user|
+    joins(:project_roles).merge(ProjectRole.owner).where(project_roles: { user: })
+  }
   has_many :tokens, dependent: :destroy
   has_many :project_roles, dependent: :destroy
   has_many :owners, -> { merge(ProjectRole.owner) },

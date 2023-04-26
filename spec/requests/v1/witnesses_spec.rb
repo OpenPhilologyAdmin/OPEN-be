@@ -3,9 +3,11 @@
 require 'swagger_helper'
 
 RSpec.describe 'v1/projects/{project_id}/witnesses' do
+  let(:not_accessible_project_id) { create(:project, :with_creator).id }
+
   path '/api/v1/projects/{project_id}/witnesses' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:project) { create(:project) }
+    let(:project) { create(:project, :with_creator, creator: user) }
     let(:project_id) { project.id }
 
     get('Retrieves witnesses of the specified project') do
@@ -13,7 +15,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Get witnesses of the project.'
+      description 'Get witnesses of the project. Only projects created by the user are accessible.'
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -52,11 +54,20 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
 
@@ -73,7 +84,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Adds a new witness to the project.'
+      description 'Adds a new witness to the project. Only projects created by the user are accessible.'
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -125,11 +136,20 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
 
       response '404', 'Project not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project_id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
       end
     end
   end
@@ -137,7 +157,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
   # rubocop:disable RSpec/ScatteredSetup
   path '/api/v1/projects/{project_id}/witnesses/{id}' do
     let(:user) { create(:user, :admin, :approved) }
-    let(:project) { create(:project) }
+    let(:project) { create(:project, :with_creator, creator: user) }
     let(:edited_witness) { project.witnesses.last }
     let(:id) { edited_witness.id }
     let(:project_id) { project.id }
@@ -156,7 +176,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description 'Update the given witness.'
+      description 'Update the given witness. Only projects created by the user are accessible.'
 
       parameter name: :project_id, in: :path,
                 schema: {
@@ -217,11 +237,26 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
 
       response '404', 'Project or witness not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when witness not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
 
       response '422', 'Witness is invalid' do
@@ -250,10 +285,11 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
       consumes 'application/json'
       produces 'application/json'
       security [{ bearer: [] }]
-      description('Deletes the given witness. It also deletes all token variants for this witness. ' \
-                  'If any of the token variants was selected, the selection would be removed as well. <br>' \
+      description('Deletes the given witness. Only projects created by the user are accessible. <br />' \
+                  'It also deletes all token variants for this witness. <br />' \
+                  'If any of the token variants was selected, the selection would be removed as well. <br />' \
                   'If the witness was the default one, the **first** of the remaining witnesses would ' \
-                  'be a new default witness. <br>' \
+                  'be a new default witness. <br />' \
                   '**It is not possible to delete witness if there are no other witnesses.**')
 
       parameter name: :project_id, in: :path,
@@ -311,7 +347,7 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
 
       response '403', 'Forbidden if there are no other witnesses' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:project) { create(:project, witnesses_number: 1) }
+        let(:project) { create(:project, :with_creator, witnesses_number: 1, creator: user) }
 
         schema '$ref' => '#/components/schemas/forbidden_request'
 
@@ -332,11 +368,26 @@ RSpec.describe 'v1/projects/{project_id}/witnesses' do
 
       response '404', 'Project or witness not found' do
         let(:Authorization) { authorization_header_for(user) }
-        let(:id) { 'invalid-id' }
 
         schema '$ref' => '#/components/schemas/record_not_found'
 
-        run_test!
+        context 'when project does not exist' do
+          let(:project_id) { 'invalid-id' }
+
+          run_test!
+        end
+
+        context 'when project is not accessible' do
+          let(:project_id) { not_accessible_project_id }
+
+          run_test!
+        end
+
+        context 'when witness not found' do
+          let(:id) { 'invalid-id' }
+
+          run_test!
+        end
       end
     end
   end
