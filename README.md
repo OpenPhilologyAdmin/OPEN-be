@@ -1,5 +1,9 @@
 # Project details
 
+This is a free, open source web app, developed by the Open Philology project at Leiden University, 
+the aim of which is to assist scholars in the work of producing scholarly editions of premodern texts, 
+mainly those in Tibetan and Chinese, but with applicability beyond these two linguistic registers.
+
 The general aims of the project:
 - provide tools for editing multilingual texts,
 - allow for easy export of edited text into standard word
@@ -9,7 +13,7 @@ publication),
 process.
 
 Useful links:
-- [Frontend Application](https://github.com/xfiveco/collation-fe)
+- [Frontend Application](https://github.com/OpenPhilologyAdmin/OPEN-fe)
 
 # Technology stack
 
