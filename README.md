@@ -18,7 +18,7 @@ Useful links:
 # Technology stack
 
 - Ruby v3.2.1
-- Ruby on Rails v7.0.4
+- Ruby on Rails v7.0.6
 - Redis
 - PostgreSQL 
 

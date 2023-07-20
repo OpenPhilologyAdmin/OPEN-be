@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.1'
-gem 'rails', '~> 7.0.3'
+gem 'rails', '~> 7.0.6'
 
 gem 'activerecord-import'
 gem 'active_storage_base64'
