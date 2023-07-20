@@ -14,27 +14,19 @@ RSpec.describe SignupNotifier, type: :service do
 
   describe '#perform!' do
     let(:mailer_mock) { instance_double(ActionMailer::MessageDelivery) }
+    let(:expected_recipient_email) { ENV.fetch('SIGNUP_NOTIFICATION_RECIPIENT', nil) }
 
     before do
       allow(NotificationMailer).to receive(:new_signup).and_return(mailer_mock)
       allow(mailer_mock).to receive(:deliver_later)
+      service.perform!
     end
 
-    context 'when there are no approved admins' do
-      it 'does not send any emails' do
-        service.perform!
-        expect(NotificationMailer).not_to have_received(:new_signup)
-      end
-    end
-
-    context 'when there are approved admins' do
-      let(:admin) { create(:user, :admin, :approved) }
-
-      it 'sends emails to admins' do
-        admin
-        service.perform!
-        expect(NotificationMailer).to have_received(:new_signup).with(new_user, admin)
-      end
+    it 'sends email to specified recipient' do
+      expect(NotificationMailer).to have_received(:new_signup).with(
+        new_user:,
+        recipient_email: expected_recipient_email
+      )
     end
   end
 end

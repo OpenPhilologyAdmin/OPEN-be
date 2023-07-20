@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class NotificationMailer < ApplicationMailer
-  def new_signup(new_user, recipient)
+  def new_signup(new_user:, recipient_email:)
     @new_user = new_user
-    @recipient = recipient
+    @recipient_email = recipient_email
 
-    mail(to: @recipient.email, subject: I18n.t('mailers.notification_mailer.new_signup.subject'))
+    mail(to: @recipient_email, subject: I18n.t('mailers.notification_mailer.new_signup.subject'))
   end
 
   def account_approved(recipient)

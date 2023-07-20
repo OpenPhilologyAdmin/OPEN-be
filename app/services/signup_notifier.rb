@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
 class SignupNotifier
+  SIGNUP_NOTIFICATION_RECIPIENT = ENV.fetch('SIGNUP_NOTIFICATION_RECIPIENT', nil)
+
   def initialize(new_user)
     @new_user = new_user
   end
 
   def perform!
-    admins.each do |admin|
-      notify_admin(admin)
-    end
+    NotificationMailer.new_signup(
+      new_user:,
+      recipient_email: SIGNUP_NOTIFICATION_RECIPIENT
+    ).deliver_later
   end
 
   private
 
-  def admins
-    @admins ||= User.admin.approved
-  end
-
-  def notify_admin(admin)
-    NotificationMailer.new_signup(@new_user, admin).deliver_later
-  end
+  attr_reader :new_user
 end

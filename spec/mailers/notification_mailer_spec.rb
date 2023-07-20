@@ -2,20 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe NotificationMailer, type: :mailer do
+RSpec.describe NotificationMailer do
   let(:default_sender) { ENV.fetch('DEFAULT_SENDER', nil) }
 
   describe '#new_signup' do
-    let(:mail) { described_class.new_signup(user, recipient) }
-    let(:user) { create(:user) }
-    let(:recipient) { create(:user) }
+    let(:mail) { described_class.new_signup(new_user:, recipient_email:) }
+    let(:new_user) { create(:user) }
+    let(:recipient_email) { Faker::Internet.email }
 
     it 'renders correct subject' do
       expect(mail.subject).to eq(I18n.t('mailers.notification_mailer.new_signup.subject'))
     end
 
     it 'sets correct recipient' do
-      expect(mail.to).to eq([recipient.email])
+      expect(mail.to).to eq([recipient_email])
     end
 
     it 'sets correct sender' do
