@@ -47,7 +47,7 @@ en:
     notification_mailer:
       new_signup:
         subject: A new user has just signed up
-        greeting: "Hello %{name},"
+        greeting: Hello,
         message: A new user has just signed up.
         new_user_name_label: 'Name:'
         new_user_email_label: 'Email:'
