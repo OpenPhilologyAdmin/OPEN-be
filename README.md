@@ -106,6 +106,18 @@ The following `ENV` variables are required in `production` environment:
 
 # User Instructions
 
+This is a free, open source web app, developed by the Open Philology project at Leiden University, 
+the aim of which is to assist scholars in the work of producing scholarly editions of premodern texts, 
+mainly those in Tibetan and Chinese, but with applicability beyond these two linguistic registers.
+
+The general aims of the project:
+- provide tools for editing multilingual texts,
+- allow for easy export of edited text into standard word
+processors/typesetters for further/final typesetting (for paper
+publication),
+- allow online display of editions, both as completed projects and in
+process.
+
 This is a simple introduction to OPEn for first time users. It will help you get started with your first editing Project.
 
 The Introduction does not get into any detail about the editing process itself: once you have started your Project, you fill find that the different functionalities within the app are on the whole self-explanatory. The challenge is to get a new Project going, and this is what this Instruction will help you do.
